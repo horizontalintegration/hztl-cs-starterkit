@@ -37,7 +37,7 @@ export async function SharedPageLayout({
     header = pageData.header;
     footer = pageData.footer;
   } catch (error) {
-    console.error('Error fetching page:', error);
+    console.error('Error fetching page in contentstack:', error);
     notFound();
   }
   // If no page found, fetch 404 page from CMS

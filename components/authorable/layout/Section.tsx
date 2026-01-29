@@ -32,8 +32,6 @@ export const Section = withStandardComponentWrapper(
      * RENDERING
      */
 
-    console.log(theme);
-
     return (
       <div data-component="authorable/shared/layout/section">
         <BrandAndThemeProvider theme={theme as NonNullable<ITheme['theme_options']>}>
@@ -78,11 +76,11 @@ const TAILWIND_VARIANTS = tv({
       'flex-wrap',
     ],
     sectionTitle: [
-      'text-component-section-title',
-      'font-typography-header-font-family',
       'text-typography-header-large-font-size',
+      'font-typography-header-font-family',
       'font-bold',
       'leading-tight',
+      'text-component-section-title',
     ],
     sectionDescription: [
       'text-component-section-body',
@@ -160,4 +158,4 @@ const TAILWIND_VARIANTS = tv({
     removePaddingLeftRight: false,
     displayCenter75: false,
   },
-});
+}, { twMerge: false });
