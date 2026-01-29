@@ -2,7 +2,7 @@
 import contentstack from '@contentstack/delivery-sdk';
 
 // Import preview mode check from stack module
-import { isPreviewModeEnabled } from './stack';
+import { isPreviewModeEnabled } from './delivery-stack';
 
 /**
  * Helper function to add editable tags for live preview (reduces code duplication)

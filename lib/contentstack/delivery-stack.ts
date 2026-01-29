@@ -1,5 +1,5 @@
 // Importing Contentstack SDK
-import contentstack from '@contentstack/delivery-sdk';
+import contentstackDeliverySDK from '@contentstack/delivery-sdk';
 
 // helper functions from private package to retrieve Contentstack endpoints in a convienient way
 import { getContentstackEndpoints, getRegionForString } from '@timbenniks/contentstack-endpoints';
@@ -15,7 +15,7 @@ const isPreviewMode = process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW === 'true';
 
 // Shared function to create Contentstack stack configuration
 export function createStack() {
-  return contentstack.stack({
+  return contentstackDeliverySDK.stack({
     // Setting the API key from environment variables
     apiKey: process.env.CONTENTSTACK_API_KEY as string,
 

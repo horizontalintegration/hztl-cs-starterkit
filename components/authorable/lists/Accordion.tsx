@@ -8,7 +8,7 @@ import { withStandardComponentWrapper } from '@/helpers/HOC';
 import { AccordionContextProvider, useAccordionContext } from '@/helpers/Context/AccordionContext';
 import { getTestProps } from '@/lib/testing/utils';
 import { IAccordion, IAccordionItem } from '@/.generated';
-import { useGlobalLabels } from '@/providers/GlobalLabelsProvider';
+import { useGlobalLabels } from '@/context/GlobalLabelContext';
 import { ReferencePlaceholder } from '@/components/primitives/ReferencePlaceholder';
 
 // Expand/Collapse All Buttons Component

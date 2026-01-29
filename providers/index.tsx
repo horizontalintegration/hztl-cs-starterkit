@@ -1,6 +1,6 @@
 'use client';
 import { IDictionaryItems, ITheme } from '@/.generated';
-import { GlobalLabelsProvider } from './GlobalLabelsProvider';
+import { GlobalLabelsProvider } from '@/context/GlobalLabelContext';
 import { Brands } from '@/helpers/Constants/Constant';
 import { BrandAndThemeProvider } from './BrandAndThemeContext';
 // Initialize component registry early to avoid circular dependencies

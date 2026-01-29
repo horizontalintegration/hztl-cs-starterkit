@@ -7,7 +7,7 @@ import { tv } from 'tailwind-variants';
 import { SvgIcon } from '@/helpers/SvgIcon';
 import { useIsScrolled } from '@/lib/hooks/useIsScrolled';
 import { getTestProps } from '@/lib/testing/utils';
-import { useGlobalLabels } from '@/providers/GlobalLabelsProvider';
+import { useGlobalLabels } from '@/context/GlobalLabelContext';
 
 const tailwindVariants = tv({
   slots: {

@@ -3,6 +3,8 @@
 import { IPage } from "@/.generated";
 import { ComponentRenderer } from "@/components/primitives/ComponentRenderer";
 import { ContentstackLivePreview } from "@/components/primitives/ContentstackLivePreview";
+import LanguageSelector from "@/components/primitives/LanguageSelector";
+import { HeaderProvider } from "@/context/HeaderContext";
 import { useScrollElementIntoView } from "@/lib/hooks/useScrollElementIntoView";
 import { JSX, useRef } from "react";
 import { tv } from "tailwind-variants";
@@ -14,8 +16,6 @@ interface MainLayoutProps {
 
 
 export const MainLayout = ({ page, pageContentTypeUID = "page" }: MainLayoutProps): JSX.Element => {
-    const { base } = TAILWIND_VARIANTS();
-
     const mainLayoutRef = useRef<HTMLDivElement>(null);
 
     useScrollElementIntoView(mainLayoutRef.current, {
@@ -29,6 +29,8 @@ export const MainLayout = ({ page, pageContentTypeUID = "page" }: MainLayoutProp
             return <ComponentRenderer components={components} extendedProps={rest} />;
         },
     };
+
+    const { base } = TAILWIND_VARIANTS();
     return (
         <div
             ref={mainLayoutRef}
@@ -36,6 +38,9 @@ export const MainLayout = ({ page, pageContentTypeUID = "page" }: MainLayoutProp
             id={page.uid}
             data-component="authorable/shared/site-structure/main-layout/main-layout"
         >
+            <HeaderProvider>
+                <LanguageSelector />
+            </HeaderProvider>
             {(() => {
                 return pageTypeMapping[pageContentTypeUID as keyof typeof pageTypeMapping]();
             })()}
