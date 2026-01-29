@@ -6,9 +6,10 @@ import { GetEntries, GetEntryByUid } from '../types';
 import { IFooter, IHeader } from '@/.generated';
 
 // Importing stack instance and language helpers
-import { stack } from './stack';
+import { stack } from './delivery-stack';
 import { getCurrentLanguage } from './language';
 import { addEditableTagsIfPreview, addEditableTagsToEntries } from './preview-helpers';
+import { cache } from 'react';
 
 /**
  * Function to fetch page data based on the URL with multisite support
@@ -16,11 +17,11 @@ import { addEditableTagsIfPreview, addEditableTagsToEntries } from './preview-he
  * @param pageType - The content type UID (default: 'page')
  * @returns The fetched page entry or undefined
  */
-export async function getPage<T>(url: string, pageType: string) {
+export const getPage = cache(async <T>(url: string, pageType: string, locale: string) => {
   const query = stack
     .contentType(pageType) // Specifying the content type as "page"
     .entry() // Accessing the entry
-    .locale(getCurrentLanguage()) // Add locale specification
+    .locale(locale)// Add locale specification
     .query() // Creating a query
     .addParams({ include_all: true, include_all_depth: 5 }) // Using a safe limit of 5 depth for include_all. Max is 100
     .where('url', QueryOperation.EQUALS, url.toLowerCase()); // Filtering entries by URL
@@ -32,13 +33,13 @@ export async function getPage<T>(url: string, pageType: string) {
     return entry; // Returning the fetched entry
   }
   return undefined;
-}
+})
 
 /**
  * Function to fetch header entry
  * @returns The fetched header entry or undefined
  */
-export async function getHeader() {
+export const getHeader = cache(async () => {
   const result = await stack
     .contentType('header') // Specifying the content type as "header"
     .entry() // Accessing the entry
@@ -52,13 +53,13 @@ export async function getHeader() {
     return entry; // Returning the fetched entry
   }
   return undefined;
-}
+})
 
 /**
  * Function to fetch footer entry
  * @returns The fetched footer entry or undefined
  */
-export async function getFooter() {
+export const getFooter = cache(async () => {
   const result = await stack
     .contentType('footer') // Specifying the content type as "footer"
     .entry() // Accessing the entry
@@ -72,14 +73,14 @@ export async function getFooter() {
     return entry; // Returning the fetched entry
   }
   return undefined;
-}
+})
 
 /**
  * Function to fetch multiple entries of a content type
  * @param params - Object containing contentTypeUid, referencesToInclude, and locale
  * @returns The fetched entries or undefined
  */
-export const getEntries = async <T>({
+export const getEntries = cache(async <T>({
   contentTypeUid,
   referencesToInclude = '',
   locale,
@@ -111,14 +112,14 @@ export const getEntries = async <T>({
   } catch (err) {
     throw err;
   }
-};
+});
 
 /**
  * Function to fetch all slugs for a content type
  * @param params - Object containing contentTypeUid and locale
  * @returns The fetched slugs or undefined
  */
-export const getAllSlugs = async <T>({
+export const getAllSlugs = cache(async <T>({
   contentTypeUid = 'page',
   locale,
 }: Pick<GetEntries, 'contentTypeUid'> & { locale?: string }) => {
@@ -137,14 +138,14 @@ export const getAllSlugs = async <T>({
   } catch (err) {
     throw err;
   }
-};
+});
 
 /**
  * Function to fetch a single entry by UID
  * @param params - Object containing contentTypeUid, entryUid, and referencesToInclude
  * @returns The fetched entry or undefined
  */
-export const getEntryByUid = async ({
+export const getEntryByUid = cache(async ({
   contentTypeUid,
   entryUid,
   referencesToInclude = '',
@@ -165,14 +166,14 @@ export const getEntryByUid = async ({
     console.error(`Error while fetching entry for ${entryUid} in ${contentTypeUid}`);
     throw err;
   }
-};
+});
 
 /**
  * Function to fetch multiple entries by their UIDs
  * @param params - Object containing contentTypeUid, entryUids, referencesToInclude, and locale
  * @returns The fetched entries sorted by the order of entryUids or undefined
  */
-export const getEntriesByUids = async <T>({
+export const getEntriesByUids = cache(async <T>({
   contentTypeUid,
   entryUids,
   referencesToInclude,
@@ -235,4 +236,4 @@ export const getEntriesByUids = async <T>({
     console.error(`Error while fetching entries for UIDs ${entryUids} in ${contentTypeUid}`);
     throw err;
   }
-};
+});

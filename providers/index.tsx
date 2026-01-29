@@ -1,6 +1,6 @@
 'use client';
 import { IDictionaryItems } from '@/.generated';
-import { GlobalLabelsProvider } from './GlobalLabelsProvider';
+import { GlobalLabelsProvider } from '@/context/GlobalLabelContext';
 // Initialize component registry early to avoid circular dependencies
 import '@/utils/init-component-registry';
 

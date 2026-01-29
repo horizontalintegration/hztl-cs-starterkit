@@ -3,8 +3,11 @@
 import { IPage } from "@/.generated";
 import { ComponentRenderer } from "@/components/primitives/ComponentRenderer";
 import { ContentstackLivePreview } from "@/components/primitives/ContentstackLivePreview";
+import LanguageSelector from "@/components/primitives/LanguageSelector";
+import { HeaderProvider } from "@/context/HeaderContext";
 import { useScrollElementIntoView } from "@/lib/hooks/useScrollElementIntoView";
 import { JSX, useRef } from "react";
+import { tv } from "tailwind-variants";
 
 interface MainLayoutProps {
     page: IPage;
@@ -26,12 +29,17 @@ export const MainLayout = ({ page, pageContentTypeUID = "page" }: MainLayoutProp
             return <ComponentRenderer components={components} extendedProps={rest} />;
         },
     };
+
+    const { base } = TAILWIND_VARIANTS();
     return (
-        <div
+        <div className={base()}
             ref={mainLayoutRef}
             id={page.uid}
             data-component="authorable/shared/site-structure/main-layout/main-layout"
         >
+            <HeaderProvider>
+                <LanguageSelector />
+            </HeaderProvider>
             {(() => {
                 return pageTypeMapping[pageContentTypeUID as keyof typeof pageTypeMapping]();
             })()}
@@ -39,3 +47,18 @@ export const MainLayout = ({ page, pageContentTypeUID = "page" }: MainLayoutProp
         </div>
     )
 }
+
+const TAILWIND_VARIANTS = tv({
+    slots: {
+        base: [
+            'grid',
+            'grid-cols-1',
+            'm-auto',
+            'w-full',
+            'max-w-xl-desktop',
+            'px-6',
+            'md:px-12',
+            'xl:px-20'
+        ],
+    },
+});
