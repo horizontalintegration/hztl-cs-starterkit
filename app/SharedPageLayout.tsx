@@ -1,7 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { IPage } from '@/.generated';
-import { Header } from '@/components/authorable/Header';
+import { Header } from '@/components/authorable/site-structure/Header/Header';
 import { Footer } from '@/components/authorable/Footer';
 import BackToTop from '@/components/authorable/site-structure/BackToTop/BackToTop';
 import { fetchPageData } from '@/lib/contentstack/page-data';
