@@ -99,7 +99,6 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
         // Set default locale
         if (locale.code === DEFAULT_LOCALE) {
           acc[DEFAULT_LOCALE] = `${baseUrl}${urlPath}`;
-          acc['x-default'] = `${baseUrl}${urlPath}`;
           return acc;
         }
 

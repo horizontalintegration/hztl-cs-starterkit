@@ -100,11 +100,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                         : `${baseUrl}/${locale.code}${page.url}`;
 
                     languageUrls[locale.code as string] = localeUrl;
-
-                    // Add x-default for default locale (SEO best practice)
-                    if (locale.code === DEFAULT_LOCALE) {
-                        languageUrls['x-default'] = localeUrl;
-                    }
                 }
 
                 // Only add alternates if we have language URLs

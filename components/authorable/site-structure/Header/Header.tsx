@@ -1,9 +1,9 @@
 'use client';
 
-import { IEnhancedImage, IEnhancedLink, IHeader, ILink } from "@/.generated";
+import { IEnhancedImage, IEnhancedLink, IHeader } from "@/.generated";
 import { useIsScrolled } from "@/lib/hooks/useIsScrolled";
 import { tv } from "tailwind-variants";
-import LanguageSelector from "../primitives/LanguageSelector";
+import LanguageSelector from './LanguageSelector';
 import Link from "next/link";
 import Image from "next/image";
 import { getCSLPAttributes } from "@/utils/type-guards";
