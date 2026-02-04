@@ -3,13 +3,14 @@ import contentstack, { QueryOperation } from '@contentstack/delivery-sdk';
 
 // Importing type definitions
 import { GetEntries, GetEntryByUid } from '../types';
-import { IFooter, IHeader } from '@/.generated';
+import { IFooter, IHeader, ISiteSettings } from '@/.generated';
 
 // Importing stack instance and language helpers
 import { stack } from './delivery-stack';
 import { getCurrentLanguage } from './language';
 import { addEditableTagsIfPreview, addEditableTagsToEntries } from './preview-helpers';
 import { cache } from 'react';
+import { DEFAULT_LOCALE } from '@/constants/locales';
 
 /**
  * Function to fetch page data based on the URL with multisite support
@@ -136,6 +137,38 @@ export const getAllSlugs = cache(async <T>({
 
     return slugs;
   } catch (err) {
+    throw err;
+  }
+});
+
+/**
+ * Fetches site settings entry from Contentstack
+ * @param contentTypeUid - The content type UID for site settings (default: 'site_settings')
+ * @returns The site settings entry if found, or undefined if no entry exists or an error occurs
+ */
+export const getSiteSettings = cache(async (contentTypeUid: string = 'site_settings'): Promise<(ISiteSettings & contentstack.Utils.EntryModel) | undefined> => {
+  if (!contentTypeUid) {
+    console.warn('getSiteSettings: contentTypeUid is required');
+    return undefined;
+  }
+
+  try {
+    const siteSettings = await stack
+      .contentType(contentTypeUid)
+      .entry()
+      .locale(DEFAULT_LOCALE)
+      .query()
+      .find<ISiteSettings & contentstack.Utils.EntryModel>();
+
+    if (siteSettings.entries && siteSettings.entries.length > 0) {
+      const entry = siteSettings.entries[0];
+      return entry;
+    }
+
+    console.warn(`getSiteSettings: No site settings entry found for content type "${contentTypeUid}"`);
+    return undefined;
+  } catch (err) {
+    console.error(`Error while fetching site settings for content type "${contentTypeUid}":`, err);
     throw err;
   }
 });
