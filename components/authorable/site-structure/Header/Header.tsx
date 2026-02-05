@@ -5,7 +5,6 @@ import { useIsScrolled } from "@/lib/hooks/useIsScrolled";
 import { tv } from "tailwind-variants";
 import LanguageSelector from './LanguageSelector';
 import Link from "next/link";
-import Image from "next/image";
 import { getCSLPAttributes } from "@/utils/type-guards";
 import ImageWrapper from "@/helpers/Wrappers/ImageWrapper/ImageWrapper";
 
