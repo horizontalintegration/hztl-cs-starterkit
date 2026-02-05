@@ -24,7 +24,7 @@ export const getPage = cache(async <T>(url: string, pageType: string, locale: st
     .entry() // Accessing the entry
     .locale(locale)// Add locale specification
     .query() // Creating a query
-    .addParams({ include_all: true, include_all_depth: 5 }) // Using a safe limit of 5 depth for include_all. Max is 100
+    .addParams({ include_all: true, include_all_depth: 5, include_dimension: true }) // Using a safe limit of 5 depth for include_all. Max is 100
     .where('url', QueryOperation.EQUALS, url.toLowerCase()); // Filtering entries by URL
 
   const result = await query.find<T & contentstack.Utils.EntryModel>(); // Executing the query and expecting a result of type Page
@@ -46,6 +46,7 @@ export const getHeader = cache(async (locale: string) => {
     .entry() // Accessing the entry
     .locale(locale)
     .query() // Creating a query
+    .addParams({ include_dimension: true })
     .find<IHeader>(); // Executing the query and expecting a result of type Header
 
   if (result.entries) {
@@ -66,6 +67,7 @@ export const getFooter = cache(async (locale: string) => {
     .entry() // Accessing the entry
     .locale(locale)
     .query() // Creating a query
+    .addParams({ include_dimension: true })
     .find<IFooter>(); // Executing the query and expecting a result of type Footer
 
   if (result.entries) {

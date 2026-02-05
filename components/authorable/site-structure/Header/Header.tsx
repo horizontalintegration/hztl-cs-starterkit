@@ -7,6 +7,7 @@ import LanguageSelector from './LanguageSelector';
 import Link from "next/link";
 import Image from "next/image";
 import { getCSLPAttributes } from "@/utils/type-guards";
+import ImageWrapper from "@/helpers/Wrappers/ImageWrapper/ImageWrapper";
 
 export const Logo = ({
   logo,
@@ -25,7 +26,9 @@ export const Logo = ({
         href={logoLink?.link?.href ?? '/'}
         {...getCSLPAttributes(logoLink.$?.link)}
       >
-        <Image src={logo.image?.url ?? ''} width={logo.image_width ?? 0} height={logo.image_height ?? 0} priority alt={logo.image?.title ?? ''} {...getCSLPAttributes(logo.$?.image)} />
+        <ImageWrapper
+          image={logo}
+        />
       </Link>
     </div>
   );
@@ -59,7 +62,6 @@ const TAILWIND_VARIANTS = tv({
       'top-0',
       'z-40',
       'w-full',
-      'bg-white',
       'transition-transform',
       'duration-300',
     ],
@@ -68,11 +70,14 @@ const TAILWIND_VARIANTS = tv({
       'justify-center',
       'transition-all',
       'duration-200',
+      'w-full',
     ],
     inner: [
       'w-full',
       'max-w-screen-2xl',
-      'px-20'
+      'px-6',
+      'md:px-12',
+      'lg:px-20'
     ],
     menuWrapper: [
       'flex',
