@@ -1,3 +1,5 @@
+'use client';
+
 // Global
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { tv } from 'tailwind-variants';
@@ -16,7 +18,7 @@ import { setLanguagePreference } from '@/app/actions/language';
  * Displays a dropdown for selecting languages/locales
  * Supports both mobile and desktop views
  */
-const LanguageSelector = () => {
+export const LanguageSelector = () => {
   // ============================================================================
   // Hooks & State
   // ============================================================================
@@ -231,8 +233,6 @@ const LanguageSelector = () => {
     </div>
   );
 };
-
-export default LanguageSelector;
 
 // ============================================================================
 // Styles

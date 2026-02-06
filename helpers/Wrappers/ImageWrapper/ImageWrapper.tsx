@@ -5,11 +5,11 @@
 
 // Global
 import { JSX, useMemo, useState } from 'react';
+import { tv } from 'tailwind-variants';
+import Image from 'next/image';
 // Lib
 import { isValidNextImageDomain } from '@/lib/next-config/plugins/images';
 import { IEnhancedImage } from '@/.generated';
-import Image from 'next/image';
-import { tv } from 'tailwind-variants';
 import { cn } from '@/utils/cn';
 import { getCSLPAttributes } from '@/utils/type-guards';
 // Default Fallback Image
@@ -45,6 +45,12 @@ export interface ImageWrapperProps {
   blurDataURL?: string;
   /** Fetch priority: 'high' for high priority, 'low' for low priority, 'auto' for automatic priority */
   fetchPriority?: 'high' | 'low' | 'auto';
+  /** Whether to show the fallback image */
+  showFallbackImage?: boolean;
+  /** Children to render inside the wrapper */
+  children?: React.ReactNode;
+  /** Whether the image should be full bleed */
+  isFullBleed?: boolean;
   /** Callback function called when image fails to load */
   onError?: () => void;
   /** Callback function called when image successfully loads */
@@ -149,6 +155,9 @@ const ImageWrapper = ({
   placeholder,
   blurDataURL,
   fetchPriority = 'auto',
+  showFallbackImage = true,
+  children,
+  isFullBleed = false,
 }: ImageWrapperProps): JSX.Element => {
   const [isError, setIsError] = useState(false);
   // Early return with null instead of empty fragment for better React performance
@@ -166,6 +175,7 @@ const ImageWrapper = ({
     image_fit_options,
     image_position_options,
     dimensions,
+    rounded_image
   } = image;
 
   // Validate dimensions
@@ -259,8 +269,10 @@ const ImageWrapper = ({
 
   const isValidDomain = useMemo(() => isValidNextImageDomain(url), [url]);
 
-  const { wrapperBase } = TAILWIND_VARIANTS({
+  const { wrapperBase, fallbackImageBase } = TAILWIND_VARIANTS({
     isFill: !!fill,
+    roundedImage: !!rounded_image,
+    isFullBleed: !!isFullBleed
   });
 
   const wrapperStyle = useMemo(() => {
@@ -285,14 +297,15 @@ const ImageWrapper = ({
         {...getCSLPAttributes(image.$?.image)}
       />}
 
-      {isError && (
+      {isError && showFallbackImage && (
         <Image
           src={DefaultFallbackImage}
           alt="Default Fallback Image"
-          className="w-full h-full"
+          className={fallbackImageBase()}
           unoptimized={true}
         />
       )}
+      {children}
     </div>
   );
 };
@@ -302,6 +315,7 @@ export default ImageWrapper;
 const TAILWIND_VARIANTS = tv({
   slots: {
     wrapperBase: ['w-full', 'h-full'],
+    fallbackImageBase: ['w-full', 'h-full']
   },
   variants: {
     isFill: {
@@ -312,5 +326,20 @@ const TAILWIND_VARIANTS = tv({
         wrapperBase: ['static'],
       },
     },
+    roundedImage: {
+      true: {
+        wrapperBase: ['rounded-lg', 'overflow-hidden'],
+      }
+    },
+    isFullBleed: {
+      true: {
+        wrapperBase: [
+          'w-screen',
+          'left-[calc(-50vw+50%)]',
+          'right-[calc(-50vw+50%)]',
+          'relative'
+        ]
+      }
+    }
   },
 });

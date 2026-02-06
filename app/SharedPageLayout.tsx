@@ -3,9 +3,11 @@ import { notFound } from 'next/navigation';
 import { IPage } from '@/.generated';
 import { Header } from '@/components/authorable/site-structure/Header/Header';
 import { Footer } from '@/components/authorable/Footer';
-import BackToTop from '@/components/authorable/site-structure/BackToTop/BackToTop';
+import { BackToTop } from '@/components/authorable/site-structure/BackToTop/BackToTop';
 import { fetchPageData } from '@/lib/contentstack/page-data';
 import { MainLayout } from '@/components/authorable/site-structure/MainLayout/MainLayout';
+import { tv } from 'tailwind-variants';
+import { cn } from '@/utils/cn';
 
 interface SharedPageLayoutProps {
   urlPath: string;
@@ -51,10 +53,12 @@ export async function SharedPageLayout({
     notFound();
   }
 
+  const { base } = TAILWIND_VARIANTS();
+
   return (
     <>
       <div className="prod-mode">
-        <div tabIndex={-1}>
+        <div tabIndex={-1} className={cn(base(), 'prod-mode')}>
           {header && <Header {...header} />}
           <main>
             <div id="content">
@@ -70,3 +74,11 @@ export async function SharedPageLayout({
     </>
   );
 }
+
+const TAILWIND_VARIANTS = tv({
+  slots: {
+    base: [
+      'overflow-x-clip'
+    ]
+  }
+})
