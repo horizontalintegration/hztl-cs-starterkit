@@ -51,10 +51,6 @@ export interface ImageWrapperProps {
   children?: React.ReactNode;
   /** Whether the image should be full bleed */
   isFullBleed?: boolean;
-  /** Callback function called when image fails to load */
-  onError?: () => void;
-  /** Callback function called when image successfully loads */
-  onLoad?: () => void;
 }
 
 /**
@@ -321,9 +317,6 @@ const TAILWIND_VARIANTS = tv({
     isFill: {
       true: {
         wrapperBase: ['relative'],
-      },
-      false: {
-        wrapperBase: ['static'],
       },
     },
     roundedImage: {

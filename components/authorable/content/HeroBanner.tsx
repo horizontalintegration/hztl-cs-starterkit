@@ -53,9 +53,11 @@ const TAILWIND_VARIANTS = tv({
             'gap-4',
             'py-20',
             'px-6',
+            'md:px-12',
+            'xl:px-20',
             'z-10',
             'relative',
-            'max-w-screen-xl',
+            'max-w-screen-2xl',
             'mx-auto'
         ],
         heading: [
