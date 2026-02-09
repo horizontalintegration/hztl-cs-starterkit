@@ -19,6 +19,9 @@ const nextConfig = {
 
   // Disable the X-Powered-By header. Follows security best practices.
   poweredByHeader: false,
+
+  // Disabling streaming metadata generation
+  htmlLimitedBots: /.*/,
 };
 
 module.exports = () => {
