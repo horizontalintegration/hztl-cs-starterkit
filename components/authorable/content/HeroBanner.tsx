@@ -1,11 +1,12 @@
 import { IHeroBannerModularBlock } from "@/.generated";
+import { ButtonWrapper } from "@/helpers/Wrappers/ButtonWrapper/ButtonWrapper";
 import ImageWrapper from "@/helpers/Wrappers/ImageWrapper/ImageWrapper";
 import { getCSLPAttributes } from "@/utils/type-guards";
 import { tv } from "tailwind-variants";
 
 export const HeroBanner = (props: IHeroBannerModularBlock) => {
 
-    const { base, wrapper, container, image, heading, description } = TAILWIND_VARIANTS();
+    const { base, wrapper, container, image, heading, description, ctaGroupWrapper, cta } = TAILWIND_VARIANTS();
     return (
         <section className={base()}>
             <div className={wrapper()}>
@@ -22,6 +23,15 @@ export const HeroBanner = (props: IHeroBannerModularBlock) => {
                     <div className={container()}>
                         <h1 className={heading()} {...getCSLPAttributes(props.$?.banner_heading)}>{props.banner_heading}</h1>
                         <p className={description()} {...getCSLPAttributes(props.$?.banner_description)}>{props.banner_description}</p>
+                        <div className={ctaGroupWrapper()}>
+                            {props.banner_cta?.map((ctaItem, index) => {
+                                return (
+                                    <div className={cta()} key={`${ctaItem.link?.title}-${index}`}>
+                                        <ButtonWrapper cta={ctaItem} />
+                                    </div>
+                                )
+                            })}
+                        </div>
                     </div>
                 </ImageWrapper>
             </div>
@@ -73,6 +83,18 @@ const TAILWIND_VARIANTS = tv({
             'text-white',
             'w-full',
             'md:w-2/5'
+        ],
+        cta: [
+            'w-full',
+            'md:w-fit'
+        ],
+        ctaGroupWrapper: [
+            'flex',
+            'flex-col',
+            'md:flex-row',
+            'flex-wrap',
+            'justify-start',
+            'gap-4'
         ]
     }
 })

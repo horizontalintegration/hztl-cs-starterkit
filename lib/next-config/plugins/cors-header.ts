@@ -77,7 +77,7 @@ const corsHeaderPlugin = (nextConfig: NextConfig = {}): NextConfig => {
                     headers: [
                         {
                             key: 'Access-Control-Allow-Origin',
-                            value: 'https://cdn.contentstack.io/'.replace(/\/$/, ''),
+                            value: 'https://cdn.contentstack.io',
                         },
                         {
                             key: 'Access-Control-Allow-Methods',

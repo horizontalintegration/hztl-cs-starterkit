@@ -140,6 +140,8 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
 
     const faviconUrl = siteSetting?.favicon_file?.url || '/favicon.ico';
     const cannonicalUrl = resolvedParams?.locale === DEFAULT_LOCALE ? `${baseUrl}${urlPath}` : `${baseUrl}/${resolvedParams?.locale}${urlPath}`;
+    const shouldIndex = process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT === 'production' ? metadata.robotsIndex : false;
+    const shouldFollow = process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT === 'production' ? metadata.robotsFollow : false;
 
     return {
       title: metadata.pageTitle,
@@ -166,10 +168,8 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
         site: metadata.TwitterSite,
       },
       robots: {
-        index:
-          process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT === 'production'
-            ? metadata.robotsIndex : false,
-        follow: metadata.robotsFollow,
+        index: shouldIndex,
+        follow: shouldFollow,
         'max-image-preview': metadata.robotsMaxImagePreview,
       },
     };
