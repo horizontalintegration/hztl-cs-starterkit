@@ -50,6 +50,9 @@ export const getCSPDirectives = async (): Promise<string> => {
 
             // Manifest
             "manifest-src 'self'",
+
+            // Frame-ancestors
+            "frame-ancestors 'self' https://app.contentstack.com",
         ].join('; ');
 
         return cspDirectives;
