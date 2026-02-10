@@ -1,7 +1,10 @@
-const imagesPlugin = require('./lib/next-config/plugins/images.js');
+import imagesPlugin from "./lib/next-config/plugins/images";
+import corsHeaderPlugin from "./lib/next-config/plugins/cors-header";
+import type { NextConfig } from "next";
 
 const plugins = {
-  images: typeof imagesPlugin === 'function' ? imagesPlugin : imagesPlugin.default || imagesPlugin,
+  images: imagesPlugin,
+  corsHeader: corsHeaderPlugin,
 };
 
 const nextConfig = {
@@ -26,6 +29,6 @@ const nextConfig = {
 
 module.exports = () => {
   // Run the base config through any configured plugins
-  const finalNextConfig = Object.values(plugins).reduce((acc, plugin) => plugin(acc), nextConfig);
+  const finalNextConfig = Object.values(plugins).reduce((acc: NextConfig, plugin) => plugin(acc), nextConfig);
   return finalNextConfig;
 };

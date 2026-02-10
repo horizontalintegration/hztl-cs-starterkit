@@ -10,7 +10,7 @@ import { stack } from './delivery-stack';
 import { getCurrentLanguage } from './language';
 import { addEditableTagsIfPreview, addEditableTagsToEntries } from './preview-helpers';
 import { cache } from 'react';
-import { DEFAULT_LOCALE } from '@/constants/locales';
+import { DEFAULT_LOCALE } from '../../constants/locales';
 
 /**
  * Function to fetch page data based on the URL with multisite support
