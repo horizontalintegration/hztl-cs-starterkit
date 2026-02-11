@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 // Local
 import LanguageSelector from './LanguageSelector';
 import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
-import LinkWrapper from '@/helpers/Wrappers/LinkWrapper/LinkWrapper';
+import { ButtonWrapper } from '@/helpers/Wrappers/ButtonWrapper/ButtonWrapper';
 import PlainTextWrapper from '@/helpers/Wrappers/PlainTextWrapper/PlainTextWrapper';
 import { SvgIcon } from '@/helpers/SvgIcon';
 import useClickOutside from '@/lib/hooks/useClickOutside';
@@ -18,8 +18,47 @@ import { useHeader } from './HeaderContext';
 import { getTestProps } from '@/lib/testing/utils';
 // import PreviewSearchListComponent from '@/widgets/SearchPreview';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
-import { IEnhancedImage, IEnhancedLink, IFile, IHeader, ILink } from '@/.generated';
+import { IEnhancedCta, IEnhancedImage, IEnhancedLink, IFile, IHeader, ILink } from '@/.generated';
 import { useGlobalLabels } from '@/context/GlobalLabelContext';
+import Link from 'next/link';
+
+type NavItemInterface = NonNullable<IHeader['navigation_section']>[number] & {
+  dropdownOpen: number | null;
+  index: number;
+  open: () => void;
+  close: () => void;
+  headerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+const NavLink = ({ link }: { link: ILink | undefined }) => {
+  const { linkContent } = TAILWIND_VARIANTS();
+
+  return <span className={linkContent()}>{link?.title ?? ''}</span>;
+};
+
+export const Logo = ({
+  logo,
+  logoLink,
+  isMobile,
+}: {
+  logo?: IEnhancedImage | null;
+  logoLink?: ILink;
+  isMobile: boolean;
+}) => {
+  const { logoContainer } = TAILWIND_VARIANTS();
+
+  return (
+    <div className={logoContainer()}>
+      <Link
+        href={logoLink?.href ?? '#'}
+        role={isMobile ? '' : 'menuitem'}
+        {...getTestProps(`header-logo`)}
+      >
+        <ImageWrapper image={logo} priority />
+      </Link>
+    </div>
+  );
+};
 
 const DropdownMenu = (props: NavItemInterface) => {
   const { globalLabels } = useGlobalLabels();
@@ -45,11 +84,11 @@ const DropdownMenu = (props: NavItemInterface) => {
     dropDownMenuSection,
     dropDownMenuWrapper,
     dropDownFeaturedWrapper,
-    dropDownFeaturedImg,
     dropDownFeaturedContent,
     dropDownFeaturedTitle,
     dropDownFeaturedDescription,
     featuredLink,
+    featuredLinkWrapper,
     linkContent,
   } = TAILWIND_VARIANTS({
     isScrolled: isScrolled,
@@ -65,10 +104,10 @@ const DropdownMenu = (props: NavItemInterface) => {
           <div className={dropDownMenuGrid()}>
             {mega_menu_section?.map((category, index) => {
               const { mega_menu_title, mega_menu_link, link_items } = category || {};
-              const menuLinks = link_items as IEnhancedLink[];
+              const menuLinks = link_items as IEnhancedCta[]
               const categoryMenuCTA = mega_menu_link
-              if (categoryMenuCTA?.href) {
-                categoryMenuCTA.title = globalLabels.category_cta_name_label ?? '';
+              if (categoryMenuCTA?.link?.href) {
+                categoryMenuCTA.link.title = globalLabels.category_cta_name_label ?? '';
               }
 
               return (
@@ -90,28 +129,26 @@ const DropdownMenu = (props: NavItemInterface) => {
                       ?.filter((item) => item.link?.href)
                       .map((item, linkIndex) => (
                         <li key={`header-secondary-menu-category-${index + 1}-nav-link-${linkIndex + 1}`}>
-                          <LinkWrapper
-                            ctaComponentClass="default"
+                          <ButtonWrapper
                             className={dropDownMenuColItemsLink()}
-                            link={item.link}
+                            cta={item}
                             tabIndex={0}
                             {...getTestProps(`header-secondary-menu-${index + 1}-nav-link`)}
                           >
                             <NavLink link={item.link} />
-                          </LinkWrapper>
+                          </ButtonWrapper>
                         </li>
                       ))}
-                    {categoryMenuCTA?.href && (
+                    {categoryMenuCTA?.link?.href && (
                       <li>
-                        <LinkWrapper
-                          ctaComponentClass="default"
+                        <ButtonWrapper
+                          cta={categoryMenuCTA}
                           className={dropDownMenuColItemsLink()}
-                          link={categoryMenuCTA}
                           tabIndex={0}
                           {...getTestProps(`header-secondary-menu-category-${index + 1}-nav-link`)}
                         >
-                          <NavLink link={categoryMenuCTA} />
-                        </LinkWrapper>
+                          <NavLink link={categoryMenuCTA.link} />
+                        </ButtonWrapper>
                       </li>
                     )}
                   </ul>
@@ -122,8 +159,8 @@ const DropdownMenu = (props: NavItemInterface) => {
           {navigation_link?.link?.href && (
             <div className={dropDownFeaturedWrapper()} role="complementary">
               <ImageWrapper
-                enhancedImage={featured_image}
-                className={dropDownFeaturedImg()}
+                image={featured_image}
+
               />
               <div className={dropDownFeaturedContent()}>
                 <PlainTextWrapper
@@ -136,16 +173,17 @@ const DropdownMenu = (props: NavItemInterface) => {
                   content={feature_description}
                   className={dropDownFeaturedDescription()}
                 />
-                <LinkWrapper
-                  ctaComponentClass="default"
-                  className={featuredLink()}
-                  link={navigation_link.link}
-                  tabIndex={0}
-                >
-                  <span className={linkContent()}>
-                    {navigation_link?.link?.title || displayTitle}
-                  </span>
-                </LinkWrapper>
+                <div className={featuredLinkWrapper()}>
+                  <ButtonWrapper
+                    cta={navigation_link}
+                    className={featuredLink()}
+                    tabIndex={0}
+                  >
+                    <span className={linkContent()}>
+                      {navigation_link?.link?.title || displayTitle}
+                    </span>
+                  </ButtonWrapper>
+                </div>
               </div>
             </div>
           )}
@@ -154,45 +192,6 @@ const DropdownMenu = (props: NavItemInterface) => {
     </div>
   );
 };
-
-const NavLink = ({ link }: { link: ILink | undefined }) => {
-  const { linkContent } = TAILWIND_VARIANTS();
-
-  return <span className={linkContent()}>{link?.title ?? ''}</span>;
-};
-
-export const Logo = ({
-  logo,
-  logoLink,
-  isMobile,
-}: {
-  logo?: IEnhancedImage | null;
-  logoLink?: ILink;
-  isMobile: boolean;
-}) => {
-  const { logoContainer } = TAILWIND_VARIANTS();
-
-  return (
-    <div className={logoContainer()}>
-      <LinkWrapper
-        ctaComponentClass="default"
-        link={logoLink}
-        role={isMobile ? '' : 'menuitem'}
-        {...getTestProps(`header-logo`)}
-      >
-        <ImageWrapper enhancedImage={logo} priority />
-      </LinkWrapper>
-    </div>
-  );
-};
-
-type NavItemInterface = NonNullable<IHeader['navigation_section']>[number] & {
-  dropdownOpen: number | null;
-  index: number;
-  open: () => void;
-  close: () => void;
-  headerRef: React.RefObject<HTMLDivElement | null>;
-}
 
 const NavItem = (props: NavItemInterface) => {
   const { dropdownOpen, index, headerRef } = props || {};
@@ -290,7 +289,7 @@ const NavItem = (props: NavItemInterface) => {
 
   useEffect(() => {
     if (isList) {
-      const hrefValues = megaMenuList?.flatMap((category) => category.link_items as IEnhancedLink[]).map((linkItem) => linkItem.link?.href)
+      const hrefValues = megaMenuList?.flatMap((category) => category.link_items as IEnhancedCta[]).map((linkItem) => linkItem.link?.href)
         .filter((href) => href);
       setIsActive(hrefValues?.includes(pathname) ?? false);
     } else {
@@ -354,18 +353,16 @@ const NavItem = (props: NavItemInterface) => {
           )}
         </>
       ) : (
-        <LinkWrapper
-          ctaComponentClass="default"
+        <ButtonWrapper
+          cta={navigationLink}
           aria-haspopup="false"
           className={navTitleLinkWrapper()}
-          ctaVariant="link"
-          field={navigationLink}
           {...getTestProps(`header-nav-link`)}
           role="menuitem"
         >
           <span className={isActive ? navActiveStrokes() : navAnimation()} />
           <PlainTextWrapper content={navigationTitle} />
-        </LinkWrapper>
+        </ButtonWrapper>
       )}
     </li>
   );
@@ -561,7 +558,7 @@ export const HeaderDesktop = (props: IHeader) => {
               <div className={container()}>
                 <div className={menuWrapper()} role="menubar">
                   <div className={menuContainer()} ref={menuContainerRef}>
-                    <Logo logo={logo} logoLink={logo_link?.link} isMobile={false} />
+                    <Logo logo={logo} logoLink={logo_link} isMobile={false} />
                     <ul className={menuItems()} role="presentation">
                       {navigation_section?.map((item, index) => (
                         <NavItem
@@ -727,7 +724,6 @@ const TAILWIND_VARIANTS = tv({
       'text-color-text-text-secondary',
       'text-sm',
     ],
-    dropDownFeaturedImg: ['h-auto', 'rounded-lg'],
     svgIconClass: ['scale-x-0', '!h-5', '!w-5'],
     inner: ['flex', 'justify-center', 'transition-all', 'duration-200'],
     languageWrapper: [
@@ -780,11 +776,13 @@ const TAILWIND_VARIANTS = tv({
       'py-2',
       'text-component-header-mega-menu-link-text',
       'hover:text-component-header-mega-menu-link-text-hover',
-      'hover:underline',
       'flex',
       'items-center',
       'justify-between',
       'group',
+    ],
+    featuredLinkWrapper: [
+      'w-fit',
     ],
     linkContent: ['flex', 'items-center', 'gap-2'],
   },

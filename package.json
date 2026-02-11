@@ -12,6 +12,7 @@
   "homepage": "https://contentstack.com",
   "license": "MIT",
   "scripts": {
+    "bootstrap:run": "ts-node --require dotenv-flow/config --project tsconfig.scripts.json scripts/bootstrap.ts",
     "tsgen": "csdx tsgen -a CSDT -o \"./.generated/index.ts\" -p \"I\" --branch=main --no-doc --include-system-fields --include-editable-tags",
     "gen-config": "tsx ./scripts/generate-component-mapper.ts",
     "fetch-languages": "tsx --require dotenv-flow/config scripts/fetch-language.ts",

@@ -69,7 +69,7 @@ export const Header = (props: IHeader) => {
 const TAILWIND_VARIANTS = tv({
   slots: {
     base: [
-      'relative',
+      'sticky',
       'top-0',
       'bg-component-header-nav-bg',
       'w-full',
