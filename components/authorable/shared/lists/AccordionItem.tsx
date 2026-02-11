@@ -6,14 +6,13 @@ import { tv } from 'tailwind-variants';
 
 // Local
 import RichTextWrapper from '@/helpers/Wrappers/RichTextWrapper/RichTextWrapper';
-import { withStandardComponentWrapper } from '@/helpers/HOC';
 import { SvgIcon } from '@/helpers/SvgIcon';
 import { useScrollElementIntoView } from '@/lib/hooks/useScrollElementIntoView';
 import { useAccordionItemContext } from '@/helpers/Context/AccordionContext';
 import { getTestProps } from '@/lib/testing/utils';
 import { IAccordionItem } from '@/.generated';
 
-export const AccordionItem = withStandardComponentWrapper((props: IAccordionItem): JSX.Element => {
+export const AccordionItem = ((props: IAccordionItem): JSX.Element => {
   const { content, title } = props || {};
   const accordionId = `accordion-${props.uid}`;
   /*

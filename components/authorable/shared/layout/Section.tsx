@@ -3,7 +3,6 @@
 // Global
 import React, { JSX } from 'react';
 // Local
-import { withStandardComponentWrapper } from '@/helpers/HOC';
 import { tv } from 'tailwind-variants';
 import { BrandAndThemeProvider } from '@/providers/BrandAndThemeContext';
 import PlainTextWrapper from '@/helpers/Wrappers/PlainTextWrapper/PlainTextWrapper';
@@ -11,7 +10,7 @@ import { TextAlignmentProvider } from '@/lib/context/TextAlignmentContext';
 import { IComponents, ITheme } from '@/.generated';
 import { ReferencePlaceholder } from '@/components/primitives/ReferencePlaceholder';
 
-export const Section = withStandardComponentWrapper(
+export const Section =
   (props: IComponents['section']): JSX.Element => {
     const { title, description, section_items, styling_options } = props;
 
@@ -64,7 +63,6 @@ export const Section = withStandardComponentWrapper(
       </div>
     );
   }
-);
 
 const TAILWIND_VARIANTS = tv({
   slots: {

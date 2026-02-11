@@ -4,7 +4,6 @@
 import React, { JSX } from 'react';
 import { tv } from 'tailwind-variants';
 // Local
-import { withStandardComponentWrapper } from '@/helpers/HOC';
 import { AccordionContextProvider, useAccordionContext } from '@/helpers/Context/AccordionContext';
 import { getTestProps } from '@/lib/testing/utils';
 import { IAccordion, IAccordionItem } from '@/.generated';
@@ -63,7 +62,7 @@ const AccordionControls = () => {
   );
 };
 
-export const Accordion = withStandardComponentWrapper((props: IAccordion): JSX.Element => {
+export const Accordion = ((props: IAccordion): JSX.Element => {
 
   /*
    * Rendering
