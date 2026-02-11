@@ -5,7 +5,6 @@ import React, { useEffect } from 'react';
 
 // Local
 import { HeaderDesktop } from '@/components/authorable/site-structure/Header/HeaderDesktop';
-import HeaderMobile from '@/components/authorable/site-structure/Header/HeaderMobile';
 import { tv } from 'tailwind-variants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { HeaderProvider, useHeader } from './HeaderContext';

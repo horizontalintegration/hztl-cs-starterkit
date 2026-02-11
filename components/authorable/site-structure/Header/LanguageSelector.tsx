@@ -126,14 +126,15 @@ const LanguageSelector = () => {
     [isOpen, setIsOpen, closeAllMenus]
   );
 
-  /**
-   * Get URL path for a language switch
-   */
-  const getLanguageHref = (langCode: string): string => {
-    return LanguageService.getLanguageUrlPath(langCode, pathWithoutLocale);
-  };
-
   const handleLanguageSelect = useCallback(async (langCode: string) => {
+
+    /**
+    * Get URL path for a language switch
+    */
+    const getLanguageHref = (langCode: string): string => {
+      return LanguageService.getLanguageUrlPath(langCode, pathWithoutLocale);
+    };
+
     // Save the language preference
     LanguageService.saveLanguagePreference(langCode);
     setIsOpen(false);
@@ -141,7 +142,7 @@ const LanguageSelector = () => {
 
     // Set the language preference cookie server-side + redirect atomically
     await setLanguagePreference(langCode, getLanguageHref(langCode));
-  }, [setIsOpen, closeAllMenus, getLanguageHref]);
+  }, [setIsOpen, closeAllMenus, pathWithoutLocale]);
 
   // ============================================================================
   // Render Helpers

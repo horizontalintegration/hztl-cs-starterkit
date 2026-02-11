@@ -18,7 +18,7 @@ import { useHeader } from './HeaderContext';
 import { getTestProps } from '@/lib/testing/utils';
 // import PreviewSearchListComponent from '@/widgets/SearchPreview';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
-import { IEnhancedCta, IEnhancedImage, IEnhancedLink, IFile, IHeader, ILink } from '@/.generated';
+import { IEnhancedCta, IEnhancedImage, IHeader, ILink } from '@/.generated';
 import { useGlobalLabels } from '@/context/GlobalLabelContext';
 import Link from 'next/link';
 
@@ -404,7 +404,6 @@ export const HeaderDesktop = (props: IHeader) => {
   } = useHeader();
 
   const isMobileDevice = useIsMobile();
-  const { globalLabels } = useGlobalLabels();
 
   /*
    * STATE
