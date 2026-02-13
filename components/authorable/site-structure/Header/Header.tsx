@@ -1,6 +1,6 @@
 'use client';
 
-import { CSLPAttribute, CSLPFieldMapping, IEnhancedImage, IHeader, ILink } from "@/.generated";
+import { CSLPFieldMapping, IEnhancedImage, IHeader, ILink } from "@/.generated";
 import { useIsScrolled } from "@/lib/hooks/useIsScrolled";
 import { tv } from "tailwind-variants";
 import { LanguageSelector } from './LanguageSelector';
