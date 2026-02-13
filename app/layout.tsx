@@ -1,5 +1,9 @@
 import React from 'react';
 import '@/assets/app.css';
+// IMPORTANT: Register SERVER components for server-side bundle
+// This ensures ComponentMapper has server components available during SSR
+import '@/temp/registered-server-components';
+
 // RootLayout component that wraps the entire application
 export default async function RootLayout({
   children,

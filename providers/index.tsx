@@ -1,8 +1,9 @@
 'use client';
 import { IDictionaryItems } from '@/.generated';
 import { GlobalLabelsProvider } from '@/context/GlobalLabelContext';
-// Initialize component registry early to avoid circular dependencies
-import '@/temp/registered-components';
+// IMPORTANT: Register CLIENT components for client-side bundle
+// This ensures ComponentMapper has client components available during hydration
+import '@/temp/registered-client-components';
 
 export function Providers({
   children,
