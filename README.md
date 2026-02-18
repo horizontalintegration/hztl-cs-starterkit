@@ -253,6 +253,13 @@ CSP_REPORT_ONLY=true
 ENABLE_LYTICS=true
 
 # ===============================
+# Redirects
+# ===============================
+
+# Enable CMS managed redirects
+ENABLE_REDIRECTS=true
+
+# ===============================
 # App
 # ===============================
 
