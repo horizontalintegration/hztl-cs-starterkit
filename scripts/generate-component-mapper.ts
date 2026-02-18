@@ -239,8 +239,8 @@ export const generateRegisteredComponents = () => {
     }
 
     // Collect all component files from all directories (recursively)
-    const serverComponentMap = new Map<string, { file: string; dir: string }>();
-    const clientComponentMap = new Map<string, { file: string; dir: string }>();
+    const componentMap = new Map<string, { file: string; dir: string }>();
+    const clientOnlyComponentMap = new Map<string, { file: string; dir: string }>();
 
     for (const dir of registeredComponentsDirs) {
       const files = findComponentFiles(dir);
@@ -250,44 +250,44 @@ export const generateRegisteredComponents = () => {
         const componentData = { file, dir: fileDir };
 
         if (isClient) {
-          // Add to client component map (first occurrence wins)
-          if (!clientComponentMap.has(componentName)) {
-            clientComponentMap.set(componentName, componentData);
+          // Only add client components to the client only component map
+          if (!clientOnlyComponentMap.has(componentName)) {
+            clientOnlyComponentMap.set(componentName, componentData);
           }
-        } else {
-          // Add to server component map (first occurrence wins)
-          if (!serverComponentMap.has(componentName)) {
-            serverComponentMap.set(componentName, componentData);
-          }
+        }
+
+        // Add to the component map
+        if (!componentMap.has(componentName)) {
+          componentMap.set(componentName, componentData);
         }
       });
     }
 
     // Generate server components registry
     generateRegistryFile(
-      serverComponentMap,
-      'registered-server-components.ts',
-      'Server Components'
+      componentMap,
+      'registered-components.ts',
+      'Components'
     );
 
     // Generate client components registry
     generateRegistryFile(
-      clientComponentMap,
-      'registered-client-components.ts',
-      'Client Components'
+      clientOnlyComponentMap,
+      'registered-client-only-components.ts',
+      'Client Only Components'
     );
 
     console.log(`✅ Generated component registries:`);
-    console.log(`   📦 Server: ${serverComponentMap.size} components`);
-    console.log(`   🎨 Client: ${clientComponentMap.size} components`);
+    console.log(`   📦 Components: ${componentMap.size} components`);
+    console.log(`   🎨 Client: ${clientOnlyComponentMap.size} components`);
 
     return {
-      server: Array.from(serverComponentMap.keys()),
-      client: Array.from(clientComponentMap.keys()),
+      components: Array.from(componentMap.keys()),
+      clientOnlyComponents: Array.from(clientOnlyComponentMap.keys()),
     };
   } catch (error) {
     console.error('Error reading registered components directories:', error);
-    return { server: [], client: [] };
+    return { components: [], clientOnlyComponents: [] };
   }
 };
 

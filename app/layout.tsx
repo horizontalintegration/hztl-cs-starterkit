@@ -4,7 +4,7 @@ import { Scripts } from '@/components/primitives/Scripts';
 import PageViewTracker from '@/components/primitives/PageViewTracker';
 // IMPORTANT: Register SERVER components for server-side bundle
 // This ensures ComponentMapper has server components available during SSR
-import '@/temp/registered-server-components';
+import '@/temp/registered-components';
 
 // RootLayout component that wraps the entire application
 export default async function RootLayout({
