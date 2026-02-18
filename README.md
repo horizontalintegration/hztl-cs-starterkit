@@ -174,7 +174,7 @@ Store these tokens securely as they will be used later.
 ### Step 10 — Add Delivery Token as CLI Alias
 
 ```bash
-csdx tokens:add -a CSDT -k YOUR_API_KEY --delivery --token YOUR_DELIVERY_TOKEN -e YOUR_STACK_ENVIRONMENT
+csdx tokens:add -a starterkit-delivery-token -k YOUR_API_KEY --delivery --token YOUR_DELIVERY_TOKEN -e YOUR_STACK_ENVIRONMENT
 ```
 
 ---
@@ -198,7 +198,6 @@ NEXT_PUBLIC_CONTENTSTACK_REGION=NA
 NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT=development
 NEXT_PUBLIC_CONTENTSTACK_BRANCH=main
 NEXT_PUBLIC_CONTENTSTACK_PREVIEW=true
-NEXT_PUBLIC_ENABLE_LANGUAGE_SWITCHER=true
 CACHE_MAX_AGE=100
 STALE_WHILE_REVALIDATE=600
 ENABLE_SOURCE_MAPS=true
