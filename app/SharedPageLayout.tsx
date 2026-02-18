@@ -7,6 +7,7 @@ import { BackToTop } from '@/components/authorable/site-structure/BackToTop/Back
 import { fetchPageData } from '@/lib/contentstack/page-data';
 import { MainLayout } from '@/components/authorable/site-structure/MainLayout/MainLayout';
 import { tv } from 'tailwind-variants';
+import { cn } from '@/utils/cn';
 
 interface SharedPageLayoutProps {
   urlPath: string;
@@ -59,19 +60,17 @@ export async function SharedPageLayout({
   } = TAILWIND_VARIANTS();
   return (
     <>
-      <div className="prod-mode">
-        <div className={mainClass()} tabIndex={-1}>
-          {header && <Header {...header} />}
-          <main>
-            <div id="content">
-              <MainLayout page={page} pageContentTypeUID={pageContentTypeUID} />
-            </div>
-          </main>
-          <footer className={footerClass()}>
-            <div className={footerContentContainerClass()}>{footer && <Footer />}</div>
-          </footer>
-          <BackToTop />
-        </div>
+      <div tabIndex={-1} className={cn(mainClass())}>
+        {header && <Header {...header} />}
+        <main>
+          <div id="content">
+            <MainLayout page={page} pageContentTypeUID={pageContentTypeUID} />
+          </div>
+        </main>
+        <footer className={footerClass()}>
+          <div className={footerContentContainerClass()}>{footer && <Footer {...footer} />}</div>
+        </footer>
+        <BackToTop />
       </div>
     </>
   );

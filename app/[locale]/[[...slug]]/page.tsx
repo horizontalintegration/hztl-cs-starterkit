@@ -79,7 +79,6 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
   const urlPath = `/${pathSegments?.join('/')}`;
 
   if (!isLanguageSupported(resolvedParams?.locale)) {
-    console.error('Language not supported:', resolvedParams?.locale);
     return {
       title: 'Page Title',
     }
@@ -141,6 +140,12 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
     const cannonicalUrl = resolvedParams?.locale === DEFAULT_LOCALE ? `${baseUrl}${urlPath}` : `${baseUrl}/${resolvedParams?.locale}${urlPath}`;
     const shouldIndex = process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT === 'production' ? metadata.robotsIndex : false;
     const shouldFollow = process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT === 'production' ? metadata.robotsFollow : false;
+    const customMetadata: Record<string, string> | undefined = page.seo_data?.custom_meta_tags?.reduce((acc, tag) => {
+      if (tag.name && tag.content) {
+        acc[tag.name] = tag.content;
+      }
+      return acc;
+    }, {} as Record<string, string>)
 
     return {
       title: metadata.pageTitle,
@@ -171,6 +176,7 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
         follow: shouldFollow,
         'max-image-preview': metadata.robotsMaxImagePreview,
       },
+      other: customMetadata,
     };
   } catch (error) {
     console.error('Error generating metadata:', error);
