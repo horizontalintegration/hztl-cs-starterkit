@@ -79,7 +79,6 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
   const urlPath = `/${pathSegments?.join('/')}`;
 
   if (!isLanguageSupported(resolvedParams?.locale)) {
-    console.error('Language not supported:', resolvedParams?.locale);
     return {
       title: 'Page Title',
     }
@@ -120,28 +119,34 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
     }
 
     const metadata = {
-      pageTitle: page?.seo_data?.title || 'Page',
-      MetaDescription: page?.seo_data?.description || undefined,
-      MetaKeywords: page?.seo_data?.keywords || undefined,
-      OpenGraphType: page?.seo_data?.opengraph?.type || 'website',
-      OpenGraphTitle: page?.seo_data?.opengraph?.title || undefined,
-      OpenGraphDescription: page?.seo_data?.opengraph?.description || undefined,
-      OpenGraphImage: page?.seo_data?.opengraph?.image?.url || undefined,
-      OpenGraphSiteName: page?.seo_data?.opengraph?.site_name || undefined,
-      TwitterTitle: page?.seo_data?.twitter?.title || undefined,
-      TwitterDescription: page?.seo_data?.twitter?.description || undefined,
-      TwitterImage: page?.seo_data?.twitter?.image?.url || undefined,
-      TwitterCardType: page?.seo_data?.twitter?.card_type || 'summary',
-      TwitterSite: page?.seo_data?.twitter?.site || undefined,
-      robotsIndex: page?.seo_data?.robots?.index || false,
-      robotsFollow: page?.seo_data?.robots?.follow || false,
-      robotsMaxImagePreview: page?.seo_data?.robots?.max_image_preview || 'standard',
+      pageTitle: page?.seo?.title || 'Page',
+      MetaDescription: page?.seo?.description || undefined,
+      MetaKeywords: page?.seo?.keywords || undefined,
+      OpenGraphType: page?.seo?.opengraph?.type || 'website',
+      OpenGraphTitle: page?.seo?.opengraph?.title || undefined,
+      OpenGraphDescription: page?.seo?.opengraph?.description || undefined,
+      OpenGraphImage: page?.seo?.opengraph?.image?.url || undefined,
+      OpenGraphSiteName: page?.seo?.opengraph?.site_name || undefined,
+      TwitterTitle: page?.seo?.twitter?.title || undefined,
+      TwitterDescription: page?.seo?.twitter?.description || undefined,
+      TwitterImage: page?.seo?.twitter?.image?.url || undefined,
+      TwitterCardType: page?.seo?.twitter?.card_type || 'summary',
+      TwitterSite: page?.seo?.twitter?.site || undefined,
+      robotsIndex: page?.seo?.robots?.index || false,
+      robotsFollow: page?.seo?.robots?.follow || false,
+      robotsMaxImagePreview: page?.seo?.robots?.max_image_preview || 'standard',
     }
 
     const faviconUrl = siteSetting?.favicon_file?.url || '/favicon.ico';
     const cannonicalUrl = resolvedParams?.locale === DEFAULT_LOCALE ? `${baseUrl}${urlPath}` : `${baseUrl}/${resolvedParams?.locale}${urlPath}`;
     const shouldIndex = process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT === 'production' ? metadata.robotsIndex : false;
     const shouldFollow = process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT === 'production' ? metadata.robotsFollow : false;
+    const customMetadata: Record<string, string> | undefined = page.seo?.custom_meta_tags?.reduce((acc, tag) => {
+      if (tag.name && tag.content) {
+        acc[tag.name] = tag.content;
+      }
+      return acc;
+    }, {} as Record<string, string>)
 
     return {
       title: metadata.pageTitle,
@@ -172,6 +177,7 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
         follow: shouldFollow,
         'max-image-preview': metadata.robotsMaxImagePreview,
       },
+      other: customMetadata,
     };
   } catch (error) {
     console.error('Error generating metadata:', error);

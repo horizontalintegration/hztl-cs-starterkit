@@ -140,6 +140,12 @@ const TAILWIND_VARIANTS = tv({
         'w-full'
     ],
     variants: {
+        size: {
+            sm: ['text-sm', 'px-3', 'py-1.5', 'h-8'],
+            md: ['text-base', 'px-4', 'py-2', 'h-10'],
+            lg: ['text-lg', 'px-6', 'py-3', 'h-12'],
+            xl: ['text-xl', 'px-8', 'py-4', 'h-14'],
+        },
         variant: {
             primary: [
                 'bg-blue-600',
@@ -174,19 +180,12 @@ const TAILWIND_VARIANTS = tv({
                 'active:bg-red-800',
             ],
             link: [
-                'text-blue-600',
-                'underline',
+                'text-black',
                 'bg-transparent',
-                'hover:text-blue-700',
+                'hover:underline',
                 'p-0',
                 'h-auto',
             ],
-        },
-        size: {
-            sm: ['text-sm', 'px-3', 'py-1.5', 'h-8'],
-            md: ['text-base', 'px-4', 'py-2', 'h-10'],
-            lg: ['text-lg', 'px-6', 'py-3', 'h-12'],
-            xl: ['text-xl', 'px-8', 'py-4', 'h-14'],
         },
         disabled: {
             true: [

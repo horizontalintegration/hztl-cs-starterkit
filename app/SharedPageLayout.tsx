@@ -57,19 +57,17 @@ export async function SharedPageLayout({
 
   return (
     <>
-      <div className="prod-mode">
-        <div tabIndex={-1} className={cn(base(), 'prod-mode')}>
-          {header && <Header {...header} />}
-          <main>
-            <div id="content">
-              <MainLayout page={page} pageContentTypeUID={pageContentTypeUID} />
-            </div>
-          </main>
-          <footer>
-            <div>{footer && <Footer />}</div>
-          </footer>
-          <BackToTop />
-        </div>
+      <div tabIndex={-1} className={cn(base())}>
+        {header && <Header {...header} />}
+        <main>
+          <div id="content">
+            <MainLayout page={page} pageContentTypeUID={pageContentTypeUID} />
+          </div>
+        </main>
+        <footer>
+          <div>{footer && <Footer {...footer} />}</div>
+        </footer>
+        <BackToTop />
       </div>
     </>
   );
@@ -78,7 +76,10 @@ export async function SharedPageLayout({
 const TAILWIND_VARIANTS = tv({
   slots: {
     base: [
-      'overflow-x-clip'
+      'overflow-x-clip',
+      'flex',
+      'flex-col',
+      'min-h-screen'
     ]
   }
 })
