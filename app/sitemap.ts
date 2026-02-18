@@ -53,6 +53,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             return [];
         }
 
+        // Remove CMS 404 page from sitemap
+        allPages.entries = allPages.entries?.filter(page => page.url !== '/404');
+
         // Batch fetch all entry locales for better performance
         const localePromises = allPages.entries.map(page =>
             getEntryLocales(page.uid, 'page').catch(error => {
