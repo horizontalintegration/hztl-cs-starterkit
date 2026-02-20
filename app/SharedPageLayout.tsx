@@ -1,85 +1,82 @@
+/**
+ * @file SharedPageLayout.tsx
+ * @description Shared layout component that wraps page content with common site structure.
+ * Renders header, main content area, footer, and back-to-top button.
+ * Used by both regular pages and the 404 not-found page.
+ */
+
 import React from 'react';
-import { notFound } from 'next/navigation';
-import { IPage } from '@/.generated';
+import { tv } from 'tailwind-variants';
+
+import { IFooter, IHeader, IPage } from '@/.generated';
 import { Header } from '@/components/authorable/site-structure/Header/Header';
 import { Footer } from '@/components/authorable/site-structure/Footer/Footer';
 import { BackToTop } from '@/components/authorable/site-structure/BackToTop/BackToTop';
-import { fetchPageData } from '@/lib/contentstack/page-data';
 import { MainLayout } from '@/components/authorable/site-structure/MainLayout/MainLayout';
-import { tv } from 'tailwind-variants';
 import { cn } from '@/utils/cn';
 
+/**
+ * Props interface for SharedPageLayout component.
+ */
 interface SharedPageLayoutProps {
-  urlPath: string;
-  children?: React.ReactNode;
+  /** Page content from CMS */
+  page: IPage;
+  /** Optional header data from CMS */
+  header?: IHeader;
+  /** Optional footer data from CMS */
+  footer?: IFooter;
+  /** Content type UID for the page (defaults to 'page') */
   pageContentTypeUID?: string;
 }
 
 /**
- * Shared page layout component that handles common page rendering logic.
- * Fetches page data and header, then renders the page with header and tracking script.
+ * Shared page layout component that provides consistent structure across all pages.
+ * Renders the complete page structure including header, main content, footer, and utilities.
  *
- * @component
- * @param {SharedPageLayoutProps} props - The component props containing the URL path
- * @returns {JSX.Element} The rendered component.
+ * This component is used by:
+ * - Regular pages via [[...slug]]/page.tsx
+ * - 404 not-found page
+ *
+ * @param {SharedPageLayoutProps} props - Component props
+ * @returns {Promise<JSX.Element>} Rendered page layout
  */
 export async function SharedPageLayout({
-  urlPath,
+  page,
+  header,
+  footer,
   pageContentTypeUID = 'page',
 }: SharedPageLayoutProps) {
-  // Fetch page data using shared function
-  let page: IPage | undefined;
-  let header, footer;
-
-
-  try {
-    const pageData = await fetchPageData(urlPath, pageContentTypeUID);
-    page = pageData.page;
-    header = pageData.header;
-    footer = pageData.footer;
-  } catch (error) {
-    console.error('Error fetching page:', error);
-    notFound();
-  }
-  // If no page found, fetch 404 page from CMS
-  if (!page) {
-    const pageData = await fetchPageData('/404', 'page');
-    page = pageData.page;
-    pageContentTypeUID = 'page';
-  }
-
-  // If no 404 page found from CMS, show default 404 page
-  if (!page) {
-    notFound();
-  }
-
-  const { base } = TAILWIND_VARIANTS();
+  const { base } = PAGE_LAYOUT_VARIANTS();
 
   return (
-    <>
-      <div tabIndex={-1} className={cn(base())}>
-        {header && <Header {...header} />}
-        <main>
-          <div id="content">
-            <MainLayout page={page} pageContentTypeUID={pageContentTypeUID} />
-          </div>
-        </main>
-        <footer>
-          <div>{footer && <Footer {...footer} />}</div>
-        </footer>
-        <BackToTop />
-      </div>
-    </>
+    <div tabIndex={-1} className={cn(base())}>
+      {/* Render header if available from CMS */}
+      {header && <Header {...header} />}
+
+      {/* Main content area */}
+      <main>
+        <div id="content">
+          <MainLayout page={page} pageContentTypeUID={pageContentTypeUID} />
+        </div>
+      </main>
+
+      {/* Render footer if available from CMS */}
+      <footer>
+        <div>{footer && <Footer {...footer} />}</div>
+      </footer>
+
+      {/* Back to top button */}
+      <BackToTop />
+    </div>
   );
 }
 
-const TAILWIND_VARIANTS = tv({
+/**
+ * Tailwind variants for the page layout structure.
+ * Ensures consistent full-height layout with proper overflow handling.
+ */
+const PAGE_LAYOUT_VARIANTS = tv({
   slots: {
-    base: [
-      'overflow-x-clip',
-      'flex',
-      'flex-col',
-      'min-h-screen'
-    ]
-  }
-})
+    base: ['overflow-x-clip', 'flex', 'flex-col', 'min-h-screen'],
+  },
+});
