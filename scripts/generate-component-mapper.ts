@@ -1,10 +1,36 @@
+/**
+ * @file generate-component-mapper.ts
+ * @description CLI script that generates component registries for Next.js application.
+ * Automatically scans component directories, classifies components as server or client-side,
+ * and creates type-safe barrel files for the ComponentMapper system.
+ *
+ * This script intelligently detects client components by analyzing:
+ * - 'use client' directives
+ * - React hooks usage (useState, useEffect, etc.)
+ * - Event handlers (onClick, onChange, etc.)
+ * - Browser APIs (window, document, localStorage, etc.)
+ *
+ * Usage:
+ * npm run generate-component-mapper        # Run once and exit
+ * npm run generate-component-mapper --watch # Watch mode with auto-regeneration
+ * or
+ * tsx scripts/generate-component-mapper.ts
+ * tsx scripts/generate-component-mapper.ts --watch
+ *
+ * Output:
+ * - temp/registered-components.ts - All components (server + client)
+ * - temp/registered-client-only-components.ts - Client components only
+ *
+ */
+
 import fs from 'fs';
 import path from 'path';
 import chokidar from 'chokidar';
 
-// ============================================================================
-// CONFIGURATION: Add your component directories here (scans recursively)
-// ============================================================================
+/**
+ * Component directories to scan recursively.
+ * Add additional paths here to include more component directories.
+ */
 const ALLOWED_COMPONENT_PATHS = [
   'components/authorable/shared',
   'components/ui',
@@ -13,41 +39,62 @@ const ALLOWED_COMPONENT_PATHS = [
   // Example: 'components/features',
 ];
 
-// Configuration for client component detection
+/**
+ * Configuration for client component detection behavior.
+ */
 const CLIENT_DETECTION_CONFIG = {
-  // Enable verbose logging to see why components are classified as client/server
-  verboseLogging: true, // Set to true to debug component classification
-  // Patterns to exclude from automatic client detection (force as server components)
+  /** Enable verbose logging to see component classification reasons */
+  verboseLogging: true,
+  /** File name patterns to force as server components (skip client detection) */
   excludePatterns: [
     // Example: 'NotFound.tsx',
   ],
 };
 
-// Convert relative paths to absolute paths
+/**
+ * Absolute paths to component directories for scanning.
+ * Converted from relative paths in ALLOWED_COMPONENT_PATHS.
+ */
 const registeredComponentsDirs = ALLOWED_COMPONENT_PATHS.map((dir) =>
   path.join(__dirname, '..', dir)
 );
 
-
-// Path to the config directory where we'll create the barrel file
+/**
+ * Output directory for generated registry files.
+ */
 const configDir = path.join(__dirname, '..', 'temp');
 
-// Helper to get relative import path from configDir to component file
+/**
+ * Calculates the relative import path from config directory to a component file.
+ * Used to generate proper import statements in barrel files.
+ *
+ * @param {string} componentFilePath - Absolute path to component file
+ * @returns {string} Relative import path with forward slashes
+ */
 const getRelativeImportPath = (componentFilePath: string) => {
   return path.relative(configDir, componentFilePath).replace(/\\/g, '/');
 };
 
 /**
- * Check if a component is a client component by analyzing its content
- * @param filePath - Path to the component file
- * @returns true if the file is a client component
+ * Analyzes a component file to determine if it's a client component.
+ * Uses multiple detection strategies to classify components accurately.
+ *
+ * Detection criteria (in order of priority):
+ * 1. Exclude patterns - Force as server component
+ * 2. 'use client' directive - Explicit client component marker
+ * 3. React hooks - useState, useEffect, etc.
+ * 4. Event handlers - onClick, onChange, etc.
+ * 5. Browser APIs - window, document, localStorage, etc.
+ *
+ * @param {string} filePath - Absolute path to component file
+ * @returns {boolean} True if client component, false if server component
  */
 const isClientComponent = (filePath: string): boolean => {
   try {
     const fileName = path.basename(filePath);
 
-    // Check if file is in exclude patterns (force as server component)
-    if (CLIENT_DETECTION_CONFIG.excludePatterns.some(pattern => fileName.includes(pattern))) {
+    // 1. Check if file is in exclude patterns (force as server component)
+    if (CLIENT_DETECTION_CONFIG.excludePatterns.some((pattern) => fileName.includes(pattern))) {
       if (CLIENT_DETECTION_CONFIG.verboseLogging) {
         console.log(`   [SERVER] ${fileName} - Excluded by pattern`);
       }
@@ -57,16 +104,16 @@ const isClientComponent = (filePath: string): boolean => {
     const content = fs.readFileSync(filePath, 'utf-8');
     const reasons: string[] = [];
 
-    // 1. Check for explicit 'use client' directive
+    // 2. Check for explicit 'use client' directive
     // Look before the first import statement (handles large doc strings)
     const firstImportIndex = content.search(/^import\s/m);
-    const beforeImports = firstImportIndex !== -1
-      ? content.slice(0, firstImportIndex)
-      : content.slice(0, 500); // First 500 chars if no imports
+    const beforeImports =
+      firstImportIndex !== -1
+        ? content.slice(0, firstImportIndex)
+        : content.slice(0, 500); // First 500 chars if no imports
 
     const hasUseClientDirective =
-      beforeImports.includes("'use client'") ||
-      beforeImports.includes('"use client"');
+      beforeImports.includes("'use client'") || beforeImports.includes('"use client"');
 
     if (hasUseClientDirective) {
       reasons.push("'use client' directive");
@@ -76,7 +123,7 @@ const isClientComponent = (filePath: string): boolean => {
       return true;
     }
 
-    // 2. Check for React hooks usage (common indicators of client components)
+    // 3. Check for React hooks usage (common indicators of client components)
     const reactHooks = [
       /\buseState\s*\(/,
       /\buseEffect\s*\(/,
@@ -93,14 +140,14 @@ const isClientComponent = (filePath: string): boolean => {
       /\buseId\s*\(/,
       /\buseSyncExternalStore\s*\(/,
       /\buseInsertionEffect\s*\(/,
-      // Custom hooks that typically indicate client components
+      // Next.js client-side navigation hooks
       /\buseRouter\s*\(/,
       /\busePathname\s*\(/,
       /\buseSearchParams\s*\(/,
       /\buseParams\s*\(/,
     ];
 
-    const foundHook = reactHooks.find(hook => hook.test(content));
+    const foundHook = reactHooks.find((hook) => hook.test(content));
     if (foundHook) {
       reasons.push(`uses hook: ${foundHook.source.match(/\\b(\w+)\\s*\\\(/)?.[1]}`);
       if (CLIENT_DETECTION_CONFIG.verboseLogging) {
@@ -109,7 +156,7 @@ const isClientComponent = (filePath: string): boolean => {
       return true;
     }
 
-    // 3. Check for event handlers (strong indicator of interactivity)
+    // 4. Check for event handlers (strong indicator of interactivity)
     const eventHandlers = [
       /\bonClick\s*=/,
       /\bonChange\s*=/,
@@ -136,7 +183,7 @@ const isClientComponent = (filePath: string): boolean => {
       /\bonDrop\s*=/,
     ];
 
-    const foundHandler = eventHandlers.find(handler => handler.test(content));
+    const foundHandler = eventHandlers.find((handler) => handler.test(content));
     if (foundHandler) {
       reasons.push(`uses event: ${foundHandler.source.match(/\\b(on\w+)\\s*=/)?.[1]}`);
       if (CLIENT_DETECTION_CONFIG.verboseLogging) {
@@ -145,7 +192,7 @@ const isClientComponent = (filePath: string): boolean => {
       return true;
     }
 
-    // 4. Check for browser-only APIs (window, document, localStorage, etc.)
+    // 5. Check for browser-only APIs (window, document, localStorage, etc.)
     const browserAPIs = [
       /\bwindow\./,
       /\bdocument\./,
@@ -161,9 +208,7 @@ const isClientComponent = (filePath: string): boolean => {
       /\brequestAnimationFrame\s*\(/,
     ];
 
-    // Only flag as client if browser APIs are used outside of useEffect/useLayoutEffect
-    // (since server components can have browser API calls inside useEffect)
-    const foundAPI = browserAPIs.find(api => api.test(content));
+    const foundAPI = browserAPIs.find((api) => api.test(content));
     if (foundAPI) {
       reasons.push(`uses browser API: ${foundAPI.source.match(/\\b(\w+)\./)?.[1] || 'detected'}`);
       if (CLIENT_DETECTION_CONFIG.verboseLogging) {
@@ -172,28 +217,31 @@ const isClientComponent = (filePath: string): boolean => {
       return true;
     }
 
-    // 5. Default to false (server component)
-    // Server components are the default in Next.js App Router
+    // 6. Default to server component (Next.js App Router default)
     if (CLIENT_DETECTION_CONFIG.verboseLogging) {
       console.log(`   [SERVER] ${fileName} - No client indicators found`);
     }
     return false;
   } catch (error) {
     console.error(`Error reading file ${filePath}:`, error);
-    // Default to server component on error (safer default)
+    // Default to server component on error (safer default in Next.js)
     return false;
   }
 };
 
 /**
- * Recursively find all component files in a directory
- * @param dirPath - Directory path to scan
- * @param componentFiles - Array to collect found files
+ * Recursively scans a directory for component files.
+ * Collects all .tsx, .jsx, .ts, and .js files, classifying each as server or client component.
+ *
+ * @param {string} dirPath - Directory path to scan
+ * @param {Array} componentFiles - Accumulator array for found components
+ * @returns {Array} Array of component objects with file, directory, and client classification
  */
 const findComponentFiles = (
   dirPath: string,
   componentFiles: Array<{ file: string; dir: string; isClient: boolean }> = []
 ): Array<{ file: string; dir: string; isClient: boolean }> => {
+  // Skip non-existent directories
   if (!fs.existsSync(dirPath)) {
     return componentFiles;
   }
@@ -202,15 +250,13 @@ const findComponentFiles = (
 
   for (const entry of entries) {
     const fullPath = path.join(dirPath, entry.name);
-    // Using statSync for more reliable file type detection
     const stats = fs.statSync(fullPath);
 
-    // Skip node_modules, .git, and other hidden directories
+    // Recursively scan subdirectories (skip hidden dirs and node_modules)
     if (stats.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
-      // Recursively scan subdirectories
       findComponentFiles(fullPath, componentFiles);
     } else if (entry.isFile()) {
-      // Check if it's a component file
+      // Check if file is a component (React/TypeScript/JavaScript)
       if (
         entry.name.endsWith('.tsx') ||
         entry.name.endsWith('.jsx') ||
@@ -230,18 +276,26 @@ const findComponentFiles = (
   return componentFiles;
 };
 
-// Function to get all component files from the directories
+/**
+ * Main function that generates component registry files.
+ * Scans all configured directories, classifies components, and creates two registry files:
+ * - registered-components.ts (all components)
+ * - registered-client-only-components.ts (client components only)
+ *
+ * @returns {Object} Object containing arrays of component and client-only component names
+ */
 export const generateRegisteredComponents = () => {
   try {
-    // Ensure config directory exists
+    // Ensure output directory exists
     if (!fs.existsSync(configDir)) {
       fs.mkdirSync(configDir, { recursive: true });
     }
 
-    // Collect all component files from all directories (recursively)
+    // Maps to store component data (deduplicate by component name)
     const componentMap = new Map<string, { file: string; dir: string }>();
     const clientOnlyComponentMap = new Map<string, { file: string; dir: string }>();
 
+    // Scan all configured component directories
     for (const dir of registeredComponentsDirs) {
       const files = findComponentFiles(dir);
 
@@ -249,34 +303,31 @@ export const generateRegisteredComponents = () => {
         const componentName = path.basename(file, path.extname(file));
         const componentData = { file, dir: fileDir };
 
+        // Add client components to client-only map
         if (isClient) {
-          // Only add client components to the client only component map
           if (!clientOnlyComponentMap.has(componentName)) {
             clientOnlyComponentMap.set(componentName, componentData);
           }
         }
 
-        // Add to the component map
+        // Add all components to main component map
         if (!componentMap.has(componentName)) {
           componentMap.set(componentName, componentData);
         }
       });
     }
 
-    // Generate server components registry
-    generateRegistryFile(
-      componentMap,
-      'registered-components.ts',
-      'Components'
-    );
+    // Generate server components registry (all components)
+    generateRegistryFile(componentMap, 'registered-components.ts', 'Components');
 
-    // Generate client components registry
+    // Generate client components registry (client-only)
     generateRegistryFile(
       clientOnlyComponentMap,
       'registered-client-only-components.ts',
       'Client Only Components'
     );
 
+    // Display summary
     console.log(`✅ Generated component registries:`);
     console.log(`   📦 Components: ${componentMap.size} components`);
     console.log(`   🎨 Client: ${clientOnlyComponentMap.size} components`);
@@ -292,14 +343,19 @@ export const generateRegisteredComponents = () => {
 };
 
 /**
- * Generate a registry file for a component map
+ * Generates a registry file (barrel file) for a component map.
+ * Creates import statements, registers components with ComponentMapper, and exports them.
+ *
+ * @param {Map} componentMap - Map of component names to file data
+ * @param {string} fileName - Output file name (e.g., 'registered-components.ts')
+ * @param {string} description - Human-readable description for the registry
  */
 const generateRegistryFile = (
   componentMap: Map<string, { file: string; dir: string }>,
   fileName: string,
   description: string
 ) => {
-  // Generate import statements
+  // Generate import statements for all components
   const imports = Array.from(componentMap.entries())
     .map(([componentName, { file, dir }]) => {
       const absPath = path.join(dir, file);
@@ -308,14 +364,16 @@ const generateRegistryFile = (
     })
     .join('\n');
 
-  // Import the ComponentMapper class
+  // Import the ComponentMapper instance
   const mapperImport = "import { componentMapperInstance } from '../utils/ComponentMapper';";
 
-  const exportComponentTypes = componentMap.size > 0
-    ? `export type ComponentTypes = ${Array.from(componentMap.keys())
-      .map((componentName) => `'${componentName}'`)
-      .join(' | ')};`
-    : `export type ComponentTypes = never;`;
+  // Generate TypeScript union type of all component names
+  const exportComponentTypes =
+    componentMap.size > 0
+      ? `export type ComponentTypes = ${Array.from(componentMap.keys())
+        .map((componentName) => `'${componentName}'`)
+        .join(' | ')};`
+      : `export type ComponentTypes = never;`;
 
   // Generate component registration statements
   const componentRegistrations = Array.from(componentMap.keys())
@@ -324,14 +382,14 @@ const generateRegistryFile = (
     })
     .join('\n');
 
-  // Generate export statements for a barrel file
+  // Generate named exports for barrel file
   const exports = Array.from(componentMap.keys())
     .map((componentName) => {
       return `  ${componentName},`;
     })
     .join('\n');
 
-  // Create a barrel file content with component map
+  // Compose complete barrel file content
   const barrelFileContent = `// Do not edit this file as it is an auto generated file
 // If you need to update this file, please look into "/scripts/generate-component-mapper.ts"
 // Registry Type: ${description}
@@ -354,23 +412,29 @@ ${exports}
 };
 `;
 
-  // Write the barrel file to the config directory
+  // Write the barrel file to disk
   fs.writeFileSync(path.join(configDir, fileName), barrelFileContent);
 };
 
-// Watch mode functionality
+/**
+ * Starts watch mode with automatic regeneration on file changes.
+ * Uses chokidar to monitor component directories for add/remove events.
+ */
 const startWatchMode = () => {
-  // Initialize watcher for all directories (recursive watching)
+  // Initialize file watcher for all component directories
   const watcher = chokidar.watch(registeredComponentsDirs, {
-    ignored: /(^|[/\\])(\.|node_modules)/, // ignore dotfiles and node_modules
+    ignored: /(^|[/\\])(\.|node_modules)/, // Ignore dotfiles and node_modules
     persistent: true,
-    ignoreInitial: false, // Run immediately on startup
+    ignoreInitial: false, // Run generation immediately on startup
     depth: 99, // Watch recursively to any depth
   });
 
   let isGenerating = false;
 
-  // Debounce function to avoid running multiple times in quick succession
+  /**
+   * Debounce utility to avoid running multiple times in quick succession.
+   * Waits for a quiet period before executing the function.
+   */
   const debounce = (func: () => void, wait: number) => {
     let timeout: NodeJS.Timeout;
     return function executedFunction() {
@@ -383,7 +447,7 @@ const startWatchMode = () => {
     };
   };
 
-  // Debounced version of the generator
+  // Debounced version of the generator (100ms wait period)
   const debouncedGenerate = debounce(() => {
     if (isGenerating) return;
 
@@ -402,12 +466,14 @@ const startWatchMode = () => {
   watcher
     .on('add', (filePath) => {
       const fileName = path.basename(filePath);
+      // Only regenerate for component files
       if (fileName.match(/\.(tsx?|jsx?)$/)) {
         debouncedGenerate();
       }
     })
     .on('unlink', (filePath) => {
       const fileName = path.basename(filePath);
+      // Only regenerate for component files
       if (fileName.match(/\.(tsx?|jsx?)$/)) {
         debouncedGenerate();
       }
@@ -417,13 +483,14 @@ const startWatchMode = () => {
       console.error('❌ Watcher error:', error);
     });
 
-  // Graceful shutdown
+  // Graceful shutdown on SIGINT (Ctrl+C)
   process.on('SIGINT', () => {
     watcher.close().then(() => {
       process.exit(0);
     });
   });
 
+  // Graceful shutdown on SIGTERM
   process.on('SIGTERM', () => {
     watcher.close().then(() => {
       process.exit(0);
@@ -431,20 +498,24 @@ const startWatchMode = () => {
   });
 };
 
-// Main execution logic
+/**
+ * Main execution logic.
+ * Checks for --watch flag and either runs once or starts watch mode.
+ */
 const main = () => {
   const args = process.argv.slice(2);
   const isWatchMode = args.includes('--watch') || args.includes('-w');
 
   if (isWatchMode) {
+    // Watch mode: continuously monitor for changes
     startWatchMode();
   } else {
-    // Run once and exit
+    // Single run mode: generate once and exit
     generateRegisteredComponents();
   }
 };
 
-// Run the script if called directly
+// Execute the script if called directly (not imported as module)
 if (require.main === module) {
   main();
 }
