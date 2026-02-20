@@ -1,5 +1,6 @@
 import { IEnhancedImage } from '@/.generated';
 import { cn } from '@/utils/cn';
+import Image from 'next/image';
 import React, { CSSProperties, PropsWithChildren } from 'react';
 import { tv } from 'tailwind-variants';
 
@@ -27,28 +28,31 @@ export const Container = ({
   id,
 }: ContainerProps & PropsWithChildren) => {
   const Tag = tag;
+  const hasBackgroundImage = !!backgroundImage?.image?.url;
 
   const { base, wrapper } = TAILWIND_VARIANTS({
     inlinePadding: inlinePadding,
     blockPadding: blockPadding,
-    fullBleed: fullBleed
+    fullBleed: fullBleed,
+    hasBackgroundImage: hasBackgroundImage
   });
-
-  const backgroundImageStyle = backgroundImage?.image?.url ? {
-    backgroundImage: backgroundImage ? `url(${backgroundImage.image?.url})` : 'none',
-    backgroundSize: backgroundImage?.image_fit_options || 'cover',
-    backgroundPosition: backgroundImage?.image_position_options || 'center',
-  } : {};
 
   return (
     <Tag
       className={cn(base(), className)}
       data-component={componentName}
       id={id}
-      style={{
-        ...backgroundImageStyle,
-      }}
     >
+      {hasBackgroundImage && (
+        <Image
+          src={backgroundImage.image?.url || ''}
+          alt={backgroundImage.image?.title || 'Background Image'}
+          fill={true}
+          objectFit={backgroundImage.image_fit_options || 'cover'}
+          objectPosition={backgroundImage.image_position_options || 'center'}
+          fetchPriority="high"
+          loading="lazy" />
+      )}
       <div
         className={wrapper()}
       >
@@ -109,6 +113,13 @@ const TAILWIND_VARIANTS = tv({
           'relative',
           'left-[calc(-50vw+50%)]',
           'right-[calc(-50vw+50%)]',
+        ]
+      }
+    },
+    hasBackgroundImage: {
+      true: {
+        base: [
+          'relative'
         ]
       }
     }
