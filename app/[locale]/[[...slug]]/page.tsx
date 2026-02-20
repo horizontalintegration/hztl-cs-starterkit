@@ -47,7 +47,7 @@ interface SlugPageProps {
  * @returns {Promise<PageData>} Page data including page, header, and footer
  * @throws {Error} Triggers notFound() if data cannot be fetched
  */
-export const fetchRouteData = async (
+const fetchRouteData = async (
   urlPath: string,
   pageContentTypeUID: string = 'page'
 ): Promise<PageData> => {

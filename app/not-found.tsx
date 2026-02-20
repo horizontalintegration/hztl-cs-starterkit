@@ -63,8 +63,8 @@ export default async function NotFound() {
                 <div className={errorCode()}>404</div>
                 <h1 className={heading()}>Page Not Found</h1>
                 <p className={description()}>
-                    Sorry, we couldn't find the page you're looking for. It might have
-                    been removed, renamed, or doesn't exist.
+                    Sorry, we couldn&apos;t find the page you&apos;re looking for. It might have
+                    been removed, renamed, or doesn&apos;t exist.
                 </p>
                 <div className={ctaWrapper()}>
                     <a href="/" className={primaryButton()}>
