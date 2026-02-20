@@ -77,15 +77,6 @@ export const Container = ({
     hasBackgroundImage: hasBackgroundImage
   });
 
-  // Configure background image styles from CMS data
-  const backgroundImageStyle = backgroundImage?.image?.url
-    ? {
-      backgroundImage: `url(${backgroundImage.image?.url})`,
-      backgroundSize: backgroundImage?.image_fit_options || 'cover',
-      backgroundPosition: backgroundImage?.image_position_options || 'center',
-    }
-    : {};
-
   return (
     <Tag
       className={cn(base(), className)}
