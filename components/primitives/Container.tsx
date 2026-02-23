@@ -70,7 +70,7 @@ export const Container = ({
   const hasBackgroundImage = !!backgroundImage?.image?.url;
 
   // Apply Tailwind variants based on props
-  const { base, wrapper } = CONTAINER_VARIANTS({
+  const { base, wrapper, image } = CONTAINER_VARIANTS({
     inlinePadding,
     blockPadding,
     fullBleed,
@@ -85,6 +85,7 @@ export const Container = ({
     >
       {hasBackgroundImage && (
         <Image
+          className={image()}
           src={backgroundImage.image?.url || ''}
           alt={backgroundImage.image?.title || 'Background Image'}
           fill={true}
@@ -106,6 +107,7 @@ const CONTAINER_VARIANTS = tv({
   slots: {
     base: ['w-full', 'mx-auto', 'flex', 'flex-col', 'justify-center'],
     wrapper: ['w-full', 'mx-auto', 'max-w-screen-2xl'],
+    image: ['-z-10']
   },
   variants: {
     inlinePadding: {

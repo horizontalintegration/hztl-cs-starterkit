@@ -267,7 +267,6 @@ const LANGUAGE_SELECTOR_VARIANTS = tv({
   slots: {
     base: [
       'relative',
-      'z-50',
     ],
     buttonClasses: [
       'flex',
@@ -331,6 +330,7 @@ const LANGUAGE_SELECTOR_VARIANTS = tv({
       'transition-all',
       'duration-200',
       'origin-top',
+      'z-30'
     ],
     dropDownMenuList: [
       'py-1',
