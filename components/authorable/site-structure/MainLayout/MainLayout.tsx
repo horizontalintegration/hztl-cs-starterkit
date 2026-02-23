@@ -73,10 +73,6 @@ export const MainLayout = ({
     );
 };
 
-/**
- * Tailwind variants for main layout styling.
- * Provides responsive grid layout and skip-to-content positioning.
- */
 const MAIN_LAYOUT_VARIANTS = tv({
     slots: {
         base: [

@@ -1,11 +1,16 @@
+/**
+ * @file LanguageSelector.tsx
+ * @description Multi-language selector dropdown for switching between available locales.
+ * Provides an accessible, keyboard-navigable interface for language selection with
+ * URL preservation and server-side cookie preference management.
+ */
+
 'use client';
 
-// Global
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { tv } from 'tailwind-variants';
 import { useParams, usePathname } from 'next/navigation';
 
-// Local
 import SvgIcon from '@/helpers/SvgIcon/SvgIcon';
 import { useGlobalLabels } from '@/context/GlobalLabelContext';
 import { LANGUAGE_DETAILS, type LanguageDetail } from '@/constants/locales';
@@ -14,53 +19,58 @@ import { LanguageService } from '@/lib/services/language-service';
 import { setLanguagePreference } from '@/app/actions/language';
 
 /**
- * LanguageSelector Component
- * Displays a dropdown for selecting languages/locales
- * Supports both mobile and desktop views
+ * Language/Locale selector dropdown component.
+ * 
+ * Features:
+ * - Displays current locale with native name and country
+ * - Dropdown menu with all available languages from CMS
+ * - Click-outside and Escape key to close dropdown
+ * - Keyboard navigation (Enter/Space to toggle)
+ * - Accessible with ARIA attributes and screen reader support
+ * - Preserves current URL path when switching languages
+ * - Sets language preference cookie server-side
+ * - Smooth animations and focus states
+ * 
+ * @returns {JSX.Element} Rendered language selector dropdown
+ * 
+ * @example
+ * ```tsx
+ * <LanguageSelector />
+ * ```
  */
 export const LanguageSelector = () => {
-  // ============================================================================
-  // Hooks & State
-  // ============================================================================
-
   const params = useParams();
   const pathname = usePathname();
   const { globalLabels } = useGlobalLabels();
   const [isOpen, setIsOpen] = useState(false);
 
-
   // Refs for click-outside detection
   const selectRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // ============================================================================
-  // Computed Values
-  // ============================================================================
-
   const currentLocale = params.locale as string;
 
-  // Parse pathname to get path without locale
+  // Parse pathname to get path without locale prefix
   const pathSegments = pathname.split('/').filter(Boolean);
   const firstSegment = pathSegments[0];
   const pathWithoutLocale = pathSegments
     .slice(isLanguageSupported(firstSegment) ? 1 : 0)
     .join('/');
 
-  // Get available languages and current selection
+  // Get available languages from constants and find current selection
   const availableLanguages = LANGUAGE_DETAILS || [];
+  const currentLanguage = availableLanguages.find(
+    (lang) => lang.langCode === currentLocale
+  );
 
-  const currentLanguage = availableLanguages.find((lang) => lang.langCode === currentLocale);
-
-  // Labels with fallbacks
+  // Global labels with fallbacks
   const ariaLabel = globalLabels.country_selector_label || 'Select a language';
   const selectedLabel = globalLabels.is_selected_label || 'is selected';
 
-  // ============================================================================
-  // Effects
-  // ============================================================================
-
   /**
-   * Handle click outside to close dropdown
+   * Close dropdown when clicking outside the component.
+   * Listens for mousedown events and checks if the click target is outside
+   * both the selector button and dropdown menu.
    */
   useEffect(() => {
     if (!isOpen) return;
@@ -83,21 +93,26 @@ export const LanguageSelector = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, setIsOpen]);
+  }, [isOpen]);
 
-  // ============================================================================
-  // Event Handlers
-  // ============================================================================
-
+  /**
+   * Toggle dropdown open/closed state.
+   * Prevents event propagation to avoid triggering click-outside handler.
+   */
   const handleToggle = useCallback(
     (event: React.MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
       setIsOpen(!isOpen);
     },
-    [isOpen, setIsOpen]
+    [isOpen]
   );
 
+  /**
+   * Handle keyboard interactions for accessibility.
+   * - Enter/Space: Toggle dropdown
+   * - Escape: Close dropdown
+   */
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -107,52 +122,64 @@ export const LanguageSelector = () => {
         setIsOpen(false);
       }
     },
-    [isOpen, setIsOpen]
+    [isOpen]
   );
 
-
-
-  const handleLanguageSelect = useCallback(async (langCode: string) => {
-    /**
-   * Get URL path for a language switch
+  /**
+   * Handle language selection from dropdown.
+   * 
+   * Flow:
+   * 1. Saves preference to localStorage (client-side)
+   * 2. Closes dropdown
+   * 3. Calls server action to set cookie and redirect to new locale URL
+   * 
+   * @param {string} langCode - Selected language code (e.g., 'en-us', 'es-es')
    */
-    const getLanguageHref = (langCode: string): string => {
-      return LanguageService.getLanguageUrlPath(langCode, pathWithoutLocale);
-    };
-    // Save the language preference
-    LanguageService.saveLanguagePreference(langCode);
-    setIsOpen(false);
+  const handleLanguageSelect = useCallback(
+    async (langCode: string) => {
+      /**
+       * Get URL path for the selected language.
+       * Preserves current page path with new locale prefix.
+       */
+      const getLanguageHref = (langCode: string): string => {
+        return LanguageService.getLanguageUrlPath(langCode, pathWithoutLocale);
+      };
 
-    // Set the language preference cookie server-side + redirect atomically
-    await setLanguagePreference(langCode, getLanguageHref(langCode));
-  }, [setIsOpen, pathWithoutLocale]);
+      // Save preference client-side (localStorage)
+      LanguageService.saveLanguagePreference(langCode);
+      setIsOpen(false);
 
-  // ============================================================================
-  // Render Helpers
-  // ============================================================================
-
+      // Set server-side cookie and redirect atomically
+      await setLanguagePreference(langCode, getLanguageHref(langCode));
+    },
+    [pathWithoutLocale]
+  );
 
   /**
-   * Generate aria label for language option
+   * Generate accessible aria-label for language option.
+   * Combines native name, country name, and selected state for screen readers.
+   * 
+   * @param {LanguageDetail} language - Language details from constants
+   * @param {boolean} isSelected - Whether this language is currently selected
+   * @returns {string} Formatted aria-label for screen readers
+   * 
+   * @example
+   * getLanguageAriaLabel({ nativeName: 'English', countryName: 'United States' }, true)
+   * // Returns: "English United States is selected"
    */
-  const getLanguageAriaLabel = (language: LanguageDetail & { langCode: string }, isSelected: boolean): string => {
+  const getLanguageAriaLabel = (
+    language: LanguageDetail & { langCode: string },
+    isSelected: boolean
+  ): string => {
     const baseLabel = `${language.nativeName} ${language.countryName || ''}`.trim();
     return isSelected ? `${baseLabel} ${selectedLabel}` : baseLabel;
   };
 
-  // ============================================================================
-  // Styles
-  // ============================================================================
-
-  const styles = TAILWIND_VARIANTS({ isOverlayVisible: isOpen });
-
-  // ============================================================================
-  // Render
-  // ============================================================================
+  const styles = LANGUAGE_SELECTOR_VARIANTS({ isOverlayVisible: isOpen });
 
   return (
     <div className={styles.base()} ref={selectRef}>
-      {/* Selector Button */}
+      {/* Selector Button - Shows current language */}
       <button
         type="button"
         role="button"
@@ -176,6 +203,7 @@ export const LanguageSelector = () => {
             )}
           </div>
 
+          {/* Chevron icon that rotates when dropdown opens */}
           <span className={styles.chevronContainer()}>
             <SvgIcon
               className={styles.buttonIcon()}
@@ -188,7 +216,7 @@ export const LanguageSelector = () => {
         </div>
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown Menu - List of available languages */}
       {isOpen && (
         <div
           ref={dropdownRef}
@@ -206,7 +234,9 @@ export const LanguageSelector = () => {
                     role="menuitem"
                     aria-current={isSelected ? 'page' : undefined}
                     aria-label={getLanguageAriaLabel(language, isSelected)}
-                    onClick={() => { handleLanguageSelect(language.langCode) }}
+                    onClick={() => {
+                      handleLanguageSelect(language.langCode);
+                    }}
                     className={styles.dropDownMenuItem()}
                   >
                     <span className={styles.dropDownItemName()}>
@@ -220,9 +250,8 @@ export const LanguageSelector = () => {
                       )}
                     </span>
 
-                    {isSelected && (
-                      <span className="sr-only">{selectedLabel}</span>
-                    )}
+                    {/* Screen reader only: announce selected state */}
+                    {isSelected && <span className="sr-only">{selectedLabel}</span>}
                   </button>
                 </li>
               );
@@ -234,11 +263,7 @@ export const LanguageSelector = () => {
   );
 };
 
-// ============================================================================
-// Styles
-// ============================================================================
-
-const TAILWIND_VARIANTS = tv({
+const LANGUAGE_SELECTOR_VARIANTS = tv({
   slots: {
     base: [
       'relative',

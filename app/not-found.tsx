@@ -79,10 +79,6 @@ export default async function NotFound() {
     );
 }
 
-/**
- * Tailwind variants for the fallback 404 page UI.
- * Used when CMS content is unavailable.
- */
 const FALLBACK_VARIANTS = tv({
     slots: {
         container: [

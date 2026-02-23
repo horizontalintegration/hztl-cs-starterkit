@@ -102,17 +102,12 @@ export const Container = ({
   );
 };
 
-/**
- * Tailwind variants for container styling.
- * Provides responsive padding and full-bleed layout options.
- */
 const CONTAINER_VARIANTS = tv({
   slots: {
     base: ['w-full', 'mx-auto', 'flex', 'flex-col', 'justify-center'],
     wrapper: ['w-full', 'mx-auto', 'max-w-screen-2xl'],
   },
   variants: {
-    // Horizontal padding (left/right)
     inlinePadding: {
       true: {
         base: ['px-5', 'md:px-10'],
@@ -121,7 +116,6 @@ const CONTAINER_VARIANTS = tv({
         base: ['px-0', 'md:px-0'],
       },
     },
-    // Vertical padding (top/bottom)
     blockPadding: {
       true: {
         base: ['py-5', 'md:py-10'],
@@ -130,7 +124,6 @@ const CONTAINER_VARIANTS = tv({
         base: ['py-0', 'md:py-0'],
       },
     },
-    // Full-bleed: extends beyond parent container to full viewport width
     fullBleed: {
       true: {
         base: [
