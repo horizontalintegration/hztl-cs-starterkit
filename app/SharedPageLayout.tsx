@@ -71,10 +71,6 @@ export async function SharedPageLayout({
   );
 }
 
-/**
- * Tailwind variants for the page layout structure.
- * Ensures consistent full-height layout with proper overflow handling.
- */
 const PAGE_LAYOUT_VARIANTS = tv({
   slots: {
     base: ['overflow-x-clip', 'flex', 'flex-col', 'min-h-screen'],

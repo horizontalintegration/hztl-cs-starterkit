@@ -59,10 +59,6 @@ export const HeroBanner = (props: IHeroBannerModularBlock) => {
     );
 };
 
-/**
- * Tailwind variants for hero banner styling.
- * Provides responsive design with mobile-first approach.
- */
 const HERO_BANNER_VARIANTS = tv({
     slots: {
         base: [
