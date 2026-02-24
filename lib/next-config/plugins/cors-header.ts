@@ -5,7 +5,7 @@
 
 import type { NextConfig } from 'next';
 
-import { getCSPDirectives } from '@/lib/csp/csp-setting';
+import { getCSPDirectives } from '../../csp/csp-setting';
 
 /**
  * Adds security and CORS headers to all responses.

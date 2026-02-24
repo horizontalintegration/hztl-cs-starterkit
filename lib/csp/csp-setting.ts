@@ -4,7 +4,7 @@
  * Generates CSP directives with environment-aware rules and CMS-managed sources.
  */
 
-import { getSiteSettings } from '@/lib/contentstack/entries';
+import { getSiteSettings } from '../../lib/contentstack/entries';
 
 /**
  * Generates Content Security Policy directives from site settings.

@@ -8,7 +8,7 @@ import contentstack, { QueryOperation } from '@contentstack/delivery-sdk';
 import { cache } from 'react';
 
 import { IFooter, IHeader, ISiteSettings } from '@/.generated';
-import { DEFAULT_LOCALE } from '@/constants/locales';
+import { DEFAULT_LOCALE } from '../../constants/locales';
 import { GetEntries, GetEntryByUid } from '@/lib/types';
 import { stack } from './delivery-stack';
 import { getCurrentLanguage } from './language';

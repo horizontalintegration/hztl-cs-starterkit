@@ -4,8 +4,8 @@
  * Provides utilities for getting, setting, and validating language codes.
  */
 
-import { DEFAULT_LOCALE } from '@/constants/locales';
-import { LanguageService } from '@/lib/services/language-service';
+import { DEFAULT_LOCALE } from '../../constants/locales';
+import { LanguageService } from '../../lib/services/language-service';
 
 /** Gets the current active language code */
 export function getCurrentLanguage(): string {
