@@ -106,7 +106,7 @@ const HEADER_VARIANTS = tv({
     base: [
       'sticky',
       'top-0',
-      'z-40',
+      'z-10',
       'w-full',
       'transition-transform',
       'duration-300',
