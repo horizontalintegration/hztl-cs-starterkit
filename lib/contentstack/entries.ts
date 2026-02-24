@@ -1,20 +1,22 @@
-// Global
+/**
+ * @file entries.ts
+ * @description Contentstack entry fetching functions with React caching.
+ * Provides typed, cached functions for fetching pages, headers, footers, and custom content types.
+ */
+
 import contentstack, { QueryOperation } from '@contentstack/delivery-sdk';
 import { cache } from 'react';
 
-// Local
-import { GetEntries, GetEntryByUid } from '../types';
 import { IFooter, IHeader, ISiteSettings } from '@/.generated';
+import { DEFAULT_LOCALE } from '@/constants/locales';
+import { GetEntries, GetEntryByUid } from '@/lib/types';
 import { stack } from './delivery-stack';
 import { getCurrentLanguage } from './language';
 import { addEditableTagsIfPreview, addEditableTagsToEntries } from './preview-helpers';
-import { DEFAULT_LOCALE } from '../../constants/locales';
 
 /**
- * Function to fetch page data based on the URL with multisite support
- * @param url - The URL to fetch the page for
- * @param pageType - The content type UID (default: 'page')
- * @returns The fetched page entry or undefined
+ * Fetches a page entry by URL with locale support.
+ * Includes all referenced content up to 2 levels deep.
  */
 export const getPage = cache(async <T>(url: string, pageType: string, locale: string) => {
   if (!url || !pageType || !locale) return undefined;
@@ -43,10 +45,7 @@ export const getPage = cache(async <T>(url: string, pageType: string, locale: st
   }
 });
 
-/**
- * Function to fetch header entry
- * @returns The fetched header entry or undefined
- */
+/** Fetches header entry for specified locale */
 export const getHeader = cache(async (locale: string) => {
   if (!locale) return undefined;
 
@@ -72,10 +71,7 @@ export const getHeader = cache(async (locale: string) => {
   }
 });
 
-/**
- * Function to fetch footer entry
- * @returns The fetched footer entry or undefined
- */
+/** Fetches footer entry for specified locale */
 export const getFooter = cache(async (locale: string) => {
   if (!locale) return undefined;
 
@@ -101,11 +97,7 @@ export const getFooter = cache(async (locale: string) => {
   }
 });
 
-/**
- * Function to fetch multiple entries of a content type
- * @param params - Object containing contentTypeUid, referencesToInclude, and locale
- * @returns The fetched entries or undefined
- */
+/** Fetches multiple entries of a content type with optional reference includes */
 export const getEntries = cache(async <T>({
   contentTypeUid,
   referencesToInclude = '',
@@ -139,11 +131,7 @@ export const getEntries = cache(async <T>({
   }
 });
 
-/**
- * Function to fetch all slugs for a content type
- * @param params - Object containing contentTypeUid and locale
- * @returns The fetched slugs or undefined
- */
+/** Fetches all URL slugs for a content type (used for static path generation) */
 export const getAllSlugs = cache(async <T>({
   contentTypeUid = 'page',
   locale,
@@ -167,14 +155,9 @@ export const getAllSlugs = cache(async <T>({
   }
 });
 
-/**
- * Fetches site settings entry from Contentstack
- * @param contentTypeUid - The content type UID for site settings (default: 'site_settings')
- * @returns The site settings entry if found, or undefined if no entry exists or an error occurs
- */
+/** Fetches site settings (global configuration) */
 export const getSiteSettings = cache(async (contentTypeUid: string = 'site_settings'): Promise<(ISiteSettings & contentstack.Utils.EntryModel) | undefined> => {
   if (!contentTypeUid) return undefined;
-
 
   try {
     const siteSettings = await stack
@@ -195,11 +178,7 @@ export const getSiteSettings = cache(async (contentTypeUid: string = 'site_setti
   }
 });
 
-/**
- * Function to fetch a single entry by UID
- * @param params - Object containing contentTypeUid, entryUid, and referencesToInclude
- * @returns The fetched entry or undefined
- */
+/** Fetches a single entry by its unique ID */
 export const getEntryByUid = cache(async ({
   contentTypeUid,
   entryUid,
@@ -226,9 +205,8 @@ export const getEntryByUid = cache(async ({
 });
 
 /**
- * Function to fetch multiple entries by their UIDs
- * @param params - Object containing contentTypeUid, entryUids, referencesToInclude, and locale
- * @returns The fetched entries sorted by the order of entryUids or undefined
+ * Fetches multiple entries by their UIDs, sorted in the order specified.
+ * Useful for maintaining custom ordering of related content.
  */
 export const getEntriesByUids = cache(async <T>({
   contentTypeUid,
@@ -261,6 +239,7 @@ export const getEntriesByUids = cache(async <T>({
         return response;
       }
 
+      // Sort entries to match the order of entryUids
       const entryMap = new Map<string, (typeof response.entries)[number]>();
       for (const entry of response.entries) {
         entryMap.set((entry as any).uid, entry);

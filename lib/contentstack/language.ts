@@ -1,28 +1,25 @@
-// Importing the language service
-import { DEFAULT_LOCALE } from '../../constants/locales';
-import { LanguageService } from '../../lib/services/language-service';
-
 /**
- * Helper function to get current language
- * @returns The current language code
+ * @file language.ts
+ * @description Language management helpers for Contentstack multi-locale support.
+ * Provides utilities for getting, setting, and validating language codes.
  */
+
+import { DEFAULT_LOCALE } from '@/constants/locales';
+import { LanguageService } from '@/lib/services/language-service';
+
+/** Gets the current active language code */
 export function getCurrentLanguage(): string {
   return LanguageService.getInstance().getLanguage();
 }
 
-/**
- * Helper function to set current language
- * @param language - The language code to set
- */
+/** Sets the current active language code */
 export function setCurrentLanguage(language: string): void {
   LanguageService.getInstance().setLanguage(language);
 }
 
 /**
- * Extract locale from params and set it as the current language
- * This helper reduces duplication across page components and generateMetadata
- * @param locale - The locale string from route params
- * @returns The resolved language code (defaults to 'en-us' if locale is not supported)
+ * Extracts locale from route params and sets it as current language.
+ * Falls back to default locale if not supported.
  */
 export function extractAndSetLanguage(locale: string): string {
   const isLanguageParam = isLanguageSupported(locale);
@@ -31,11 +28,7 @@ export function extractAndSetLanguage(locale: string): string {
   return language;
 }
 
-/**
- * Check if a language is supported
- * @param language - The language code to check
- * @returns true if the language is supported, false otherwise
- */
+/** Checks if a language code is supported */
 export function isLanguageSupported(language: string): boolean {
   return LanguageService.getInstance().isLanguageSupported(language);
 }
