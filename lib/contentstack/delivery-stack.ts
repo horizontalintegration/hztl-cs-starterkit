@@ -1,54 +1,58 @@
-// Importing Contentstack SDK
-import contentstackDeliverySDK from '@contentstack/delivery-sdk';
+/**
+ * @file delivery-stack.ts
+ * @description Contentstack Delivery SDK configuration and initialization.
+ * Provides stack instance and helpers for content delivery with regional endpoints and Live Preview support.
+ */
 
-// helper functions from private package to retrieve Contentstack endpoints in a convienient way
+import contentstackDeliverySDK from '@contentstack/delivery-sdk';
 import { getContentstackEndpoints, getRegionForString } from '@timbenniks/contentstack-endpoints';
 
-// Set the region by string value from environment variables
+// Configure region from environment variable
 const region = getRegionForString(process.env.NEXT_PUBLIC_CONTENTSTACK_REGION || 'EU');
 
-// object with all endpoints for region.
+// Get region-specific endpoints
 const endpoints = getContentstackEndpoints(region, true);
 
-// Cache preview mode check for performance
+// Cache preview mode check
 const isPreviewMode = process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW === 'true';
 
-// Shared function to create Contentstack stack configuration
+/**
+ * Creates a configured Contentstack stack instance.
+ * Includes Live Preview support when enabled.
+ * 
+ * Environment variables required:
+ * - CONTENTSTACK_API_KEY: Stack API key
+ * - CONTENTSTACK_DELIVERY_TOKEN: Delivery token
+ * - NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT: Environment name (e.g., 'production')
+ * - NEXT_PUBLIC_CONTENTSTACK_BRANCH: Branch name
+ * - NEXT_PUBLIC_CONTENTSTACK_REGION: Region code (e.g., 'EU', 'US')
+ * - NEXT_PUBLIC_CONTENTSTACK_PREVIEW: Enable preview mode ('true'/'false')
+ * - CONTENTSTACK_PREVIEW_TOKEN: Preview token (if preview enabled)
+ */
 export function createStack() {
   return contentstackDeliverySDK.stack({
-    // Setting the API key from environment variables
     apiKey: process.env.CONTENTSTACK_API_KEY as string,
-
-    // Setting the delivery token from environment variables
     deliveryToken: process.env.CONTENTSTACK_DELIVERY_TOKEN as string,
-
-    // Setting the environment based on environment variables
     environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT as string,
     branch: process.env.NEXT_PUBLIC_CONTENTSTACK_BRANCH as string,
-
-    // Setting the region based on environment variables
     region: region,
     live_preview: {
-      // Enabling live preview if specified in environment variables
       enable: isPreviewMode,
-
-      // Setting the preview token from environment variables
       preview_token: process.env.CONTENTSTACK_PREVIEW_TOKEN,
-
-      // Setting the host for live preview based on the region
       host: endpoints.preview,
     },
   });
 }
 
-// Export the stack instance for backward compatibility
+/** Default stack instance for backward compatibility */
 export const stack = createStack();
 
-// Export endpoints and preview mode for use in other modules
+/** Returns region-specific Contentstack endpoints */
 export function getEndpoints() {
   return endpoints;
 }
 
+/** Returns whether Live Preview mode is enabled */
 export function isPreviewModeEnabled(): boolean {
   return isPreviewMode;
 }

@@ -1,17 +1,9 @@
 /**
- * Contentstack Management SDK Client
+ * @file management-stack.ts
+ * @description Contentstack Management API client for build-time operations.
  * 
- * This module provides a configured client for interacting with the Contentstack Management API.
- * 
- * @module contentstack-management
- * 
- * @security WARNING: This module should ONLY be used in Node.js build scripts.
- * Never import this in browser-side code as it uses sensitive management tokens.
- * 
- * @requires CONTENTSTACK_MANAGEMENT_TOKEN - Management API token with appropriate permissions
- * @requires CONTENTSTACK_API_KEY - Stack API key
- * 
- * @see https://www.contentstack.com/docs/developers/apis/content-management-api/
+ * ⚠️ SECURITY WARNING: Only use in Node.js build scripts, never in browser code.
+ * Requires CONTENTSTACK_MANAGEMENT_TOKEN with sensitive permissions.
  */
 
 import * as contentstackManagementSDK from '@contentstack/management';
@@ -19,37 +11,18 @@ import { Locales } from '@contentstack/management/types/stack/contentType/entry'
 import { Locale } from '@contentstack/management/types/stack/locale';
 import { cache } from 'react';
 
-/**
- * Configuration options for management client
- */
 interface ManagementClientConfig {
-    /**
-     * Management API authentication token
-     */
+    /** Management API authentication token */
     authtoken: string;
-
-    /**
-     * Stack API key
-     */
+    /** Stack API key */
     apiKey: string;
-
-    /**
-     * Optional: API host URL (defaults to Contentstack's default)
-     */
+    /** Optional API host URL */
     host?: string;
 }
 
-/**
- * Validates required environment variables for management operations
- * 
- * @throws {Error} If required environment variables are missing
- */
+/** Validates required environment variables */
 function validateEnvironment(): void {
-    const requiredVars = [
-        'CONTENTSTACK_MANAGEMENT_TOKEN',
-        'CONTENTSTACK_API_KEY',
-    ];
-
+    const requiredVars = ['CONTENTSTACK_MANAGEMENT_TOKEN', 'CONTENTSTACK_API_KEY'];
     const missingVars = requiredVars.filter((varName) => !process.env[varName]);
 
     if (missingVars.length > 0) {
@@ -61,23 +34,14 @@ function validateEnvironment(): void {
 }
 
 /**
- * Creates and configures a Contentstack Management SDK client
- * 
- * This client is used for build-time operations such as:
- * - Fetching available locales/languages
- * - Querying content type schemas
- * - Accessing stack configuration
- * 
- * @returns Configured Contentstack management stack client
- * @throws {Error} If required environment variables are missing
+ * Creates Contentstack Management SDK client for build-time operations.
+ * Used for fetching locales, schemas, and stack configuration.
  * 
  * @example
- *
- * const stack = createManagementClient();
+ * const stack = await createManagementClient();
  * const locales = await stack.locale().query().find();
- *  */
+ */
 export async function createManagementClient() {
-    // Validate environment variables first
     validateEnvironment();
 
     const config: ManagementClientConfig = {
@@ -86,10 +50,7 @@ export async function createManagementClient() {
     };
 
     try {
-        // Initialize management SDK client
         const client = contentstackManagementSDK.client();
-
-        // Return stack instance for the specified API key
         const stack = client.stack({
             api_key: config.apiKey,
             management_token: config.authtoken,
@@ -104,22 +65,10 @@ export async function createManagementClient() {
     }
 }
 
-/**
- * Fetches all available locales from the Contentstack stack
- * 
- * @returns Promise resolving to array of locale objects
- * @throws {Error} If API request fails
- * 
- * @example
- *
- * const locales = await fetchLocales();
- * console.log(`Found ${locales.length} locales`);
- *  */
+/** Fetches all available locales from stack */
 export async function fetchLocales(): Promise<Locale[]> {
     try {
         const stack = await createManagementClient();
-
-        // Query all locales from the stack
         const response = await stack.locale().query().find();
 
         if (!response || !response.items) {
@@ -135,19 +84,11 @@ export async function fetchLocales(): Promise<Locale[]> {
     }
 }
 
-/**
- * Checks if the management client can successfully connect to Contentstack
- * 
- * @returns Promise resolving to true if connection is successful
- * @throws {Error} If connection fails
- */
+/** Tests Management API connection by attempting to fetch locales */
 export async function testConnection(): Promise<boolean> {
     try {
         const stack = await createManagementClient();
-
-        // Attempt to fetch locales as a connection test
         await stack.locale().query().find();
-
         return true;
     } catch (error) {
         throw new Error(
@@ -157,22 +98,8 @@ export async function testConnection(): Promise<boolean> {
     }
 }
 
-/**
- * Retrieves all available locales for a specific entry in Contentstack
- * 
- * This function queries the Contentstack Management API to get the list of locales
- * in which a particular entry has been published or exists.
- * 
- * @param entryUid - The unique identifier of the entry
- * @param contentTypeUid - The unique identifier of the content type (e.g., 'page', 'blog_post')
- * 
- * @returns An array of locale codes (e.g., ['en-us', 'fr-fr']) if locales exist,
- *          or an empty array if no locales are found or an error occurs
- **/
-export const getEntryLocales = cache(async (
-    entryUid: string,
-    contentTypeUid: string) => {
-    // Validate inputs
+/** Fetches all locales in which an entry exists or has been published */
+export const getEntryLocales = cache(async (entryUid: string, contentTypeUid: string) => {
     if (!entryUid || !contentTypeUid) {
         console.error('getEntryLocales: entryUid and contentTypeUid are required');
         return undefined;
@@ -180,13 +107,8 @@ export const getEntryLocales = cache(async (
 
     try {
         const stack = await createManagementClient();
+        const locales: Locales = await stack.contentType(contentTypeUid).entry(entryUid).locales();
 
-        const locales: Locales = await stack
-            .contentType(contentTypeUid)
-            .entry(entryUid)
-            .locales();
-
-        // Return locales or undefined
         return locales || undefined;
     } catch (error) {
         console.error(
@@ -194,6 +116,5 @@ export const getEntryLocales = cache(async (
             error instanceof Error ? error.message : error
         );
         return undefined;
-
     }
-})
+});
