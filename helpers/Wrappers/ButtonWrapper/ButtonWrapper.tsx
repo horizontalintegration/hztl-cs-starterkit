@@ -136,8 +136,8 @@ export const ButtonWrapper = ({
                     title={cta?.modal_content?.title || ''}
                 >
                     <div className={modalContentWrapper()}>
-                        <h2 className={modalTitle()}>{cta?.modal_content?.title}</h2>
-                        <RichTextWrapper content={cta.modal_content?.content} />
+                        <h2 className={modalTitle()} {...getCSLPAttributes(cta.modal_content?.$?.title)}>{cta?.modal_content?.title}</h2>
+                        <RichTextWrapper content={cta.modal_content?.content} cslpAttribute={cta.modal_content?.$?.content} />
                     </div>
                 </ModalWrapper>
             </>

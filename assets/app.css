@@ -17,3 +17,154 @@ body {
 main {
   @apply w-full grow shrink-0;
 }
+
+/* Base Container */
+.rte {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #1a1a1a;
+}
+
+/* Headings */
+.rte h1,
+.rte h2,
+.rte h3,
+.rte h4,
+.rte h5,
+.rte h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.rte h1 {
+  font-size: 2.25rem;
+}
+.rte h2 {
+  font-size: 1.875rem;
+}
+.rte h3 {
+  font-size: 1.5rem;
+}
+.rte h4 {
+  font-size: 1.25rem;
+}
+.rte h5 {
+  font-size: 1.125rem;
+}
+.rte h6 {
+  font-size: 1rem;
+}
+
+/* Paragraph */
+.rte p {
+  margin-bottom: 1rem;
+}
+
+/* Links */
+.rte a {
+  color: #2563eb;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.rte a:hover {
+  color: #1d4ed8;
+}
+
+/* Lists */
+.rte ul,
+.rte ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.rte li {
+  margin-bottom: 0.5rem;
+}
+
+/* Nested lists */
+.rte ul ul,
+.rte ol ol,
+.rte ul ol,
+.rte ol ul {
+  margin-top: 0.5rem;
+}
+
+/* Blockquote */
+.rte blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: #555;
+}
+
+/* Code inline */
+.rte code {
+  background: #f3f4f6;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Preformatted block */
+.rte pre {
+  background: #111827;
+  color: #f9fafb;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.rte pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Images */
+.rte img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 1.5rem 0;
+}
+
+/* Tables */
+.rte table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.rte th,
+.rte td {
+  border: 1px solid #e5e7eb;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.rte th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+/* Horizontal Rule */
+.rte hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 2rem 0;
+}
+
+/* Strong & Emphasis */
+.rte strong {
+  font-weight: 600;
+}
+
+.rte em {
+  font-style: italic;
+}
