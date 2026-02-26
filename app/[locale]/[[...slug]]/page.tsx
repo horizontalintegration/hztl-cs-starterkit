@@ -199,7 +199,11 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
       robotsMaxImagePreview: page?.seo?.robots?.max_image_preview || 'standard',
     };
 
-    const faviconUrl = siteSetting?.favicon_file?.url || '/favicon.ico';
+    const favicons = {
+      icon: siteSetting?.favicons?.icon?.url || '/favicon.ico',
+      shortcut: siteSetting?.favicons?.shortcut?.url || '/favicon.ico',
+      apple: siteSetting?.favicons?.apple?.url || '/favicon.ico',
+    }
     const canonicalUrl =
       resolvedParams?.locale === DEFAULT_LOCALE
         ? `${baseUrl}${urlPath}`
@@ -234,7 +238,7 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
           canonical: canonicalUrl,
           languages: languageUrls,
         },
-      icons: faviconUrl,
+      icons: favicons,
       openGraph: {
         type: metadata.openGraphType,
         title: metadata.openGraphTitle,
