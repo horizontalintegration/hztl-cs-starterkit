@@ -1,29 +1,40 @@
-// Global
+/**
+ * @file RichTextWrapper.tsx
+ * @description Rich text renderer with automatic external link handling and table enhancements.
+ * Processes CMS HTML content client-side to add accessibility features and icons.
+ */
+
 import React, { useEffect, useState, JSX } from 'react';
 
-// Local
-import { ReplacementToken } from '@/utils/string-utils';
 import { CSLPFieldMapping } from '@/.generated';
 import { getCSLPAttributes } from '@/utils/type-guards';
 
 interface RichTextWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
-  fallbacks?: (string | undefined)[];
-  tokens?: ReplacementToken[];
-  cslpAttribute?: CSLPFieldMapping
+  /** Rich text HTML content from CMS */
+  content?: string;
+  /** Contentstack Live Preview field mapping */
+  cslpAttribute?: CSLPFieldMapping;
 }
 
+/**
+ * Renders rich text HTML with automatic processing for external links and tables.
+ * 
+ * Features:
+ * - Adds target="_blank" to external links
+ * - Inserts "Opens in new tab" icon and screen reader text
+ * - Enhances table cells with data-column attributes for responsive tables
+ * 
+ * @example
+ * <RichTextWrapper content="<p>Hello <a href='https://example.com'>World</a></p>" />
+ */
 const RichTextWrapper = ({
   content,
-  fallbacks,
-  tokens,
   className,
   cslpAttribute,
   ...props
 }: RichTextWrapperProps): JSX.Element => {
-
   const updatedContent = useUpdatedRichTextContent({ content });
 
-  // We should only render if it has a value
   if (!updatedContent) return <></>;
 
   return (
@@ -37,6 +48,7 @@ const RichTextWrapper = ({
   );
 };
 
+/** SVG icon for external links (new tab indicator) */
 const NEW_TAB_ICON_STRING = `<span class="svg-icon inline-flex align-middle -ml-3 h-6 w-6">
     <svg
       aria-hidden="true"
@@ -53,35 +65,40 @@ const NEW_TAB_ICON_STRING = `<span class="svg-icon inline-flex align-middle -ml-
     </svg>
   </span>`;
 
+/**
+ * Hook that processes rich text content client-side.
+ * 
+ * Processing steps:
+ * 1. Identifies external links (http/https or target="_blank")
+ * 2. Adds new tab icon and screen reader text to external links
+ * 3. Enhances table cells with data-column attributes for responsive styling
+ */
 function useUpdatedRichTextContent({ content }: RichTextWrapperProps) {
-  // Replace tokens if present
   const [updatedContent, setUpdatedContent] = useState<string>(content || '');
 
-  // Run this client-side because we don't have access to the document server-side
+  // Process content client-side (requires DOM access)
   useEffect(() => {
     const template = document.createElement('template');
     template.innerHTML = content || '';
 
-    // Find all links either either have target="_blank" or appear to be external due to starting with "http"
+    // Find all external links
     const externalLinks = [...template.content.querySelectorAll('a')].filter(
       (a) =>
         a.attributes.getNamedItem('href')?.value.startsWith('http') ||
         a.attributes.getNamedItem('target')?.value === '_blank'
     );
-    // Update each external link
+
+    // Enhance external links with target="_blank" and icon
     externalLinks.forEach((a) => {
-      // Set to open in new tab
       a.setAttribute('target', '_blank');
-      // Add Screen Reader text and new tab icon
       a.innerHTML = `${a.innerHTML}<span class="sr-only"> (Opens in a new tab)</span> ${NEW_TAB_ICON_STRING}`;
     });
 
-    // Add data-column attributes to table cells
+    // Enhance table cells with column names for responsive styling
     const tables = template.content.querySelectorAll('table');
     tables.forEach((table) => {
       const headerElements = table.querySelectorAll('thead th');
 
-      // Only proceed if there are th elements
       if (headerElements.length > 0) {
         const headers = Array.from(headerElements).map((th) => th.textContent?.trim() || '');
 
@@ -93,7 +110,6 @@ function useUpdatedRichTextContent({ content }: RichTextWrapperProps) {
       }
     });
 
-    // Update the content
     setUpdatedContent(template.innerHTML);
   }, [content]);
 
