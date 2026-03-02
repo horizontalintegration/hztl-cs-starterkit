@@ -1,18 +1,41 @@
-import { IPage } from "@/.generated";
-import { DEFAULT_LOCALE } from "@/constants/locales";
-import { getEntries } from "@/lib/contentstack/entries";
-import { getCurrentLanguage } from "@/lib/contentstack/language";
-import { getEntryLocales } from "@/lib/contentstack/management-stack";
-import { MetadataRoute } from "next";
+/**
+ * @file sitemap.ts
+ * @description Next.js special file that generates XML sitemap for the site.
+ * Fetches all published pages from Contentstack CMS and creates sitemap entries
+ * with proper lastModified dates, priorities, change frequencies, and language alternates.
+ */
 
-// Revalidate sitemap every hour
+import { MetadataRoute } from 'next';
+
+import { IPage } from '@/.generated';
+import { DEFAULT_LOCALE } from '@/constants/locales';
+import { getEntries } from '@/lib/contentstack/entries';
+import { getCurrentLanguage } from '@/lib/contentstack/language';
+import { getEntryLocales } from '@/lib/contentstack/management-stack';
+
+// Revalidate sitemap every hour (3600 seconds)
 export const revalidate = 3600;
 
-// Valid changeFrequency values per sitemap protocol
-const VALID_CHANGE_FREQUENCIES = ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'] as const;
+/**
+ * Valid change frequency values per sitemap protocol specification.
+ * @see {@link https://www.sitemaps.org/protocol.html}
+ */
+const VALID_CHANGE_FREQUENCIES = [
+    'always',
+    'hourly',
+    'daily',
+    'weekly',
+    'monthly',
+    'yearly',
+    'never',
+] as const;
 
 /**
- * Validates and clamps priority value between 0.0 and 1.0
+ * Validates and clamps priority value to valid sitemap range (0.0 to 1.0).
+ * Falls back to 0.5 (medium priority) if value is undefined or null.
+ *
+ * @param {number | null | undefined} priority - Priority value from CMS
+ * @returns {number} Clamped priority value between 0.0 and 1.0
  */
 function validatePriority(priority: number | null | undefined): number {
     if (priority === undefined || priority === null) return 0.5;
@@ -20,20 +43,42 @@ function validatePriority(priority: number | null | undefined): number {
 }
 
 /**
- * Validates changeFrequency against allowed values
+ * Validates change frequency against sitemap protocol allowed values.
+ * Falls back to 'daily' if value is invalid or undefined.
+ *
+ * @param {string | undefined} frequency - Change frequency from CMS
+ * @returns {MetadataRoute.Sitemap[number]['changeFrequency']} Valid change frequency
  */
-function validateChangeFrequency(frequency: string | undefined): MetadataRoute.Sitemap[number]['changeFrequency'] {
+function validateChangeFrequency(
+    frequency: string | undefined
+): MetadataRoute.Sitemap[number]['changeFrequency'] {
     if (!frequency) return 'daily';
     return VALID_CHANGE_FREQUENCIES.includes(frequency as any)
-        ? frequency as MetadataRoute.Sitemap[number]['changeFrequency']
+        ? (frequency as MetadataRoute.Sitemap[number]['changeFrequency'])
         : 'daily';
 }
 
+/**
+ * Generates XML sitemap for the site.
+ * Fetches all published pages from CMS and creates sitemap entries with metadata.
+ *
+ * Features:
+ * - Multi-locale support with language alternates
+ * - Automatic filtering of 404 pages
+ * - Validation of priority and change frequency values
+ * - Batch fetching of locale data for performance
+ * - Error handling with graceful fallbacks
+ * - Hourly revalidation (ISR)
+ *
+ * @returns {Promise<MetadataRoute.Sitemap>} Array of sitemap entries
+ *
+ * @see {@link https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap}
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const sitemapArray: MetadataRoute.Sitemap = [];
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-    // Validate base URL is configured
+    // Validate base URL configuration
     if (!baseUrl) {
         console.error('[Sitemap] NEXT_PUBLIC_BASE_URL is not configured');
         return [];
@@ -42,10 +87,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const currentLocale = getCurrentLanguage();
 
     try {
-        // Fetch all pages for current locale
+        // Fetch all pages for current locale from CMS
         const allPages = await getEntries<IPage>({
             contentTypeUid: 'page',
-            locale: currentLocale
+            locale: currentLocale,
         });
 
         if (!allPages?.entries || allPages.entries.length === 0) {
@@ -53,16 +98,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             return [];
         }
 
-        // Batch fetch all entry locales for better performance
-        const localePromises = allPages.entries.map(page =>
-            getEntryLocales(page.uid, 'page').catch(error => {
+        // Exclude CMS 404 page from sitemap
+        allPages.entries = allPages.entries?.filter((page) => page.url !== '/404');
+
+        // Batch fetch locale data for all pages (parallel requests for performance)
+        const localePromises = allPages.entries.map((page) =>
+            getEntryLocales(page.uid, 'page').catch((error) => {
                 console.error(`[Sitemap] Failed to fetch locales for page ${page.uid}:`, error);
                 return null;
             })
         );
         const allPageLocales = await Promise.all(localePromises);
 
-        // Build sitemap entries
+        // Build sitemap entries for each page
         for (let i = 0; i < allPages.entries.length; i++) {
             const page = allPages.entries[i];
             const pageLocales = allPageLocales[i];
@@ -73,12 +121,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 continue;
             }
 
-            // Build page URL based on locale
-            const pageUrl = currentLocale === DEFAULT_LOCALE
-                ? `${baseUrl}${page.url}`
-                : `${baseUrl}/${currentLocale}${page.url}`;
+            // Construct page URL based on locale
+            const pageUrl =
+                currentLocale === DEFAULT_LOCALE
+                    ? `${baseUrl}${page.url}`
+                    : `${baseUrl}/${currentLocale}${page.url}`;
 
-            // Initialize page sitemap object with validated values
+            // Create sitemap entry with validated values
             const pageSitemapObject: MetadataRoute.Sitemap[number] = {
                 url: pageUrl,
                 lastModified: page.updated_at ? new Date(page.updated_at) : new Date(),
@@ -86,26 +135,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 priority: validatePriority(page.page_sitemap_setting?.priority),
             };
 
-            // Build language alternates if locales exist
+            // Build language alternate URLs if multiple locales exist
             if (pageLocales?.locales && pageLocales.locales.length > 0) {
                 const languageUrls: Record<string, string> = {};
 
                 for (const locale of pageLocales.locales) {
-                    // Skip non-localized locales (except default)
+                    // Skip non-localized versions (except default locale)
                     if (locale.code !== DEFAULT_LOCALE && !locale.localized) continue;
 
-                    // Build URL for this locale
-                    const localeUrl = locale.code === DEFAULT_LOCALE
-                        ? `${baseUrl}${page.url}`
-                        : `${baseUrl}/${locale.code}${page.url}`;
+                    // Construct URL for this locale
+                    const localeUrl =
+                        locale.code === DEFAULT_LOCALE
+                            ? `${baseUrl}${page.url}`
+                            : `${baseUrl}/${locale.code}${page.url}`;
 
                     languageUrls[locale.code as string] = localeUrl;
                 }
 
-                // Only add alternates if we have language URLs
+                // Add language alternates if available
                 if (Object.keys(languageUrls).length > 0) {
                     pageSitemapObject.alternates = {
-                        languages: languageUrls
+                        languages: languageUrls,
                     };
                 }
             }
@@ -114,10 +164,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
 
         return sitemapArray;
-
     } catch (error) {
         console.error('[Sitemap] Error generating sitemap:', error);
-        // Return empty array on error to prevent sitemap from breaking
+        // Return empty array to prevent sitemap from breaking
         return [];
     }
 }

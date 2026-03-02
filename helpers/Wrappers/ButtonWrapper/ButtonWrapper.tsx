@@ -1,17 +1,21 @@
+/**
+ * @file ButtonWrapper.tsx
+ * @description Flexible button/link component with CMS integration.
+ * Automatically renders as Link or button based on props, with variant styling and accessibility features.
+ */
+
 'use client';
 
-import { IEnhancedCta } from "@/.generated"
-import { cn } from "@/utils/cn";
-import { getCSLPAttributes } from "@/utils/type-guards";
-import Link from "next/link";
-import { JSX, useCallback, useMemo } from "react";
-import { tv } from "tailwind-variants";
+import { JSX, useCallback, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { tv } from 'tailwind-variants';
 
-/**
- * Props for the ButtonWrapper component
- * 
- * @interface ButtonWrapperProps
- */
+import { IEnhancedCta } from '@/.generated';
+import { cn } from '@/utils/cn';
+import { getCSLPAttributes } from '@/utils/type-guards';
+import ModalWrapper from '../ModalWrapper/ModalWrapper';
+import RichTextWrapper from '../RichTextWrapper/RichTextWrapper';
+
 export interface ButtonWrapperProps extends React.HTMLAttributes<HTMLButtonElement> {
     /** Enhanced CTA object from Contentstack */
     cta?: IEnhancedCta;
@@ -33,6 +37,17 @@ export interface ButtonWrapperProps extends React.HTMLAttributes<HTMLButtonEleme
     ariaLabel?: string;
 }
 
+/**
+ * Flexible button/link component that adapts based on provided props.
+ * Supports CMS-driven CTAs with variants, sizes, and accessibility features.
+ * 
+ * @example
+ * // As a link with CMS data
+ * <ButtonWrapper cta={ctaFromCMS} />
+ * 
+ * // As a button with onClick
+ * <ButtonWrapper customLabel="Click me" onClick={handleClick} />
+ */
 export const ButtonWrapper = ({
     cta,
     href,
@@ -42,52 +57,54 @@ export const ButtonWrapper = ({
     className,
     onClick,
     type = 'button',
-    ariaLabel
+    ariaLabel,
 }: ButtonWrapperProps): JSX.Element => {
-    //Early return if no CTA or href
-    if (!cta && !href) return <></>;
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Define default values
+    //Early return if no CTA or href
+    if (!cta && !href && !onClick) return <></>;
+
+    // Default values
     const defaultVariant = 'primary';
     const defaultSize = 'md';
 
-    //Get additional fields from Enhanced CTA
+    // Extract CTA properties
     const opensInNewTab = cta?.opens_in_new_tab || false;
     const ctaVariant = cta?.cta_variant || defaultVariant;
     const ctaSize = cta?.cta_size || defaultSize;
 
-    //Determine if this is a link or button
+    // Determine rendering mode (link vs button)
     const isLink = !!href || !!cta?.link?.href;
     const linkHref = cta?.link?.href || href || '#';
     const linkTitle = cta?.link?.title || customLabel || '';
 
-    //Determine if link is external
+    // Check if link is external
     const isExternal = useMemo(() => {
         if (!isLink) return false;
         return linkHref.startsWith('http') || linkHref.startsWith('https') || linkHref.startsWith('//');
-    }, [isLink, linkHref])
+    }, [isLink, linkHref]);
 
-    //Determine if should open in new tab
+    // Determine new tab behavior
     const shouldOpenInNewTab = opensInNewTab || isExternal;
 
-    //Memoize click handler
+    // Memoized click handler with disabled state check
     const handleClick = useCallback(
         (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
             if (disabled) {
                 e.preventDefault();
                 return;
             }
-            onClick?.(e as React.MouseEvent<HTMLButtonElement>)
+            onClick?.(e as React.MouseEvent<HTMLButtonElement>);
         },
         [disabled, onClick]
-    )
+    );
 
     const base = TAILWIND_VARIANTS({
         variant: ctaVariant,
         size: ctaSize,
         disabled,
         focusRing,
-    })
+    });
 
     // Common props for both button and link
     const commonProps = {
@@ -96,6 +113,36 @@ export const ButtonWrapper = ({
         'aria-label': ariaLabel || (shouldOpenInNewTab ? `${linkTitle} (Opens in a new tab)` : undefined),
         ...getCSLPAttributes(cta?.$?.link),
     };
+
+    // Render as Modal
+    if (cta?.modal_cta) {
+        const { modalTitle, modalContentWrapper } = MODAL_CONTENT_VARIANTS();
+
+        return (
+            <>
+                <button
+                    type={type}
+                    onClick={() => setIsModalOpen(true)}
+                    disabled={disabled}
+                    {...commonProps}
+                    aria-disabled={disabled}
+                    tabIndex={disabled ? -1 : undefined}
+                >
+                    {linkTitle}
+                </button>
+                <ModalWrapper
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    title={cta?.modal_content?.title || ''}
+                >
+                    <div className={modalContentWrapper()}>
+                        <h2 className={modalTitle()} {...getCSLPAttributes(cta.modal_content?.$?.title)}>{cta?.modal_content?.title}</h2>
+                        <RichTextWrapper content={cta.modal_content?.content} cslpAttribute={cta.modal_content?.$?.content} />
+                    </div>
+                </ModalWrapper>
+            </>
+        );
+    }
 
     // Render as Link
     if (isLink) {
@@ -114,17 +161,16 @@ export const ButtonWrapper = ({
 
     // Render as Button
     return (
-        <button
-            type={type}
+        <Link
+            href={linkHref}
+            target={shouldOpenInNewTab ? '_blank' : undefined}
+            rel={shouldOpenInNewTab ? 'noopener noreferrer' : undefined}
             onClick={handleClick}
-            disabled={disabled}
             {...commonProps}
-            aria-disabled={disabled}
-            tabIndex={disabled ? -1 : undefined}
         >
             {linkTitle}
-        </button>
-    )
+        </Link>
+    );
 }
 
 const TAILWIND_VARIANTS = tv({
@@ -198,4 +244,22 @@ const TAILWIND_VARIANTS = tv({
             true: ['focus:ring-2', 'focus:ring-blue-500', 'focus:ring-offset-2']
         },
     }
-})
+});
+
+/**
+ * Tailwind variants for modal content styling.
+ */
+const MODAL_CONTENT_VARIANTS = tv({
+    slots: {
+        modalContentWrapper: [
+            'space-y-4',
+        ],
+        modalTitle: [
+            'text-2xl',
+            'md:text-3xl',
+            'font-bold',
+            'text-gray-900',
+            'mb-4',
+        ],
+    },
+});

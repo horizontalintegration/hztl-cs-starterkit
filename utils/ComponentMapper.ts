@@ -1,8 +1,14 @@
-import { toPascalCase } from './string-utils';
-import { NotFound } from '../components/primitives/NotFound';
+/**
+ * @file ComponentMapper.ts
+ * @description Singleton registry that maps CMS component names (snake_case) to React components.
+ */
+
+import { NotFound } from '@/components/primitives/NotFound';
+import { toPascalCase } from '@/utils/string-utils';
 
 /**
- * Class responsible for registering and retrieving components
+ * Registers and resolves components by name. Names are normalized to PascalCase.
+ * Returns NotFound when a component is missing (used by ComponentRenderer, ReferencePlaceholder).
  */
 export class ComponentMapper {
   private static instance: ComponentMapper;
@@ -18,59 +24,33 @@ export class ComponentMapper {
     return ComponentMapper.instance;
   }
 
-  /**
-   * Register a single component
-   * @param name The component name (will be converted to PascalCase)
-   * @param component The React component
-   */
-  register(name: string, component: any): void {
+  /** Registers a component under PascalCase name */
+  register(name: string, component: React.ComponentType<any>): void {
     this.components[toPascalCase(name)] = component;
   }
 
-  /**
-   * Register multiple components at once
-   * @param components Object mapping component names to component implementations
-   */
+  /** Registers multiple components from a map */
   registerBulk(components: Record<string, React.ComponentType<any>>): void {
     Object.entries(components).forEach(([name, component]) => {
       this.register(name, component);
     });
   }
 
-  /**
-   * Get a component by name
-   * @param name The component name (will be converted to PascalCase)
-   * @param returnNotFound Whether to return the NotFound component if the component is not found
-   * @returns The component, NotFound component, or undefined based on returnNotFound parameter
-   */
+  /** Returns the component or NotFound if not registered */
   getComponent(name: string): React.ComponentType<any> {
     const component = this.components[toPascalCase(name)];
-
-    if (!component) {
-      // Return a wrapped NotFound component that will receive the correct props
-      return this.notFoundComponent;
-    }
-
-    return component;
+    return component ?? this.notFoundComponent;
   }
 
-  /**
-   * Check if a component exists
-   * @param name The component name (will be converted to PascalCase)
-   * @returns True if the component exists
-   */
+  /** Returns true if a component is registered */
   hasComponent(name: string): boolean {
     return !!this.components[toPascalCase(name)];
   }
 
-  /**
-   * Get all registered components
-   * @returns Record of all registered components
-   */
+  /** Returns a copy of all registered components */
   getAllComponents(): Record<string, React.ComponentType<any>> {
     return { ...this.components };
   }
 }
 
-// Create and export a singleton instance
 export const componentMapperInstance = ComponentMapper.getInstance();

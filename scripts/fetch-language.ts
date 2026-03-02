@@ -1,36 +1,47 @@
 /**
- * Language Fetcher Script
- * 
- * Fetches all available languages/locales from Contentstack and generates
- * a TypeScript constants file for use throughout the application.
- * 
- * This script should be run during the build process to ensure the application
- * always has the latest language configuration from Contentstack.
- * 
- * @usage
+ * @file fetch-language.ts
+ * @description CLI script to fetch available languages/locales from Contentstack and generate TypeScript constants.
+ * Queries the Contentstack Management API to retrieve all configured locales and creates a type-safe
+ * constants file for locale configuration throughout the application.
  *
+ * This script should be run during the build process or when locale configuration changes in Contentstack.
+ *
+ * Usage:
+ * npm run fetch-language
+ * or
  * tsx scripts/fetch-language.ts
- * 
- * @output constants/locales.ts - Generated TypeScript file with locale constants
- * 
- * @requires CONTENTSTACK_MANAGEMENT_TOKEN
- * @requires CONTENTSTACK_API_KEY
+ *
+ * Requirements:
+ * - CONTENTSTACK_MANAGEMENT_TOKEN must be set in .env file
+ * - CONTENTSTACK_API_KEY must be set in .env file
+ *
+ * Output:
+ * - Generates constants/locales.ts with:
+ *   - SUPPORTED_LOCALES array
+ *   - DEFAULT_LOCALE constant
+ *   - LANGUAGE_DETAILS with native names and ISO codes
+ *   - TypeScript types for type-safe locale handling
+ *
+ * @see {@link https://www.contentstack.com/docs/developers/apis/content-management-api/}
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
+
 import { fetchLocales, testConnection } from '../lib/contentstack/management-stack';
 import { Locale } from '@contentstack/management/types/stack/locale';
 
 /**
- * Configuration for the script
+ * Script configuration settings.
  */
 const CONFIG = {
+    /** Output file path for generated TypeScript constants */
     outputFile: path.join(process.cwd(), 'constants', 'locales.ts'),
 } as const;
 
 /**
- * Logger utility for consistent output formatting
+ * Logger utility for consistent console output formatting.
+ * Provides semantic logging methods with emoji prefixes.
  */
 const logger = {
     info: (message: string) => console.log(`ℹ️  ${message}`),
@@ -41,37 +52,36 @@ const logger = {
 };
 
 /**
- * Processes raw locale data from Contentstack into structured format
- * 
- * @param languages - Array of locale objects from Contentstack
- * @returns Processed locale configuration
+ * Processes raw locale data from Contentstack into structured format.
+ * Extracts locale codes, determines the default locale, and creates detailed language information.
+ *
+ * @param {Locale[]} languages - Array of locale objects from Contentstack Management API
+ * @returns {Object} Processed locale configuration with locales, default, and details
  */
 function processLocales(languages: Locale[]) {
     logger.debug(`Processing ${languages.length} locales`);
 
-    // Extract locale codes
+    // Extract all locale codes
     const locales = languages.map((lang) => lang.code);
 
-    // Determine default locale (one without fallback or first in list)
-    const defaultLocale = languages.find(
-        (lang) => !lang.fallback_locale || lang.fallback_locale === lang.code
-    )?.code || locales[0];
+    // Determine default locale (locale without fallback or first in list)
+    const defaultLocale =
+        languages.find((lang) => !lang.fallback_locale || lang.fallback_locale === lang.code)?.code ||
+        locales[0];
 
     if (!defaultLocale) {
         throw new Error('Could not determine default locale from stack');
     }
 
-    // Create language details with country code, native name, and ISO code
-    const languageDetails = languages.map(
-        (lang) => {
-            const isoCode = lang.code.split('-')[0];
+    // Create detailed language information with native names and ISO codes
+    const languageDetails = languages
+        .map((lang) => {
+            const isoCode = lang.code.split('-')[0]; // e.g., "en" from "en-us"
             const langCode = lang.code;
 
             // Extract native name from the name field (part before " - ")
             const nativeName = lang.name.split(' - ')[0].trim();
-            const countryName = lang.name.includes(' - ')
-                ? lang.name.split(' - ')[1].trim()
-                : null;
+            const countryName = lang.name.includes(' - ') ? lang.name.split(' - ')[1].trim() : null;
 
             return {
                 countryName,
@@ -79,7 +89,8 @@ function processLocales(languages: Locale[]) {
                 isoCode,
                 langCode,
             };
-        }).sort((a, b) => a.nativeName.localeCompare(b.nativeName));
+        })
+        .sort((a, b) => a.nativeName.localeCompare(b.nativeName)); // Sort alphabetically by native name
 
     logger.debug(`Default locale: ${defaultLocale}`);
 
@@ -91,13 +102,13 @@ function processLocales(languages: Locale[]) {
 }
 
 /**
- * Generates TypeScript file content with locale constants
- * 
- * @param data - Processed locale configuration
- * @returns TypeScript file content as string
+ * Generates TypeScript file content with locale constants and types.
+ * Creates a fully-typed constants file with JSDoc documentation.
+ *
+ * @param {ReturnType<typeof processLocales>} data - Processed locale configuration
+ * @returns {string} Complete TypeScript file content
  */
 function generateTypeScriptContent(data: ReturnType<typeof processLocales>): string {
-
     return `/**
  * Locale Constants
  * 
@@ -140,9 +151,10 @@ export const LANGUAGES_WITHOUT_URL_PREFIX = [DEFAULT_LOCALE as string];
 }
 
 /**
- * Writes the generated content to the output file
- * 
- * @param content - TypeScript file content to write
+ * Writes the generated TypeScript content to the output file.
+ * Creates the output directory if it doesn't exist.
+ *
+ * @param {string} content - TypeScript file content to write
  */
 function writeOutputFile(content: string): void {
     const outputDir = path.dirname(CONFIG.outputFile);
@@ -153,26 +165,33 @@ function writeOutputFile(content: string): void {
         logger.info(`Created directory: ${outputDir}`);
     }
 
-    // Write the generated file
+    // Write the generated TypeScript file
     fs.writeFileSync(CONFIG.outputFile, content, 'utf-8');
 
     logger.success(`Generated: ${CONFIG.outputFile}`);
 }
 
 /**
- * Main execution function
- * Orchestrates the entire language fetching and generation process
+ * Main execution function.
+ * Orchestrates the entire language fetching and generation process:
+ * 1. Tests Contentstack API connection
+ * 2. Fetches locales from stack
+ * 3. Processes locale data
+ * 4. Generates TypeScript file
+ * 5. Writes output file
+ *
+ * @returns {Promise<void>}
  */
 async function main(): Promise<void> {
     logger.info('Starting language fetch from Contentstack...');
 
     try {
-        // Step 1: Test connection
+        // Step 1: Test Contentstack Management API connection
         logger.info('Testing Contentstack Management API connection...');
         await testConnection();
         logger.success('Connection successful');
 
-        // Step 2: Fetch locales
+        // Step 2: Fetch locales from Contentstack stack
         logger.info('Fetching locales from stack...');
         const languages = await fetchLocales();
 
@@ -185,37 +204,38 @@ async function main(): Promise<void> {
             logger.info(`  - ${lang.code} (${lang.name})`);
         });
 
-        // Step 3: Process locale data
+        // Step 3: Process locale data into structured format
         logger.info('Processing locale data...');
         const processedData = processLocales(languages);
 
-        // Step 4: Generate TypeScript content
+        // Step 4: Generate TypeScript file content
         logger.info('Generating TypeScript file...');
         const fileContent = generateTypeScriptContent(processedData);
 
-        // Step 6: Write output file
+        // Step 5: Write output file
         writeOutputFile(fileContent);
 
-        // Summary
+        // Display success summary
         logger.success('Language fetch complete!');
         logger.info(`  Locales: ${processedData.locales.join(', ')}`);
         logger.info(`  Default: ${processedData.defaultLocale}`);
         logger.info(`  Output: ${CONFIG.outputFile}`);
-
     } catch (error) {
         logger.error('Language fetch failed');
 
         if (error instanceof Error) {
             logger.error(error.message);
 
-            // Provide helpful error messages
+            // Provide helpful error messages based on error type
             if (error.message.includes('CONTENTSTACK_MANAGEMENT_TOKEN')) {
                 logger.info('Hint: Make sure your .env file contains CONTENTSTACK_MANAGEMENT_TOKEN');
                 logger.info('      You can generate one at: Settings → Tokens → Management Tokens');
             } else if (error.message.includes('CONTENTSTACK_API_KEY')) {
                 logger.info('Hint: Make sure your .env file contains CONTENTSTACK_API_KEY');
             } else if (error.message.includes('authentication')) {
-                logger.info('Hint: Check that your CONTENTSTACK_MANAGEMENT_TOKEN is valid and has appropriate permissions');
+                logger.info(
+                    'Hint: Check that your CONTENTSTACK_MANAGEMENT_TOKEN is valid and has appropriate permissions'
+                );
             }
         }
 
@@ -224,12 +244,12 @@ async function main(): Promise<void> {
     }
 }
 
-// Execute the script
+// Execute the main function and handle promise resolution
 main()
     .then(() => {
-        process.exit(0);
+        process.exit(0); // Exit successfully
     })
     .catch((error) => {
         logger.error(`Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        process.exit(1);
+        process.exit(1); // Exit with error code
     });

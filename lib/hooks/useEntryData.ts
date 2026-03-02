@@ -1,17 +1,28 @@
+/**
+ * @file useEntryData.ts
+ * @description Hook for fetching multiple Contentstack entries by UID with locale support.
+ * Groups references by content type and fetches in parallel.
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { getEntriesByUids } from '../contentstack/entries';
-import { toPascalCase } from '@/utils/string-utils';
+
 import { ISystemFields } from '@/.generated';
-import { isLanguageSupported } from '../contentstack/language';
 import { DEFAULT_LOCALE } from '@/constants/locales';
+import { getEntriesByUids } from '@/lib/contentstack/entries';
+import { isLanguageSupported } from '@/lib/contentstack/language';
+import { toPascalCase } from '@/utils/string-utils';
 
 interface UseEntryDataParams {
+  /** Array of referenced content items (system fields) */
   references: Array<ISystemFields>;
+  /** Skip fetching (e.g., when data is already available) */
   skip?: boolean;
+  /** Reference field names to include in response */
   referencesToInclude?: string | Array<string>;
 }
 
+/** Single entry with component metadata */
 type EntryDataType<T> = {
   componentName: string;
   componentId: string;
@@ -19,6 +30,8 @@ type EntryDataType<T> = {
 };
 
 type EntriesDataType<T> = Array<EntryDataType<T>>;
+
+/** Hook return type */
 interface UseEntryDataResult<T> {
   data: EntriesDataType<T> | null;
   loading: boolean;
@@ -27,9 +40,14 @@ interface UseEntryDataResult<T> {
 }
 
 /**
- * Custom hook to fetch entry data from Contentstack for multiple references
- * @param params Object containing references array
- * @returns Object with data array, loading state, error, and refetch function
+ * Fetches multiple Contentstack entries by UID, grouped by content type.
+ * Resolves locale from URL params and fetches in parallel per content type.
+ * 
+ * @example
+ * const { data, loading, error, refetch } = useGetEntriesByUids({
+ *   references: page.related_items,
+ *   referencesToInclude: ['author', 'image'],
+ * });
  */
 export const useGetEntriesByUids = <T = any>({
   references = [],
@@ -40,13 +58,10 @@ export const useGetEntriesByUids = <T = any>({
   const [loading, setLoading] = useState<boolean>(!skip);
   const [error, setError] = useState<Error | null>(null);
   const params = useParams();
-
-  // Get language from URL params (client-side)
   const locale = params?.locale as string | undefined;
   const language = locale && isLanguageSupported(locale) ? locale : DEFAULT_LOCALE;
 
-  // Create stable keys for array dependencies to prevent infinite loops
-  // Stringify arrays so we compare by content, not by reference
+  // Stable keys for array deps (compare by content, not reference)
   const referencesKey = JSON.stringify(references);
   const referencesToIncludeKey = Array.isArray(referencesToInclude)
     ? JSON.stringify(referencesToInclude)
@@ -63,7 +78,6 @@ export const useGetEntriesByUids = <T = any>({
     try {
       setLoading(true);
 
-      // Group references by content type
       const referencesByContentType = references.reduce(
         (acc, ref) => {
           if (!ref._content_type_uid || !ref.uid) return acc;
@@ -81,20 +95,17 @@ export const useGetEntriesByUids = <T = any>({
         {} as Record<string, string[]>
       );
 
-      // Create an array of promises for each content type
       const entryPromises = Object.entries(referencesByContentType).map(
         async ([contentTypeUid, uids]) => {
           const response = await getEntriesByUids({
             contentTypeUid,
-            entryUids: uids, // Pass array of UIDs
+            entryUids: uids,
             referencesToInclude,
-            locale: language, // Pass language from URL params
+            locale: language,
           });
 
-          // If no entries found, return empty array
           if (!response) return [];
 
-          // Map each entry to the required format
           return response.entries?.map((entryData) => ({
             componentName: toPascalCase(contentTypeUid),
             componentId: contentTypeUid,
@@ -103,7 +114,6 @@ export const useGetEntriesByUids = <T = any>({
         }
       );
 
-      // Wait for all promises and flatten the results
       const results = await Promise.all(entryPromises);
       entriesData = results.flat() as unknown as EntriesDataType<T>;
 
@@ -120,7 +130,7 @@ export const useGetEntriesByUids = <T = any>({
 
   useEffect(() => {
     fetchData();
-    // Dependencies use stringified versions to prevent infinite loops when array references change
+    // Stringified deps to avoid infinite loops when array refs change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [referencesKey, skip, referencesToIncludeKey, language]);
 

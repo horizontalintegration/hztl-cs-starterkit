@@ -1,8 +1,14 @@
-// Description: Type definitions for the Contentstack API
+/**
+ * @file types.ts
+ * @description Shared type definitions for Contentstack API and component props.
+ */
+
+/** Optional extended props passed through to CMS-rendered components */
 export interface IExtendedProps {
   extendedProps?: Record<string, any>;
 }
 
+/** Params for fetching multiple entries by content type */
 export type GetEntries = {
   contentTypeUid: string;
   referencesToInclude?: string | Array<string>;
@@ -10,6 +16,7 @@ export type GetEntries = {
   locale?: string;
 };
 
+/** Params for fetching a single entry by UID */
 export type GetEntryByUid = {
   contentTypeUid: string;
   referencesToInclude?: string | Array<string>;
@@ -17,10 +24,3 @@ export type GetEntryByUid = {
   siteName?: string;
   locale?: string;
 };
-
-export type HeadingTags = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-
-export enum Devices {
-  TOUCH = 'mobile',
-  NON_TOUCH = 'desktop',
-}

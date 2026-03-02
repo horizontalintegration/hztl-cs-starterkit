@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# --- Run lint ---
+echo "Running lint..."
+npm run lint
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "Linting has failed, fix errors before committing.">&2
+  exit 1
+fi
+# --- Run Build ---
+echo "Running Build..."
+npm run build
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "Build has failed, fix errors before committing.">&2
+  exit 1
+fi
+
+echo "Pre-push checks passed."
+

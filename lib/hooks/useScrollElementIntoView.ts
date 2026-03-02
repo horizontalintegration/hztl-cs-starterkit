@@ -1,30 +1,36 @@
-// Global
+/**
+ * @file useScrollElementIntoView.ts
+ * @description Hook and helpers for scrolling an element into view with sticky header offset and animation support.
+ */
+
 import { useCallback, useEffect, useRef } from 'react';
 
 interface ScrollElementIntoViewOptions {
-  /** Since this is a hook, we can't conditionally call it, so we have the option to disable */
+  /** Disable scroll behavior (use when hook must be called unconditionally) */
   disableScroll?: boolean;
+  /** ID of sticky header element for offset (element must have height in DOM) */
   stickyHeaderId?: string;
+  /** When true, scrolls to element automatically (triggers on false→true) */
   condition?: boolean;
+  /** Wait for this element's animations to finish before scrolling */
   animationElement?: HTMLElement | null;
+  /** ID to set on the scroll anchor element */
   scrollTargetId?: string;
+  /** Delay in ms before scrolling (prefer animationElement when possible) */
   delay?: number;
+  /** Allow scroll on initial load when condition is already true */
   allowScrollOnLoad?: boolean;
 }
+
 /**
- * Scrolls an `element` into view.  This can take into account a sticky header,
- *  as well as wait for an element to finish animating if there's a css animation.
- *  It can scroll based on a condition, and/or this hook returns a function to trigger the scroll manually.
- *  See params for details
- * @param element The element to scroll into view
- * @param stickyHeaderId ID of sticky header element, so we can take that height into consideration.
- *    Make sure this element actually has height in the DOM.
- * @param condition When this condition is true, `element` will be scrolled into view automatically
- * @param animationElement If we need to wait for an element to finish animating, pass that here
- * @param delay Optional delay before scrolling.  Prefer to use `animationElement` instead
- * @param allowScrollOnLoad By default, scrolling won't happen on initial load.  If this is true, allow scrolling
- *    immediately on load
- * @returns a function to manually trigger scrolling (recommend passing `false` as `condition` if using, but not required)
+ * Scrolls an element into view with optional sticky header offset and animation wait.
+ * Accepts element ref, HTMLElement, or ID string. Returns a function to trigger scroll manually.
+ *
+ * @example
+ * const scrollToSection = useScrollElementIntoView(sectionRef, {
+ *   condition: isExpanded,
+ *   stickyHeaderId: 'header',
+ * });
  */
 export function useScrollElementIntoView<TElement extends HTMLElement>(
   element: TElement | string | null,
@@ -46,72 +52,49 @@ export function useScrollElementIntoView<TElement extends HTMLElement>(
     delay,
     allowScrollOnLoad,
   } = options;
-  // Element to scroll to.  This will be positioned absolute with an offset of the header height
-  const scrollElementRef = useRef<HTMLDivElement>(undefined);
 
+  const scrollElementRef = useRef<HTMLDivElement | undefined>(undefined);
+
+  // Create scroll anchor element and container (positioned before target)
   useEffect(() => {
-    if (disableScroll) {
-      return;
-    }
+    if (disableScroll) return;
+
     const domElement = typeof element === 'string' ? document.getElementById(element) : element;
-    // element from a useRef can be null initially, in which case, don't do anything.
-    if (!domElement) {
-      return;
-    }
-    // Element to be scrolled to.  This will be positioned absolute.
-    // The `top` will be set right before scrolling happens.
+    if (!domElement) return;
+
     const scrollElement = document.createElement('div');
     scrollElement.classList.add('absolute', 'left-0');
+    if (scrollTargetId) scrollElement.id = scrollTargetId;
+    scrollElementRef.current = scrollElement as HTMLDivElement;
 
-    if (scrollTargetId) {
-      scrollElement.id = scrollTargetId;
-    }
-    scrollElementRef.current = scrollElement;
-
-    // Need a container that is position relative, so that
-    // we can the absolute positioning is relative to this element.
     const container = document.createElement('div');
     container.classList.add('relative');
-
     container.appendChild(scrollElement);
-
-    // Add the container before our target element so that we scroll to the top of our target element
     domElement.insertAdjacentElement('beforebegin', container);
 
-    return () => {
-      container.remove();
-    };
+    return () => container.remove();
   }, [element, disableScroll, scrollTargetId]);
 
   const scrollToElement = useCallback(() => {
     if (!disableScroll) {
-      smoothScrollToElement(
-        scrollElementRef.current,
-        stickyHeaderId ?? '',
-        animationElement,
-        delay
-      );
+      smoothScrollToElement(scrollElementRef.current, stickyHeaderId ?? '', animationElement, delay);
     }
   }, [animationElement, delay, disableScroll, stickyHeaderId]);
 
-  // Previous condition so we only scroll if it changed from false to true.
-  // If `allowScrollOnLoad` is set, allow scrolling to happen even if `condition` starts out as `true`
-  const prevConditon = useRef(allowScrollOnLoad ? false : condition);
-  // When condition changes from `false` to `true`, scroll to the element.
+  // Only scroll when condition transitions from false to true (unless allowScrollOnLoad)
+  const prevCondition = useRef(allowScrollOnLoad ? false : condition);
   useEffect(() => {
-    if (disableScroll) {
-      return;
-    }
-
-    if (condition && !prevConditon.current) {
+    if (disableScroll) return;
+    if (condition && !prevCondition.current) {
       scrollToElement();
     }
-    prevConditon.current = condition;
+    prevCondition.current = condition;
   }, [condition, disableScroll, scrollToElement]);
 
   return scrollToElement;
 }
 
+/** Smoothly scrolls element into view (block: start, behavior: smooth) */
 const smoothScroll = (element: HTMLElement) => {
   element?.scrollIntoView({
     block: 'start',
@@ -120,6 +103,10 @@ const smoothScroll = (element: HTMLElement) => {
   });
 };
 
+/**
+ * Scrolls to an element with sticky header offset and optional animation wait or delay.
+ * Sets scroll element's top to negative header height so content appears below the header.
+ */
 export const smoothScrollToElement = (
   scrollElement: HTMLElement | undefined,
   stickyHeaderId?: string,
@@ -128,34 +115,24 @@ export const smoothScrollToElement = (
   additionalHeight?: number,
   callback?: () => void
 ) => {
-  if (!scrollElement) {
-    return;
-  }
-  // Get the header height
+  if (!scrollElement) return;
+
   let height = 0;
   const header = stickyHeaderId && document.getElementById(stickyHeaderId);
+  if (header) height = header.getBoundingClientRect().height || 0;
+  if (additionalHeight) height += additionalHeight;
 
-  if (header) {
-    height = header?.getBoundingClientRect().height || 0;
-  }
-
-  if (additionalHeight) {
-    height += additionalHeight;
-  }
-
-  // Set negative top on our scroll element to account for header
   scrollElement.style.top = `-${height}px`;
-  // If we have an animation element, wait for animations to complete before scrolling
+
   if (animationElement) {
     Promise.all(animationElement.getAnimations().map((anim) => anim.finished)).then(() => {
       smoothScroll(scrollElement);
-      if (callback) callback();
+      callback?.();
     });
   } else {
-    // Otherwise just use setTimeout (delay defaults to 0)
     setTimeout(() => {
       smoothScroll(scrollElement);
-      if (callback) callback();
+      callback?.();
     }, delay);
   }
 };

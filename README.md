@@ -174,7 +174,7 @@ Store these tokens securely as they will be used later.
 ### Step 10 — Add Delivery Token as CLI Alias
 
 ```bash
-csdx tokens:add -a CSDT -k YOUR_API_KEY --delivery --token YOUR_DELIVERY_TOKEN -e YOUR_STACK_ENVIRONMENT
+csdx tokens:add -a starterkit-delivery-token -k YOUR_API_KEY --delivery --token YOUR_DELIVERY_TOKEN -e YOUR_STACK_ENVIRONMENT
 ```
 
 ---
@@ -190,23 +190,82 @@ cp .env.example .env
 Example `.env`:
 
 ```env
-CONTENTSTACK_API_KEY=
-CONTENTSTACK_PREVIEW_TOKEN=
-CONTENTSTACK_MANAGEMENT_TOKEN=
-CONTENTSTACK_DELIVERY_TOKEN=
-NEXT_PUBLIC_CONTENTSTACK_REGION=NA
-NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT=development
-NEXT_PUBLIC_CONTENTSTACK_BRANCH=main
-NEXT_PUBLIC_CONTENTSTACK_PREVIEW=true
-NEXT_PUBLIC_ENABLE_LANGUAGE_SWITCHER=true
-CACHE_MAX_AGE=100
-STALE_WHILE_REVALIDATE=600
-ENABLE_SOURCE_MAPS=true
-DISABLE_CORS=false
-CSP_REPORT_ONLY=true
-ENABLE_LYTICS=false
+# ===============================
+# Contentstack (Server)
+# ===============================
 
+# Stack API Key
+CONTENTSTACK_API_KEY=
+
+# Preview token (for draft/preview content)
+CONTENTSTACK_PREVIEW_TOKEN=
+
+# Management token (for scripts/automation)
+CONTENTSTACK_MANAGEMENT_TOKEN=
+
+# Delivery token (for published content)
+CONTENTSTACK_DELIVERY_TOKEN=
+
+# ===============================
+# Contentstack (Public)
+# ===============================
+
+# Region: NA | EU | AZURE_NA | AZURE_EU
+NEXT_PUBLIC_CONTENTSTACK_REGION=NA
+
+# Environment name (e.g. development, staging, production)
+NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT=development
+
+# Branch (if branches are enabled)
+NEXT_PUBLIC_CONTENTSTACK_BRANCH=main
+
+# Enable preview mode
+NEXT_PUBLIC_CONTENTSTACK_PREVIEW=true
+
+# ===============================
+# Caching
+# ===============================
+
+# Cache duration (seconds)
+CACHE_MAX_AGE=100
+
+# Stale-while-revalidate (seconds)
+STALE_WHILE_REVALIDATE=600
+
+# ===============================
+# Debug / Security
+# ===============================
+
+# Enable source maps
+ENABLE_SOURCE_MAPS=true
+
+# Disable CORS (not for production)
+DISABLE_CORS=false
+
+# CSP report-only mode
+CSP_REPORT_ONLY=true
+
+# ===============================
+# Integrations
+# ===============================
+
+# Enable Lytics tracking
+ENABLE_LYTICS=true
+
+# ===============================
+# Redirects
+# ===============================
+
+# Enable CMS managed redirects
+ENABLE_REDIRECTS=true
+
+# ===============================
+# App
+# ===============================
+
+# Site base URL
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
 ```
 
 Never commit `.env` to version control.

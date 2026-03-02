@@ -1,25 +1,20 @@
-// Importing Contentstack SDK for editable tags utilities
+/**
+ * @file preview-helpers.ts
+ * @description Helpers for adding Contentstack Live Preview editable tags to entries.
+ */
+
 import contentstack from '@contentstack/delivery-sdk';
 
-// Import preview mode check from stack module
 import { isPreviewModeEnabled } from './delivery-stack';
 
-/**
- * Helper function to add editable tags for live preview (reduces code duplication)
- * @param entry - The entry to add editable tags to
- * @param contentTypeUid - The content type UID
- */
+/** Adds editable tags to a single entry if Live Preview is enabled */
 export function addEditableTagsIfPreview(entry: any, contentTypeUid: string, locale: string): void {
   if (isPreviewModeEnabled()) {
     contentstack.Utils.addEditableTags(entry, contentTypeUid, true, locale);
   }
 }
 
-/**
- * Helper function to add editable tags to multiple entries
- * @param entries - Array of entries to add editable tags to
- * @param contentTypeUid - The content type UID
- */
+/** Adds editable tags to multiple entries if Live Preview is enabled */
 export function addEditableTagsToEntries(entries: any[], contentTypeUid: string): void {
   if (isPreviewModeEnabled() && entries) {
     entries.forEach((entry) => {
