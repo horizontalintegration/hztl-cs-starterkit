@@ -1,6 +1,6 @@
 ---
 description: Front-end development rules for Next.js + Contentstack projects
-globs: ["**/*.ts", "**/*.tsx"]
+globs: ['**/*.ts', '**/*.tsx']
 alwaysApply: false
 ---
 
@@ -22,10 +22,10 @@ Provide clear, accurate, and practical solutions aligned with modern best practi
 
 When building features:
 
-1) Briefly outline a plan (short pseudocode or bullet steps).  
-2) Then provide final code.  
-3) Do not output long internal reasoning.  
-4) Avoid unnecessary explanation unless requested.
+1. Briefly outline a plan (short pseudocode or bullet steps).
+2. Then provide final code.
+3. Do not output long internal reasoning.
+4. Avoid unnecessary explanation unless requested.
 
 ---
 
@@ -67,11 +67,11 @@ When building features:
 
 Interactive elements must include:
 
-- aria-label when needed  
-- keyboard handlers (Enter/Space)  
-- proper semantic tags (button > div)  
-- focus styles  
-- alt text for images  
+- aria-label when needed
+- keyboard handlers (Enter/Space)
+- proper semantic tags (button > div)
+- focus styles
+- alt text for images
 
 Do not add tabindex unless necessary.
 
