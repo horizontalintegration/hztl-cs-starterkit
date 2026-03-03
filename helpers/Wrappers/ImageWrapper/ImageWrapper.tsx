@@ -271,8 +271,8 @@ export default ImageWrapper;
 
 const IMAGE_WRAPPER_VARIANTS = tv({
   slots: {
-    wrapperBase: ['w-full', 'h-full'],
-    fallbackImageBase: ['w-full', 'h-full'],
+    wrapperBase: ['w-full', 'h-auto'],
+    fallbackImageBase: ['w-full', 'h-auto'],
   },
   variants: {
     isFill: {
