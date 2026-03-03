@@ -64,7 +64,7 @@ export const LanguageSelector = () => {
   );
 
   // Global labels with fallbacks
-  const ariaLabel = globalLabels.country_selector_label || 'Select a language';
+  const ariaLabel = globalLabels.language_selector_label || 'Select a language';
   const selectedLabel = globalLabels.is_selected_label || 'is selected';
 
   /**
