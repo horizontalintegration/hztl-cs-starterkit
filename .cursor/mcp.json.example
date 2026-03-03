@@ -1,0 +1,20 @@
+{
+    "mcpServers": {
+        "contentstack": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@contentstack/mcp"
+            ],
+            "env": {
+                "CONTENTSTACK_API_KEY": "<your_stack_api_key>",
+                "CONTENTSTACK_DELIVERY_TOKEN": "<your_delivery_token>",
+                "CONTENTSTACK_BRAND_KIT_ID": "<your_brand_kit_id>",
+                "CONTENTSTACK_LAUNCH_PROJECT_ID": "<your_launch_project_id>",
+                "CONTENTSTACK_PERSONALIZE_PROJECT_ID": "<your_personalize_project_id>",
+                "LYTICS_ACCESS_TOKEN": "<your_lytics_token>",
+                "GROUPS": "<comma_separated_groups>"
+            }
+        }
+    }
+}
