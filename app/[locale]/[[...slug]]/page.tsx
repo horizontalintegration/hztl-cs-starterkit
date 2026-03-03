@@ -201,8 +201,8 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
 
     const favicons = {
       icon: siteSetting?.favicons?.icon?.url || '/favicon.ico',
-      shortcut: siteSetting?.favicons?.shortcut?.url || '/favicon.ico',
-      apple: siteSetting?.favicons?.apple?.url || '/favicon.ico',
+      shortcut: siteSetting?.favicons?.icon?.url || '/favicon.ico',
+      apple: siteSetting?.favicons?.apple_touch?.url || '/favicon.ico',
     }
     const canonicalUrl =
       resolvedParams?.locale === DEFAULT_LOCALE
