@@ -8,9 +8,9 @@ import { createHash } from 'crypto';
 /** Converts snake_case or kebab-case to PascalCase (e.g. hero_banner → HeroBanner). */
 export const toPascalCase = (str: string): string => {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    .replace(/[_\-\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : ''))
-    .replace(/^[a-z]/, (c) => c.toUpperCase());
+    ?.replace(/([a-z])([A-Z])/g, '$1 $2')
+    ?.replace(/[_\-\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : ''))
+    ?.replace(/^[a-z]/, (c) => c.toUpperCase());
 };
 
 /** Returns SHA-256 hex digest of the input string. */
