@@ -7,3 +7,4 @@ temp
 package-lock.json
 logs
 _backup_*
+.cursor/mcp.json
