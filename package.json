@@ -28,12 +28,12 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@contentstack/delivery-sdk": "^4.11.0",
     "@contentstack/json-rte-serializer": "^3.0.3",
+    "@contentstack/delivery-sdk": "^4.11.0",
     "@contentstack/live-preview-utils": "^4.2.1",
+    "@timbenniks/contentstack-endpoints": "^2.1.0",
     "@contentstack/management": "^1.27.3",
     "@contentstack/utils": "^1.4.4",
-    "@timbenniks/contentstack-endpoints": "^2.1.0",
     "autoprefixer": "^10.4.19",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
