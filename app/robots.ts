@@ -8,7 +8,6 @@
 import { MetadataRoute } from 'next';
 
 import { getSiteSettings } from '@/lib/contentstack/entries';
-import { createStack } from '@/lib/contentstack/delivery-stack';
 
 /**
  * Type definition for a robot rule entry.
@@ -52,8 +51,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     };
 
     try {
-        const stack = createStack();
-        const siteSettings = await getSiteSettings('site_settings', stack);
+        const siteSettings = await getSiteSettings('site_settings');
 
         // Fallback to defaults if no CMS settings found
         if (!siteSettings || !siteSettings.robots_file_setting) {
