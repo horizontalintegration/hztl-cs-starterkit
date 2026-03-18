@@ -6,7 +6,7 @@
 
 import ContentstackLivePreview, { IStackSdk } from '@contentstack/live-preview-utils';
 
-import { stack, getEndpoints, isPreviewModeEnabled } from './delivery-stack';
+import { createStack, getEndpoints, isPreviewModeEnabled } from './delivery-stack';
 
 /**
  * Initializes Contentstack Live Preview SDK.
@@ -19,6 +19,7 @@ import { stack, getEndpoints, isPreviewModeEnabled } from './delivery-stack';
  * - Automatic cleanup on production builds
  */
 export function initLivePreview() {
+  const stack = createStack();
   const endpoints = getEndpoints();
 
   ContentstackLivePreview.init({

@@ -1,5 +1,5 @@
 /**
- * @file ContentstackLivePreview.tsx
+ * @file LivePreview.tsx
  * @description Wrapper component that initializes Contentstack Live Preview functionality.
  * Enables real-time content editing and preview within the CMS interface.
  * Only activates when NEXT_PUBLIC_CONTENTSTACK_PREVIEW environment variable is set to 'true'.
@@ -12,9 +12,9 @@ import React, { useEffect } from 'react';
 import { initLivePreview } from '@/lib/contentstack/live-preview';
 
 /**
- * Props interface for ContentstackLivePreview.
+ * Props interface for LivePreview.
  */
-interface ContentstackLivePreviewProps {
+interface LivePreviewProps {
   /** Child components to render */
   children?: React.ReactNode;
 }
@@ -34,7 +34,7 @@ interface ContentstackLivePreviewProps {
  * Environment Variables:
  * - `NEXT_PUBLIC_CONTENTSTACK_PREVIEW`: Set to 'true' to enable live preview
  * 
- * @param {ContentstackLivePreviewProps} props - Component props with children
+ * @param {LivePreviewProps} props - Component props with children
  * @returns {JSX.Element} Rendered children with live preview initialized
  * 
  * @example
@@ -45,7 +45,7 @@ interface ContentstackLivePreviewProps {
  * </ContentstackLivePreview>
  * ```
  */
-export function ContentstackLivePreview({ children }: ContentstackLivePreviewProps) {
+export function LivePreview({ children }: LivePreviewProps) {
   // Check if live preview is enabled via environment variable
   const livePreviewEnabled = process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW === 'true';
 
