@@ -8,7 +8,6 @@
 import { MetadataRoute } from 'next';
 
 import { getSiteSettings } from '@/lib/contentstack/entries';
-import { createStack } from '@/lib/contentstack/delivery-stack';
 
 /**
  * Type definition for a robot rule entry.
