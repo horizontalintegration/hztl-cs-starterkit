@@ -65,6 +65,6 @@ try {
   execSync(command, { stdio: 'inherit' }); // Inherit stdio to show CLI output
   console.log('✅ Export complete!');
 } catch (error) {
-  console.error('❌ Export failed');
+  console.error('❌ Export failed -', error);
   process.exit(1);
 }

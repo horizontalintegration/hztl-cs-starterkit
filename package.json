@@ -22,7 +22,7 @@
     "dev": "cross-env NODE_ENV=development npm-run-all --serial fetch-languages tsgen --parallel gen-config:watch next:dev",
     "build": "cross-env NODE_ENV=production npm-run-all --serial fetch-languages tsgen gen-config next:build",
     "start": "cross-env-shell NODE_ENV=production npm-run-all --serial fetch-languages tsgen gen-config next:build next:start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "export-content": "tsx scripts/export-content.ts",
     "import-content": "tsx scripts/import-content.ts",
     "prepare": "husky"
