@@ -6,7 +6,7 @@ import { LanguageService } from '@/lib/services/language-service';
 const PUBLIC_FILE = /\.(.*)$/;
 const LANGUAGE_PREFERENCE_COOKIE = 'language-preference';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // List of paths to skip - explicit checks for safety
