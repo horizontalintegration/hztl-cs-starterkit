@@ -27,6 +27,11 @@ export const Scripts = () => {
 
   return (
     <>
+      <Script rel="preconnect" src="cdn.contentstack.io" />
+      <Script rel="preconnect" src="images.contentstack.io" />
+      <Script rel="dns-fetch" src="api.contentstack.io" />
+      <Script rel="dns-prefetch" src="https://contentstack.com" />
+      <Script rel="dns-prefetch" src="https://contentstack.io" />
       {allowLytics && <Script id="lytics-script" dangerouslySetInnerHTML={{ __html: lyticsScript }} />}
     </>
   );
