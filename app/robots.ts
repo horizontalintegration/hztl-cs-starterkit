@@ -51,7 +51,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     };
 
     try {
-        const siteSettings = await getSiteSettings();
+        const siteSettings = await getSiteSettings('site_settings');
 
         // Fallback to defaults if no CMS settings found
         if (!siteSettings || !siteSettings.robots_file_setting) {

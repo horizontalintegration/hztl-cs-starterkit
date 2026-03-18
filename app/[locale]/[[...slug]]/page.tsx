@@ -13,12 +13,13 @@ import { Locales } from '@contentstack/management/types/stack/contentType/entry'
 
 import { extractAndSetLanguage, isLanguageSupported } from '@/lib/contentstack/language';
 import { getPage, getSiteSettings } from '@/lib/contentstack/entries';
-import { stack } from '@/lib/contentstack/delivery-stack';
 import { getEntryLocales } from '@/lib/contentstack/management-stack';
 import { fetchPageData, PageData } from '@/lib/contentstack/page-data';
 import { SharedPageLayout } from '@/app/SharedPageLayout';
 import { IPage } from '@/.generated';
 import { DEFAULT_LOCALE } from '@/constants/locales';
+import { Stack } from '@contentstack/delivery-sdk';
+import { createStack } from '@/lib/contentstack/delivery-stack';
 
 // Force dynamic rendering for all pages (Server-Side Rendering)
 export const dynamic = 'force-dynamic';
@@ -35,6 +36,7 @@ interface SlugPageProps {
     live_preview: string;
     entry_uid: string;
     content_type_uid: string;
+    preview_timestamp: string;
   }>;
 }
 
@@ -44,15 +46,17 @@ interface SlugPageProps {
  *
  * @param {string} urlPath - The URL path to fetch
  * @param {string} pageContentTypeUID - The content type UID (defaults to 'page')
+ * @param {Stack} stackInstance - The Contentstack stack instance to use
  * @returns {Promise<PageData>} Page data including page, header, and footer
  * @throws {Error} Triggers notFound() if data cannot be fetched
  */
 const fetchRouteData = async (
   urlPath: string,
-  pageContentTypeUID: string = 'page'
+  pageContentTypeUID: string = 'page',
+  stackInstance?: Stack
 ): Promise<PageData> => {
   try {
-    const pageData = await fetchPageData(urlPath, pageContentTypeUID);
+    const pageData = await fetchPageData(urlPath, pageContentTypeUID, stackInstance);
     return pageData;
   } catch (error) {
     console.error('Error fetching page data:', error);
@@ -77,7 +81,9 @@ export default async function SlugPage(props: SlugPageProps) {
   await headers();
   const { params, searchParams } = props;
 
-  const { live_preview, entry_uid, content_type_uid } = await searchParams;
+  const { live_preview, entry_uid, content_type_uid, preview_timestamp } = await searchParams;
+
+  const stack = createStack();
 
   // Enable live preview mode if query params are present
   if (live_preview) {
@@ -85,6 +91,7 @@ export default async function SlugPage(props: SlugPageProps) {
       live_preview,
       contentTypeUid: content_type_uid || '',
       entryUid: entry_uid || '',
+      preview_timestamp: preview_timestamp || '',
     });
   }
 
@@ -96,7 +103,7 @@ export default async function SlugPage(props: SlugPageProps) {
   const urlPath = `/${slugArray?.join('/')}`;
 
   // Fetch page data from CMS
-  const pageData = await fetchRouteData(urlPath);
+  const pageData = await fetchRouteData(urlPath, 'page', stack);
   const { page, header, footer } = pageData;
 
   // Trigger 404 if page content is not found
@@ -138,7 +145,7 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
   try {
     let page = await getPage<IPage>(urlPath, 'page', resolvedParams?.locale);
     let isNotFoundPage = false;
-    const siteSetting = await getSiteSettings();
+    const siteSetting = await getSiteSettings('site_settings');
     let languageUrls: Record<string, string> | undefined;
     let localesList: Locales | undefined;
 
