@@ -143,15 +143,16 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
   }
 
   try {
-    let page = await getPage<IPage>(urlPath, 'page', resolvedParams?.locale);
+    const stack = createStack();
+    let page = await getPage<IPage>(urlPath, 'page', resolvedParams?.locale, stack);
     let isNotFoundPage = false;
-    const siteSetting = await getSiteSettings('site_settings');
+    const siteSetting = await getSiteSettings('site_settings', stack);
     let languageUrls: Record<string, string> | undefined;
     let localesList: Locales | undefined;
 
     // If page not found, attempt to fetch 404 page metadata
     if (!page) {
-      const notFoundPage = await getPage<IPage>('/404', 'page', resolvedParams?.locale);
+      const notFoundPage = await getPage<IPage>('/404', 'page', resolvedParams?.locale, stack);
       isNotFoundPage = true;
 
       if (!notFoundPage) {
