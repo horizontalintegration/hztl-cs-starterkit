@@ -9,7 +9,7 @@ import { tv } from 'tailwind-variants';
 
 import { IPage } from '@/.generated';
 import { ComponentRenderer } from '@/components/primitives/ComponentRenderer';
-import { ContentstackLivePreview } from '@/components/primitives/ContentstackLivePreview';
+import { LivePreview } from '@/components/primitives/LivePreview';
 
 /**
  * Props interface for MainLayout component.
@@ -67,7 +67,7 @@ export const MainLayout = ({
                 {pageTypeMapping[pageContentTypeUID as keyof typeof pageTypeMapping]()}
 
                 {/* Contentstack Live Preview component */}
-                <ContentstackLivePreview />
+                <LivePreview />
             </div>
         </>
     );

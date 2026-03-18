@@ -11,6 +11,7 @@ import { IFooter, IHeader, IPage } from '@/.generated';
 import { fetchPageData } from '@/lib/contentstack/page-data';
 import { SharedPageLayout } from './SharedPageLayout';
 import { tv } from 'tailwind-variants';
+import { createStack } from '@/lib/contentstack/delivery-stack';
 
 /**
  * Custom 404 Not Found page component.
@@ -32,7 +33,8 @@ export default async function NotFound() {
 
     // Attempt to fetch custom 404 page from CMS
     try {
-        const pageData = await fetchPageData('/404', 'page');
+        const stack = createStack();
+        const pageData = await fetchPageData('/404', 'page', stack);
         page = pageData.page;
         header = pageData.header;
         footer = pageData.footer;

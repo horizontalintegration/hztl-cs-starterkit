@@ -43,10 +43,6 @@ export function createStack() {
     },
   });
 }
-
-/** Default stack instance for backward compatibility */
-export const stack = createStack();
-
 /** Returns region-specific Contentstack endpoints */
 export function getEndpoints() {
   return endpoints;
