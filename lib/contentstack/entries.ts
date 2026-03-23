@@ -4,7 +4,7 @@
  * Provides typed, cached functions for fetching pages, headers, footers, and custom content types.
  */
 
-import contentstack, { QueryOperation } from '@contentstack/delivery-sdk';
+import contentstack, { Query, QueryOperation } from '@contentstack/delivery-sdk';
 import { cache } from 'react';
 
 import { IFooter, IHeader, ISiteSettings } from '@/.generated';
@@ -20,13 +20,10 @@ import { getSiteIdentifier, getSiteTaxonomyField } from './site';
  * No-op when NEXT_PUBLIC_SITE_IDENTIFIER is not configured (single-site mode).
  * Uses a generic to preserve the caller's query type so chained calls (e.g. .find<T>()) remain typed.
  */
-function applySiteFilter<Q>(query: Q): Q {
+function applySiteFilter<Q extends Query>(query: Q): Q {
   const siteId = getSiteIdentifier();
   if (!siteId) return query;
-  // The Contentstack SDK Query type doesn't expose .where() in its public typings,
-  // so we cast internally while preserving the outer type for downstream callers.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (query as any).where(getSiteTaxonomyField(), QueryOperation.EQUALS, siteId) as Q;
+  return (query).where(getSiteTaxonomyField(), QueryOperation.EQUALS, siteId) as Q;
 }
 
 /**

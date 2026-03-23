@@ -1,6 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+/* Theme token mappings (--theme-* → Tailwind tokens) */
+@import './themes/mappings.css';
+
+/* Theme variable definitions (one file per theme) */
+@import './themes/default.css';
+@import './themes/brand-a.css';
+@import './themes/brand-b.css';
+
+/* ---------------------------------------------------------------------------
+   Base layout
+   --------------------------------------------------------------------------- */
 .prod-mode {
   display: flex;
   height: 100%;
