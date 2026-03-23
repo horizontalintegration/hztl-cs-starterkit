@@ -18,6 +18,8 @@ interface ManagementClientConfig {
     apiKey: string;
     /** Optional API host URL */
     host?: string;
+    /** Branch UID or name for entry/asset operations when stack has branches */
+    branch_uid?: string;
 }
 
 /** Validates required environment variables */
@@ -36,7 +38,9 @@ function validateEnvironment(): void {
 /**
  * Creates Contentstack Management SDK client for build-time operations.
  * Used for fetching locales, schemas, and stack configuration.
- * 
+ * When the stack uses branches, pass branch_uid so entry/asset operations
+ * (e.g. entry locales) target the correct branch and avoid 422 errors.
+ *
  * @example
  * const stack = await createManagementClient();
  * const locales = await stack.locale().query().find();
@@ -44,9 +48,14 @@ function validateEnvironment(): void {
 export async function createManagementClient() {
     validateEnvironment();
 
+    const branch =
+        process.env.NEXT_PUBLIC_CONTENTSTACK_BRANCH ||
+        'main';
+
     const config: ManagementClientConfig = {
         authtoken: process.env.CONTENTSTACK_MANAGEMENT_TOKEN!,
         apiKey: process.env.CONTENTSTACK_API_KEY!,
+        branch_uid: branch,
     };
 
     try {
@@ -54,6 +63,7 @@ export async function createManagementClient() {
         const stack = client.stack({
             api_key: config.apiKey,
             management_token: config.authtoken,
+            branch_uid: config.branch_uid,
         });
 
         return stack;

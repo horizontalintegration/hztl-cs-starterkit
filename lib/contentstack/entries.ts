@@ -4,7 +4,7 @@
  * Provides typed, cached functions for fetching pages, headers, footers, and custom content types.
  */
 
-import contentstack, { QueryOperation, Stack } from '@contentstack/delivery-sdk';
+import contentstack, { Query, QueryOperation, Stack } from '@contentstack/delivery-sdk';
 import { cache } from 'react';
 
 import { IFooter, IHeader, ISiteSettings } from '@/.generated';
@@ -13,10 +13,23 @@ import { GetEntries, GetEntryByUid } from '@/lib/types';
 import { createStack } from './delivery-stack';
 import { getCurrentLanguage } from './language';
 import { addEditableTagsIfPreview, addEditableTagsToEntries } from './preview-helpers';
+import { getSiteIdentifier, getSiteTaxonomyField } from './site';
+
+/**
+ * Applies taxonomy-based site filter to a Contentstack query when multisite is enabled.
+ * No-op when NEXT_PUBLIC_SITE_IDENTIFIER is not configured (single-site mode).
+ * Uses a generic to preserve the caller's query type so chained calls (e.g. .find<T>()) remain typed.
+ */
+function applySiteFilter<Q extends Query>(query: Q): Q {
+  const siteId = getSiteIdentifier();
+  if (!siteId) return query;
+  return (query).where(getSiteTaxonomyField(), QueryOperation.EQUALS, siteId) as Q;
+}
 
 /**
  * Fetches a page entry by URL with locale support.
  * Includes all referenced content up to 2 levels deep.
+ * In multisite mode, results are scoped to the active site via taxonomy filter.
  */
 export const getPage = cache(async <T>(url: string, pageType: string, locale: string, stackInstance?: Stack) => {
   if (!url || !pageType || !locale) return undefined;
@@ -24,13 +37,16 @@ export const getPage = cache(async <T>(url: string, pageType: string, locale: st
   const stack = stackInstance || createStack();
 
   try {
-    const query = stack
-      .contentType(pageType)
-      .entry()
-      .locale(locale)
-      .query()
-      .addParams({ include_all: true, include_all_depth: 2, include_dimension: true })
-      .where('url', QueryOperation.EQUALS, url.toLowerCase());
+    const query = applySiteFilter(
+      stack
+        .contentType(pageType)
+        .entry()
+        .locale(locale)
+        .includeFallback()
+        .query()
+        .addParams({ include_all: true, include_all_depth: 2, include_dimension: true })
+        .where('url', QueryOperation.EQUALS, url.toLowerCase())
+    );
 
     const result = await query.find<T & contentstack.Utils.EntryModel>();
 
@@ -54,13 +70,15 @@ export const getHeader = cache(async (locale: string, stackInstance?: Stack) => 
   const stack = stackInstance || createStack();
 
   try {
-    const result = await stack
-      .contentType('header')
-      .entry()
-      .locale(locale)
-      .query()
-      .addParams({ include_dimension: true })
-      .find<IHeader>();
+    const result = await applySiteFilter(
+      stack
+        .contentType('header')
+        .entry()
+        .locale(locale)
+        .includeFallback()
+        .query()
+        .addParams({ include_dimension: true })
+    ).find<IHeader>();
 
     if (result.entries && result.entries.length > 0) {
       const entry = result.entries[0];
@@ -82,13 +100,15 @@ export const getFooter = cache(async (locale: string, stackInstance?: Stack) => 
   const stack = stackInstance || createStack();
 
   try {
-    const result = await stack
-      .contentType('footer')
-      .entry()
-      .locale(locale)
-      .query()
-      .addParams({ include_dimension: true })
-      .find<IFooter>();
+    const result = await applySiteFilter(
+      stack
+        .contentType('footer')
+        .entry()
+        .locale(locale)
+        .includeFallback()
+        .query()
+        .addParams({ include_dimension: true })
+    ).find<IFooter>();
 
     if (result.entries && result.entries.length > 0) {
       const entry = result.entries[0];
@@ -123,11 +143,12 @@ export const getEntries = cache(async <T>({
 
     const localeToUse = locale || getCurrentLanguage();
 
-    const entries = await entryQuery
-      .locale(localeToUse)
-      .includeFallback()
-      .query()
-      .find<T & contentstack.Utils.EntryModel>();
+    const entries = await applySiteFilter(
+      entryQuery
+        .locale(localeToUse)
+        .includeFallback()
+        .query()
+    ).find<T & contentstack.Utils.EntryModel>();
 
     if (entries.entries) {
       addEditableTagsToEntries(entries.entries, contentTypeUid);
@@ -152,13 +173,15 @@ export const getAllSlugs = cache(async <T>({
     const stack = stackInstance || createStack();
 
     const localeToUse = locale || getCurrentLanguage();
-    const slugs = await stack
-      .contentType(contentTypeUid)
-      .entry()
-      .locale(localeToUse)
-      .only('url')
-      .query()
-      .find<T & contentstack.Utils.EntryModel>();
+    const slugs = await applySiteFilter(
+      stack
+        .contentType(contentTypeUid)
+        .entry()
+        .locale(localeToUse)
+        .includeFallback()
+        .only('url')
+        .query()
+    ).find<T & contentstack.Utils.EntryModel>();
 
     return slugs;
   } catch (err) {
@@ -174,12 +197,13 @@ export const getSiteSettings = cache(async (contentTypeUid: string = 'site_setti
   try {
     const stack = stackInstance || createStack();
 
-    const siteSettings = await stack
-      .contentType(contentTypeUid)
-      .entry()
-      .locale(DEFAULT_LOCALE)
-      .query()
-      .find<ISiteSettings & contentstack.Utils.EntryModel>();
+    const siteSettings = await applySiteFilter(
+      stack
+        .contentType(contentTypeUid)
+        .entry()
+        .locale(DEFAULT_LOCALE)
+        .query()
+    ).find<ISiteSettings & contentstack.Utils.EntryModel>();
 
     if (siteSettings.entries && siteSettings.entries.length > 0) {
       return siteSettings.entries[0];
@@ -248,7 +272,9 @@ export const getEntriesByUids = cache(async <T>({
     const localeToUse = locale || getCurrentLanguage();
     let entryQuery = entry.locale(localeToUse).query();
 
-    entryQuery = entryQuery.where('uid', QueryOperation.INCLUDES, entryUids);
+    entryQuery = applySiteFilter(
+      entryQuery.where('uid', QueryOperation.INCLUDES, entryUids)
+    );
 
     const response = await entryQuery.find<T & contentstack.Utils.EntryModel>();
 

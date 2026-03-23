@@ -1,0 +1,14 @@
+/**
+ * Brand A theme: teal primary + amber accent.
+ */
+@layer base {
+  [data-theme='brand-a'] {
+    --theme-primary: #0f766e;
+    --theme-primary-foreground: #ffffff;
+    --theme-accent: #f59e0b;
+    --theme-accent-foreground: #1a1a1a;
+    --theme-muted: #ccfbf1;
+    --theme-muted-foreground: #0f766e;
+    --theme-font-heading: ui-sans-serif, system-ui, sans-serif;
+  }
+}
