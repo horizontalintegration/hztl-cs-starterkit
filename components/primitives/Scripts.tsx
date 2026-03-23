@@ -27,11 +27,11 @@ export const Scripts = () => {
 
   return (
     <>
-      <Script rel="preconnect" src="cdn.contentstack.io" />
-      <Script rel="preconnect" src="images.contentstack.io" />
-      <Script rel="dns-fetch" src="api.contentstack.io" />
-      <Script rel="dns-prefetch" src="https://contentstack.com" />
-      <Script rel="dns-prefetch" src="https://contentstack.io" />
+      <link rel="preconnect" href="https://cdn.contentstack.io" />
+      <link rel="preconnect" href="https://images.contentstack.io" />
+      <link rel="dns-prefetch" href="https://api.contentstack.io" />
+      <link rel="dns-prefetch" href="https://contentstack.com" />
+      <link rel="dns-prefetch" href="https://contentstack.io" />
       {allowLytics && <Script id="lytics-script" dangerouslySetInnerHTML={{ __html: lyticsScript }} />}
     </>
   );
