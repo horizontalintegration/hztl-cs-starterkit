@@ -4,13 +4,13 @@
  * Provides typed, cached functions for fetching pages, headers, footers, and custom content types.
  */
 
-import contentstack, { Query, QueryOperation } from '@contentstack/delivery-sdk';
+import contentstack, { Query, QueryOperation, Stack } from '@contentstack/delivery-sdk';
 import { cache } from 'react';
 
 import { IFooter, IHeader, ISiteSettings } from '@/.generated';
 import { DEFAULT_LOCALE } from '../../constants/locales';
 import { GetEntries, GetEntryByUid } from '@/lib/types';
-import { stack } from './delivery-stack';
+import { createStack } from './delivery-stack';
 import { getCurrentLanguage } from './language';
 import { addEditableTagsIfPreview, addEditableTagsToEntries } from './preview-helpers';
 import { getSiteIdentifier, getSiteTaxonomyField } from './site';
@@ -31,8 +31,10 @@ function applySiteFilter<Q extends Query>(query: Q): Q {
  * Includes all referenced content up to 2 levels deep.
  * In multisite mode, results are scoped to the active site via taxonomy filter.
  */
-export const getPage = cache(async <T>(url: string, pageType: string, locale: string) => {
+export const getPage = cache(async <T>(url: string, pageType: string, locale: string, stackInstance?: Stack) => {
   if (!url || !pageType || !locale) return undefined;
+
+  const stack = stackInstance || createStack();
 
   try {
     const query = applySiteFilter(
@@ -62,8 +64,10 @@ export const getPage = cache(async <T>(url: string, pageType: string, locale: st
 });
 
 /** Fetches header entry for specified locale */
-export const getHeader = cache(async (locale: string) => {
+export const getHeader = cache(async (locale: string, stackInstance?: Stack) => {
   if (!locale) return undefined;
+
+  const stack = stackInstance || createStack();
 
   try {
     const result = await applySiteFilter(
@@ -90,8 +94,10 @@ export const getHeader = cache(async (locale: string) => {
 });
 
 /** Fetches footer entry for specified locale */
-export const getFooter = cache(async (locale: string) => {
+export const getFooter = cache(async (locale: string, stackInstance?: Stack) => {
   if (!locale) return undefined;
+
+  const stack = stackInstance || createStack();
 
   try {
     const result = await applySiteFilter(
@@ -122,10 +128,13 @@ export const getEntries = cache(async <T>({
   contentTypeUid,
   referencesToInclude = '',
   locale,
-}: Pick<GetEntries, 'contentTypeUid' | 'referencesToInclude' | 'locale'>) => {
+  stackInstance,
+}: Pick<GetEntries, 'contentTypeUid' | 'referencesToInclude' | 'locale' | 'stackInstance'>) => {
   if (!contentTypeUid) return undefined;
 
   try {
+    const stack = stackInstance || createStack();
+
     const entryQuery = stack.contentType(contentTypeUid).entry();
 
     if (referencesToInclude) {
@@ -156,10 +165,13 @@ export const getEntries = cache(async <T>({
 export const getAllSlugs = cache(async <T>({
   contentTypeUid = 'page',
   locale,
-}: Pick<GetEntries, 'contentTypeUid'> & { locale?: string }) => {
+  stackInstance,
+}: Pick<GetEntries, 'contentTypeUid' | 'stackInstance' | 'locale'>) => {
   if (!contentTypeUid) return undefined;
 
   try {
+    const stack = stackInstance || createStack();
+
     const localeToUse = locale || getCurrentLanguage();
     const slugs = await applySiteFilter(
       stack
@@ -179,10 +191,12 @@ export const getAllSlugs = cache(async <T>({
 });
 
 /** Fetches site settings (global configuration) */
-export const getSiteSettings = cache(async (contentTypeUid: string = 'site_settings'): Promise<(ISiteSettings & contentstack.Utils.EntryModel) | undefined> => {
+export const getSiteSettings = cache(async (contentTypeUid: string = 'site_settings', stackInstance?: Stack): Promise<(ISiteSettings & contentstack.Utils.EntryModel) | undefined> => {
   if (!contentTypeUid) return undefined;
 
   try {
+    const stack = stackInstance || createStack();
+
     const siteSettings = await applySiteFilter(
       stack
         .contentType(contentTypeUid)
@@ -204,14 +218,17 @@ export const getSiteSettings = cache(async (contentTypeUid: string = 'site_setti
 
 /** Fetches a single entry by its unique ID */
 export const getEntryByUid = cache(async ({
+  stackInstance,
   contentTypeUid,
   entryUid,
   referencesToInclude = '',
   locale,
-}: Pick<GetEntryByUid, 'contentTypeUid' | 'entryUid' | 'referencesToInclude' | 'locale'>) => {
+}: Pick<GetEntryByUid, 'contentTypeUid' | 'entryUid' | 'referencesToInclude' | 'locale' | 'stackInstance'>) => {
   if (!entryUid || !contentTypeUid) return undefined;
 
   try {
+    const stack = stackInstance || createStack();
+
     const entryQuery = stack.contentType(contentTypeUid).entry(entryUid);
 
     if (referencesToInclude) {
@@ -237,13 +254,15 @@ export const getEntriesByUids = cache(async <T>({
   entryUids,
   referencesToInclude,
   locale,
+  stackInstance,
 }: {
   entryUids?: string | Array<string>;
-  locale?: string;
-} & Pick<GetEntryByUid, 'contentTypeUid' | 'referencesToInclude'>) => {
+} & Pick<GetEntryByUid, 'contentTypeUid' | 'referencesToInclude' | 'stackInstance' | 'locale'>) => {
   if (!entryUids || !contentTypeUid) return undefined;
 
   try {
+    const stack = stackInstance || createStack();
+
     const entry = stack.contentType(contentTypeUid).entry();
 
     if (referencesToInclude) {

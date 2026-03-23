@@ -7,6 +7,7 @@ import { IHeader as HeaderProps, IFooter as FooterProps, IPage } from '@/.genera
 import { DEFAULT_LOCALE } from '@/constants/locales';
 import { getPage, getHeader, getFooter } from '@/lib/contentstack/entries';
 import { getCurrentLanguage } from './language';
+import { Stack } from '@contentstack/delivery-sdk';
 
 /** Type mapping for different page content types */
 type PageTypeMap = {
@@ -33,15 +34,16 @@ export interface PageData {
  */
 export async function fetchPageData(
   urlPath: string,
-  pageContentTypeUID: string = 'page'
+  pageContentTypeUID: string = 'page',
+  stackInstance?: Stack
 ): Promise<PageData> {
   const pageType = pageContentTypeUID as keyof PageTypeMap;
   const currentLanguage = getCurrentLanguage();
 
   const [page, header, footer] = await Promise.all([
-    getPage<PageTypeMap[typeof pageType]>(urlPath, pageContentTypeUID, currentLanguage),
-    getHeader(currentLanguage),
-    getFooter(currentLanguage),
+    getPage<PageTypeMap[typeof pageType]>(urlPath, pageContentTypeUID, currentLanguage, stackInstance),
+    getHeader(currentLanguage, stackInstance),
+    getFooter(currentLanguage, stackInstance),
   ]);
 
   // Fallback: if page not found and not already on default locale, retry with default.

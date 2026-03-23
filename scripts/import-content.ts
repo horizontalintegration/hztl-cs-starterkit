@@ -73,6 +73,6 @@ try {
     execSync(command, { stdio: 'inherit' });
     console.log('✅ Import complete!');
 } catch (error) {
-    console.error('❌ Import failed');
+    console.error('❌ Import failed -', error);
     process.exit(1);
 }

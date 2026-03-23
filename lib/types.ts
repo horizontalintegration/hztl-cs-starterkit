@@ -3,6 +3,8 @@
  * @description Shared type definitions for Contentstack API and component props.
  */
 
+import { Stack } from "@contentstack/delivery-sdk";
+
 /** Optional extended props passed through to CMS-rendered components */
 export interface IExtendedProps {
   extendedProps?: Record<string, any>;
@@ -14,6 +16,7 @@ export type GetEntries = {
   referencesToInclude?: string | Array<string>;
   siteName?: string;
   locale?: string;
+  stackInstance?: Stack;
 };
 
 /** Params for fetching a single entry by UID */
@@ -23,4 +26,5 @@ export type GetEntryByUid = {
   entryUid: string;
   siteName?: string;
   locale?: string;
+  stackInstance?: Stack;
 };
