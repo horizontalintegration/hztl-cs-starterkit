@@ -70,35 +70,27 @@ export const Container = ({
   const hasBackgroundImage = !!backgroundImage?.image?.url;
 
   // Apply Tailwind variants based on props
-  const { base, wrapper, image } = CONTAINER_VARIANTS({
+  const { base, wrapper } = CONTAINER_VARIANTS({
     inlinePadding,
     blockPadding,
     fullBleed,
-    hasBackgroundImage: hasBackgroundImage
+    hasBackgroundImage: hasBackgroundImage,
   });
 
   return (
-    <Tag
-      className={cn(base(), className)}
-      data-component={componentName}
-      id={id}
-    >
+    <Tag className={cn(base(), className)} data-component={componentName} id={id}>
       {hasBackgroundImage && (
         <Image
-          className={image()}
           src={backgroundImage.image?.url || ''}
           alt={backgroundImage.image?.title || 'Background Image'}
           fill={true}
           objectFit={backgroundImage.image_fit_options || 'cover'}
           objectPosition={backgroundImage.image_position_options || 'center'}
           fetchPriority="high"
-          loading="lazy" />
+          loading="lazy"
+        />
       )}
-      <div
-        className={wrapper()}
-      >
-        {children}
-      </div>
+      <div className={wrapper()}>{children}</div>
     </Tag>
   );
 };
@@ -107,7 +99,6 @@ const CONTAINER_VARIANTS = tv({
   slots: {
     base: ['w-full', 'mx-auto', 'flex', 'flex-col', 'justify-center'],
     wrapper: ['w-full', 'mx-auto', 'max-w-screen-2xl'],
-    image: ['-z-10']
   },
   variants: {
     inlinePadding: {
@@ -128,20 +119,13 @@ const CONTAINER_VARIANTS = tv({
     },
     fullBleed: {
       true: {
-        base: [
-          'w-screen',
-          'relative',
-          'left-[calc(-50vw+50%)]',
-          'right-[calc(-50vw+50%)]',
-        ]
-      }
+        base: ['w-screen', 'relative', 'left-[calc(-50vw+50%)]', 'right-[calc(-50vw+50%)]'],
+      },
     },
     hasBackgroundImage: {
       true: {
-        base: [
-          'relative'
-        ]
-      }
-    }
-  }
-})
+        base: ['relative'],
+      },
+    },
+  },
+});

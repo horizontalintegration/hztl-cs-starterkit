@@ -4,12 +4,22 @@
  * add a new --theme-* variable in any theme file.
  */
 @theme inline {
-  --color-primary: var(--theme-primary);
-  --color-primary-foreground: var(--theme-primary-foreground);
-  --color-accent: var(--theme-accent);
-  --color-accent-foreground: var(--theme-accent-foreground);
-  --color-muted: var(--theme-muted);
-  --color-muted-foreground: var(--theme-muted-foreground);
-  --color-test-color: var(--theme-test-color);
-  --font-heading: var(--theme-font-heading);
+  /* Fonts */
+  --font-srpsans: var(--theme-font-srpsans);
+  --font-srpeffra: var(--theme-font-srpeffra);
+
+  /* Colors */
+  --color-dark-blue: var(--theme-color-dark-blue);
+  --color-primary: var(--theme-color-primary);
+  --color-secondary: var(--theme-color-secondary);
+  --color-tertiary: var(--theme-color-tertiary);
+  --color-textPrimary: var(--theme-color-textPrimary);
+  --color-pale-blue: var(--theme-color-pale-blue);
+  --color-light-gray: var(--theme-color-light-gray);
+  --color-orange: var(--theme-color-orange);
+  --color-gold: var(--theme-color-gold);
+  --color-light-green: var(--theme-color-light-green);
+  --color-dark-green: var(--theme-color-dark-green);
+  --color-sky-blue: var(--theme-color-sky-blue);
+  --color-light-black: var(--theme-color-light-black);
 }

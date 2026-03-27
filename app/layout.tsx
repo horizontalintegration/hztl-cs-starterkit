@@ -11,10 +11,12 @@ import '@/app.css';
 import { Scripts } from '@/components/primitives/Scripts';
 import PageViewTracker from '@/components/primitives/PageViewTracker';
 import { getTheme } from '@/lib/theme';
+import { srpSans, srpEffra } from '@/app/fonts';
 
 // Register server components for server-side rendering
 // This ensures ComponentMapper has access to all server components during SSR
 import '@/temp/registered-components';
+import Head from 'next/head';
 
 /**
  * Props interface for RootLayout component.
@@ -45,13 +47,15 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const theme = getTheme();
 
   return (
-    <html lang="en" data-theme={theme}>
-      {/* Head elements: scripts and tracking */}
-      <Scripts />
-      <PageViewTracker />
+    <html lang="en" data-theme={theme} className={`${srpSans.variable} ${srpEffra.variable}`}>
+      <Head>
+        {/* Head elements: scripts and tracking */}
+        <Scripts />
+        <PageViewTracker />
+      </Head>
 
       {/* Main content area */}
-      <body>{children}</body>
+      <body className="font-srpsans bg-tertiary">{children}</body>
     </html>
   );
 }
