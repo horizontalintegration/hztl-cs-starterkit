@@ -4,9 +4,10 @@
 @import './themes/mappings.css';
 
 /* Theme variable definitions (one file per theme) */
-@import './themes/default.css';
-@import './themes/brand-a.css';
-@import './themes/brand-b.css';
+@import './themes/tokens/index.css';
+
+/* Theme classes */
+@import './themes/classes/index.css';
 
 /* ---------------------------------------------------------------------------
    Base layout
@@ -20,12 +21,14 @@
 html {
   @apply h-full;
   scroll-behavior: smooth;
-}
-body {
-  @apply h-full;
-}
-main {
-  @apply w-full grow shrink-0;
+
+  body {
+    @apply h-full;
+
+    main {
+      @apply w-full grow shrink-0;
+    }
+  }
 }
 
 /* Base Container */

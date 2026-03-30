@@ -22,38 +22,37 @@ import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
  * @returns {JSX.Element} Rendered default hero banner variant
  */
 export const Default = (props: IHeroBannerModularBlock) => {
-    const { base, heading, description, ctaGroupWrapper, cta } = DEFAULT_VARIANTS();
+  const { base, heading, description, ctaGroupWrapper, cta } = DEFAULT_VARIANTS();
 
-    return (
-        <Container
-            backgroundImage={props.banner_image}
-            fullBleed={true}
-            blockPadding={false}
-            inlinePadding={false}
-            componentName="authorable/shared/content/hero-banner/default"
-        >
-            <div className={base()} {...getCSLPAttributes(props.$?.banner_image)}>
-                {/* Hero heading */}
-                <h1 className={heading()} {...getCSLPAttributes(props.$?.banner_heading)}>
-                    {props.banner_heading}
-                </h1>
+  return (
+    <Container
+      backgroundImage={props.banner_image}
+      blockPadding={false}
+      inlinePadding={false}
+      componentName="authorable/shared/content/hero-banner/default"
+    >
+      <div className={base()} {...getCSLPAttributes(props.$?.banner_image)}>
+        {/* Hero heading */}
+        <h1 className={heading()} {...getCSLPAttributes(props.$?.banner_heading)}>
+          {props.banner_heading}
+        </h1>
 
-                {/* Hero description */}
-                <p className={description()} {...getCSLPAttributes(props.$?.banner_description)}>
-                    {props.banner_description}
-                </p>
+        {/* Hero description */}
+        <p className={description()} {...getCSLPAttributes(props.$?.banner_description)}>
+          {props.banner_description}
+        </p>
 
-                {/* CTA buttons group */}
-                <div className={ctaGroupWrapper()}>
-                    {props.banner_cta?.map((ctaItem, index) => (
-                        <div className={cta()} key={`${ctaItem.link?.title}-${index}`}>
-                            <ButtonWrapper cta={ctaItem} />
-                        </div>
-                    ))}
-                </div>
+        {/* CTA buttons group */}
+        <div className={ctaGroupWrapper()}>
+          {props.banner_cta?.map((ctaItem, index) => (
+            <div className={cta()} key={`${ctaItem.link?.title}-${index}`}>
+              <ButtonWrapper cta={ctaItem} />
             </div>
-        </Container>
-    );
+          ))}
+        </div>
+      </div>
+    </Container>
+  );
 };
 
 /**
@@ -65,46 +64,46 @@ export const Default = (props: IHeroBannerModularBlock) => {
  * @returns {JSX.Element} Rendered left-aligned split hero banner variant
  */
 export const LeftAlignedSplit = (props: IHeroBannerModularBlock) => {
-    const { contentWrapper, base, heading, description, ctaGroupWrapper, cta } = LEFT_ALIGNED_SPLIT_VARIANTS();
+  const { contentWrapper, base, heading, description, ctaGroupWrapper, cta } =
+    LEFT_ALIGNED_SPLIT_VARIANTS();
 
-    return (
-        <Container
-            fullBleed={true}
-            blockPadding={false}
-            inlinePadding={false}
-            componentName="authorable/shared/content/hero-banner/left-aligned-split"
-        >
-            <div className={contentWrapper()}>
-                <div className={base()} {...getCSLPAttributes(props.$?.banner_image)}>
-                    {/* Hero heading */}
-                    <h1 className={heading()} {...getCSLPAttributes(props.$?.banner_heading)}>
-                        {props.banner_heading}
-                    </h1>
+  return (
+    <Container
+      blockPadding={false}
+      inlinePadding={false}
+      componentName="authorable/shared/content/hero-banner/left-aligned-split"
+    >
+      <div className={contentWrapper()}>
+        <div className={base()} {...getCSLPAttributes(props.$?.banner_image)}>
+          {/* Hero heading */}
+          <h1 className={heading()} {...getCSLPAttributes(props.$?.banner_heading)}>
+            {props.banner_heading}
+          </h1>
 
-                    {/* Hero description */}
-                    <p className={description()} {...getCSLPAttributes(props.$?.banner_description)}>
-                        {props.banner_description}
-                    </p>
+          {/* Hero description */}
+          <p className={description()} {...getCSLPAttributes(props.$?.banner_description)}>
+            {props.banner_description}
+          </p>
 
-                    {/* CTA buttons group */}
-                    <div className={ctaGroupWrapper()}>
-                        {props.banner_cta?.map((ctaItem, index) => (
-                            <div className={cta()} key={`${ctaItem.link?.title}-${index}`}>
-                                <ButtonWrapper cta={ctaItem} />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <ImageWrapper image={props.banner_image} />
-            </div>
-        </Container>
-    );
+          {/* CTA buttons group */}
+          <div className={ctaGroupWrapper()}>
+            {props.banner_cta?.map((ctaItem, index) => (
+              <div className={cta()} key={`${ctaItem.link?.title}-${index}`}>
+                <ButtonWrapper cta={ctaItem} />
+              </div>
+            ))}
+          </div>
+        </div>
+        <ImageWrapper image={props.banner_image} />
+      </div>
+    </Container>
+  );
 };
 
 const variants = {
-    Default,
-    LeftAlignedSplit
-}
+  Default,
+  LeftAlignedSplit,
+};
 
 /**
  * Hero banner component that displays a prominent banner section with image background.
@@ -127,98 +126,54 @@ const variants = {
  * @returns {JSX.Element} Rendered hero banner component based on selected variant
  */
 export const HeroBanner = (props: IHeroBannerModularBlock) => {
-    const Component = variants[toPascalCase(props.component_variant) as keyof typeof variants] || Default;
-    return <Component {...props} />;
-}
+  const Component =
+    variants[toPascalCase(props.component_variant) as keyof typeof variants] || Default;
+  return <Component {...props} />;
+};
 
 const DEFAULT_VARIANTS = tv({
-    slots: {
-        base: [
-            'w-full',
-            'flex',
-            'flex-col',
-            'justify-center',
-            'gap-4',
-            'py-20',
-            'px-6',
-            'md:px-12',
-            'xl:px-20',
-            'relative',
-            'max-w-screen-2xl',
-            'mx-auto',
-        ],
-        heading: [
-            'text-6xl',
-            'text-white',
-            'font-bold',
-            'tracking-wide',
-            'w-full',
-        ],
-        description: [
-            'text-xl',
-            'text-white',
-            'w-full',
-        ],
-        cta: [
-            'w-full',
-            'md:w-fit',
-        ],
-        ctaGroupWrapper: [
-            'flex',
-            'flex-col',
-            'md:flex-row',
-            'flex-wrap',
-            'justify-start',
-            'gap-4',
-        ],
-    }
+  slots: {
+    base: [
+      'w-full',
+      'flex',
+      'flex-col',
+      'justify-center',
+      'gap-4',
+      'py-20',
+      'px-6',
+      'md:px-12',
+      'xl:px-20',
+      'relative',
+      'max-w-screen-2xl',
+      'mx-auto',
+    ],
+    heading: ['heading-1', 'text-textPrimary', 'w-full'],
+    description: ['lead-copy', 'text-light-black', 'w-full'],
+    cta: ['w-full', 'md:w-fit'],
+    ctaGroupWrapper: ['flex', 'flex-col', 'md:flex-row', 'flex-wrap', 'justify-start', 'gap-4'],
+  },
 });
 
 const LEFT_ALIGNED_SPLIT_VARIANTS = tv({
-    slots: {
-        contentWrapper: [
-            'w-full',
-            'flex',
-            'flex-col',
-            'md:flex-row'
-        ],
-        base: [
-            'w-full',
-            'flex',
-            'flex-col',
-            'justify-center',
-            'gap-4',
-            'py-20',
-            'px-6',
-            'md:px-12',
-            'xl:px-20',
-            'relative',
-            'max-w-screen-2xl',
-            'mx-auto',
-        ],
-        heading: [
-            'text-6xl',
-            'text-black',
-            'font-bold',
-            'tracking-wide',
-            'w-full',
-        ],
-        description: [
-            'text-xl',
-            'text-black',
-            'w-full',
-        ],
-        cta: [
-            'w-full',
-            'md:w-fit',
-        ],
-        ctaGroupWrapper: [
-            'flex',
-            'flex-col',
-            'md:flex-row',
-            'flex-wrap',
-            'justify-start',
-            'gap-4',
-        ],
-    },
+  slots: {
+    contentWrapper: ['w-full', 'flex', 'flex-col', 'md:flex-row'],
+    base: [
+      'w-full',
+      'flex',
+      'flex-col',
+      'justify-center',
+      'gap-4',
+      'py-20',
+      'px-6',
+      'md:px-12',
+      'xl:px-20',
+      'relative',
+      'max-w-screen-2xl',
+      'mx-auto',
+    ],
+    heading: ['heading-1', 'text-textPrimary', 'w-full'],
+    description: ['lead-copy', 'text-light-black', 'w-full'],
+    cta: ['w-full', 'md:w-fit'],
+    ctaGroupWrapper: ['flex', 'flex-col', 'md:flex-row', 'flex-wrap', 'justify-start', 'gap-4'],
+  },
 });

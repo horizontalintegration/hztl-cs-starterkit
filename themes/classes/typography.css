@@ -1,0 +1,53 @@
+.heading-1 {
+  font-size: var(--theme-font-size-heading-1);
+  line-height: var(--theme-line-height-heading-1);
+  font-weight: var(--theme-font-weight-heading-1);
+}
+
+.heading-2 {
+  font-size: var(--theme-font-size-heading-2);
+  line-height: var(--theme-line-height-heading-2);
+  font-weight: var(--theme-font-weight-heading-2);
+}
+
+.heading-3 {
+  font-size: var(--theme-font-size-heading-3);
+  line-height: var(--theme-line-height-heading-3);
+  font-weight: var(--theme-font-weight-heading-3);
+}
+
+.heading-4 {
+  font-size: var(--theme-font-size-heading-4);
+  line-height: var(--theme-line-height-heading-4);
+  font-weight: var(--theme-font-weight-heading-4);
+}
+
+.heading-5 {
+  font-size: var(--theme-font-size-heading-5);
+  line-height: var(--theme-line-height-heading-5);
+  font-weight: var(--theme-font-weight-heading-5);
+}
+
+.body-copy {
+  font-size: var(--theme-font-size-body-copy);
+  line-height: var(--theme-line-height-body-copy);
+  font-weight: var(--theme-font-weight-body-copy);
+}
+
+.lead-copy {
+  font-size: var(--theme-font-size-lead-copy);
+  line-height: var(--theme-line-height-lead-copy);
+  font-weight: var(--theme-font-weight-lead-copy);
+}
+
+.call-out {
+  font-size: var(--theme-font-size-call-out);
+  line-height: var(--theme-line-height-call-out);
+  color: var(--color-secondary);
+  font-style: italic;
+
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+}
