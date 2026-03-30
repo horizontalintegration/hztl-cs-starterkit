@@ -5,9 +5,8 @@
  * Automatically generates copyright year with fallback text.
  */
 
-import { tv } from 'tailwind-variants';
-
 import { IFooter } from '@/.generated';
+import { footerVariants } from './Footer.styles';
 import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
 import { getCSLPAttributes } from '@/utils/type-guards';
 
@@ -29,7 +28,7 @@ import { getCSLPAttributes } from '@/utils/type-guards';
 export const Footer = (props: IFooter) => {
   // Get current year for copyright text
   const currentYear = new Date().getFullYear();
-  const { base, container, content, logoWrapper, copyright } = FOOTER_VARIANTS();
+  const { base, container, content, logoWrapper, copyright } = footerVariants();
 
   return (
     <footer className={base()}>
@@ -52,12 +51,3 @@ export const Footer = (props: IFooter) => {
   );
 };
 
-const FOOTER_VARIANTS = tv({
-  slots: {
-    base: ['w-full', 'bg-slate-200', 'mt-auto'],
-    container: ['max-w-screen-2xl', 'mx-auto', 'px-6', 'md:px-12', 'xl:px-20', 'py-8'],
-    content: ['flex', 'flex-col', 'gap-4', 'items-center'],
-    logoWrapper: ['flex', 'justify-center', 'items-center'],
-    copyright: ['text-gray-600', 'text-sm', 'text-center'],
-  },
-});

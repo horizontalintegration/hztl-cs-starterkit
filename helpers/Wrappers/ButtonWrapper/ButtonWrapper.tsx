@@ -8,10 +8,10 @@
 
 import { JSX, useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { tv } from 'tailwind-variants';
 
 import { IEnhancedCta } from '@/.generated';
 import { cn } from '@/utils/cn';
+import { buttonVariants, modalContentVariants } from './ButtonWrapper.styles';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import ModalWrapper from '../ModalWrapper/ModalWrapper';
 import RichTextWrapper from '../RichTextWrapper/RichTextWrapper';
@@ -99,7 +99,7 @@ export const ButtonWrapper = ({
     [disabled, onClick]
   );
 
-  const base = TAILWIND_VARIANTS({
+  const base = buttonVariants({
     variant: ctaVariant,
     size: ctaSize,
     disabled,
@@ -117,7 +117,7 @@ export const ButtonWrapper = ({
 
   // Render as Modal
   if (cta?.modal_cta) {
-    const { modalTitle, modalContentWrapper } = MODAL_CONTENT_VARIANTS();
+    const { modalTitle, modalContentWrapper } = modalContentVariants();
 
     return (
       <>
@@ -179,55 +179,3 @@ export const ButtonWrapper = ({
   );
 };
 
-const TAILWIND_VARIANTS = tv({
-  base: [
-    'flex',
-    'items-center',
-    'justify-center',
-    'gap-2',
-    'font-medium',
-    'transition-all',
-    'duration-300',
-    'focus:outline-none',
-    'w-full',
-  ],
-  variants: {
-    size: {
-      sm: ['text-sm', 'px-3', 'py-1.5', 'h-8'],
-      md: ['text-base', 'px-4', 'py-2', 'h-10'],
-      lg: ['text-lg', 'px-6', 'py-3', 'h-12'],
-      xl: ['text-xl', 'px-8', 'py-4', 'h-14'],
-    },
-    variant: {
-      primary: ['bg-primary', 'text-white', 'hover:bg-blue-700', 'active:bg-blue-800'],
-      secondary: ['bg-gray-600', 'text-white', 'hover:bg-gray-700', 'active:bg-gray-800'],
-      outline: [
-        'border-2',
-        'border-blue-600',
-        'text-blue-600',
-        'bg-transparent',
-        'hover:bg-blue-50',
-        'active:bg-blue-100',
-      ],
-      ghost: ['text-blue-600', 'bg-transparent', 'hover:bg-blue-50', 'active:bg-blue-100'],
-      danger: ['bg-red-600', 'text-white', 'hover:bg-red-700', 'active:bg-red-800'],
-      link: ['text-black', 'bg-transparent', 'hover:underline', 'p-0', 'h-auto'],
-    },
-    disabled: {
-      true: ['cursor-not-allowed', 'opacity-50', 'pointer-events-none'],
-    },
-    focusRing: {
-      true: ['focus:ring-2', 'focus:ring-blue-500', 'focus:ring-offset-2'],
-    },
-  },
-});
-
-/**
- * Tailwind variants for modal content styling.
- */
-const MODAL_CONTENT_VARIANTS = tv({
-  slots: {
-    modalContentWrapper: ['space-y-4'],
-    modalTitle: ['text-2xl', 'md:text-3xl', 'font-bold', 'text-gray-900', 'mb-4'],
-  },
-});

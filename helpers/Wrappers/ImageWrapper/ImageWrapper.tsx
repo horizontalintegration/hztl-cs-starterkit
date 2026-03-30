@@ -7,8 +7,8 @@
 'use client';
 
 import { JSX, useMemo, useState } from 'react';
-import { tv } from 'tailwind-variants';
 import Image from 'next/image';
+import { imageWrapperVariants } from './ImageWrapper.styles';
 
 import { IEnhancedImage } from '@/.generated';
 import { isValidNextImageDomain } from '@/lib/next-config/plugins/images';
@@ -228,7 +228,7 @@ const ImageWrapper = ({
 
   const isValidDomain = useMemo(() => isValidNextImageDomain(url), [url]);
 
-  const { wrapperBase, fallbackImageBase } = IMAGE_WRAPPER_VARIANTS({
+  const { wrapperBase, fallbackImageBase } = imageWrapperVariants({
     isFill: !!fill,
     roundedImage: !!rounded_image,
     isFullBleed: !!isFullBleed,
@@ -269,26 +269,3 @@ const ImageWrapper = ({
 
 export default ImageWrapper;
 
-const IMAGE_WRAPPER_VARIANTS = tv({
-  slots: {
-    wrapperBase: ['w-full', 'h-auto'],
-    fallbackImageBase: ['w-full', 'h-auto'],
-  },
-  variants: {
-    isFill: {
-      true: {
-        wrapperBase: ['relative'],
-      },
-    },
-    roundedImage: {
-      true: {
-        wrapperBase: ['rounded-lg', 'overflow-hidden'],
-      },
-    },
-    isFullBleed: {
-      true: {
-        wrapperBase: ['w-screen', 'left-[calc(-50vw+50%)]', 'right-[calc(-50vw+50%)]', 'relative'],
-      },
-    },
-  },
-});

@@ -15,7 +15,7 @@ import { extractAndSetLanguage, isLanguageSupported } from '@/lib/contentstack/l
 import { getPage, getSiteSettings } from '@/lib/contentstack/entries';
 import { getEntryLocales } from '@/lib/contentstack/management-stack';
 import { fetchPageData, PageData } from '@/lib/contentstack/page-data';
-import { SharedPageLayout } from '@/app/SharedPageLayout';
+import { SharedPageLayout } from '@/app/SharedPageLayout/SharedPageLayout';
 import { IPage } from '@/.generated';
 import { DEFAULT_LOCALE } from '@/constants/locales';
 import { Stack } from '@contentstack/delivery-sdk';

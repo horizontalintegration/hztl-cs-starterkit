@@ -258,10 +258,11 @@ const findComponentFiles = (
     } else if (entry.isFile()) {
       // Check if file is a component (React/TypeScript/JavaScript)
       if (
-        entry.name.endsWith('.tsx') ||
+        (entry.name.endsWith('.tsx') ||
         entry.name.endsWith('.jsx') ||
         entry.name.endsWith('.ts') ||
-        entry.name.endsWith('.js')
+        entry.name.endsWith('.js')) &&
+        !entry.name.includes('.styles.')
       ) {
         const isClient = isClientComponent(fullPath);
         componentFiles.push({

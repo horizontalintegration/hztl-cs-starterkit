@@ -1,0 +1,63 @@
+import { tv } from 'tailwind-variants';
+
+export const modalVariants = tv({
+  slots: {
+    overlay: [
+      'fixed',
+      'inset-0',
+      'bg-black/50',
+      'backdrop-blur-sm',
+      'z-50',
+      'flex',
+      'flex-col',
+      'justify-center',
+      'items-center',
+      'p-4',
+      'animate-in',
+      'fade-in',
+      'duration-200',
+    ],
+    modal: [
+      'bg-white',
+      'rounded-lg',
+      'shadow-2xl',
+      'w-full',
+      'relative',
+      'outline-none',
+      'animate-in',
+      'zoom-in-95',
+      'slide-in-from-bottom-4',
+      'duration-200',
+      'overflow-y-auto',
+      'max-h-[90vh]',
+    ],
+    closeButton: [
+      'absolute',
+      'top-4',
+      'right-4',
+      'z-10',
+      'p-2',
+      'rounded-md',
+      'hover:bg-gray-100',
+      'focus:outline-none',
+      'focus:ring-2',
+      'focus:ring-blue-500',
+      'focus:ring-offset-2',
+      'transition-colors',
+      'duration-200',
+    ],
+    modalContent: ['p-6'],
+  },
+  variants: {
+    size: {
+      sm: { modal: ['md:max-w-md'] },
+      md: { modal: ['md:max-w-2xl'] },
+      lg: { modal: ['md:max-w-4xl'] },
+      xl: { modal: ['md:max-w-6xl'] },
+      full: { modal: ['md:max-w-[95vw]'] },
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
+});
