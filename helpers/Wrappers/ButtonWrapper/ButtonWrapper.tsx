@@ -61,9 +61,6 @@ export const ButtonWrapper = ({
 }: ButtonWrapperProps): JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  //Early return if no CTA or href
-  if (!cta && !href && !onClick) return <></>;
-
   // Default values
   const defaultVariant = 'primary';
   const defaultSize = 'md';
@@ -98,6 +95,9 @@ export const ButtonWrapper = ({
     },
     [disabled, onClick]
   );
+
+  //Early return if no CTA or href
+  if (!cta && !href && !onClick) return <></>;
 
   const base = buttonVariants({
     variant: ctaVariant,
@@ -178,4 +178,3 @@ export const ButtonWrapper = ({
     </Link>
   );
 };
-
