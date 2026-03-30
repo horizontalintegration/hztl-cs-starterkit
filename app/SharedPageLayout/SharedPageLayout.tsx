@@ -5,9 +5,8 @@
  * Used by both regular pages and the 404 not-found page.
  */
 
-import { tv } from 'tailwind-variants';
-
 import { IFooter, IHeader, IPage } from '@/.generated';
+import { pageLayoutVariants } from './SharedPageLayout.styles';
 import { Header } from '@/components/authorable/site-structure/Header/Header';
 import { Footer } from '@/components/authorable/site-structure/Footer/Footer';
 import { BackToTop } from '@/components/authorable/site-structure/BackToTop/BackToTop';
@@ -45,7 +44,7 @@ export async function SharedPageLayout({
   footer,
   pageContentTypeUID = 'page',
 }: SharedPageLayoutProps) {
-  const { base, main } = PAGE_LAYOUT_VARIANTS();
+  const { base, main } = pageLayoutVariants();
 
   return (
     <div tabIndex={-1} className={cn(base())}>
@@ -68,9 +67,3 @@ export async function SharedPageLayout({
   );
 }
 
-const PAGE_LAYOUT_VARIANTS = tv({
-  slots: {
-    base: ['overflow-x-clip', 'flex', 'flex-col', 'min-h-screen'],
-    main: ['max-w-[1200px]', 'mx-auto', 'md:px-[30px]'],
-  },
-});

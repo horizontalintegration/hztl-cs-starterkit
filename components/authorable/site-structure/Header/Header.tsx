@@ -7,12 +7,12 @@
 
 'use client';
 
-import { tv } from 'tailwind-variants';
 import Link from 'next/link';
+import { headerVariants } from './Header.styles';
 
 import { CSLPFieldMapping, IEnhancedImage, IHeader, ILink } from '@/.generated';
 import { useIsScrolled } from '@/lib/hooks/useIsScrolled';
-import { LanguageSelector } from './LanguageSelector';
+import { LanguageSelector } from './LanguageSelector/LanguageSelector';
 import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
 import { getCSLPAttributes } from '@/utils/type-guards';
 
@@ -36,7 +36,7 @@ interface LogoProps {
  * @returns {JSX.Element | null} Rendered logo or null if data is missing
  */
 export const Logo = ({ logo, logoLink, $ }: LogoProps) => {
-  const { logoContainer } = HEADER_VARIANTS();
+  const { logoContainer } = headerVariants();
 
   // Don't render if logo or link data is missing
   if (!logo || !logoLink) return null;
@@ -74,7 +74,7 @@ export const Header = (props: IHeader) => {
   const isScrolled = useIsScrolled();
 
   const { base, wrapper, inner, menuWrapper, menuContainer, languageWrapper } =
-    HEADER_VARIANTS({ isScrolled });
+    headerVariants({ isScrolled });
 
   return (
     <header className={base()} id="header">
@@ -101,58 +101,3 @@ export const Header = (props: IHeader) => {
   );
 };
 
-const HEADER_VARIANTS = tv({
-  slots: {
-    base: [
-      'sticky',
-      'top-0',
-      'z-10',
-      'w-full',
-      'transition-transform',
-      'duration-300',
-      'bg-white',
-    ],
-    wrapper: [
-      'flex',
-      'justify-center',
-      'transition-all',
-      'duration-200',
-      'w-full',
-    ],
-    inner: [
-      'w-full',
-      'max-w-screen-2xl',
-      'px-6',
-      'md:px-12',
-      'lg:px-20',
-    ],
-    menuWrapper: [
-      'flex',
-      'justify-between',
-    ],
-    menuContainer: [
-      'flex',
-    ],
-    languageWrapper: [
-      'flex',
-      'w-[38%]',
-      'lg:w-auto',
-      'items-center',
-      'justify-end',
-    ],
-    logoContainer: [
-      'flex',
-      'items-center',
-    ],
-  },
-  variants: {
-    isScrolled: {
-      false: {
-        wrapper: ['py-6'],
-      },
-      true: {
-        wrapper: ['py-3'],
-      },
-    },
-  },
-});
