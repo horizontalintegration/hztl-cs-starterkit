@@ -356,9 +356,9 @@ const generateRegistryFile = (
   fileName: string,
   description: string
 ) => {
-  // Import the ComponentMapper instance and next/dynamic
+  // Import the ComponentMapper instance (and next/dynamic only when there are components to register)
   const imports = [
-    "import dynamic from 'next/dynamic';",
+    ...(componentMap.size > 0 ? ["import dynamic from 'next/dynamic';"] : []),
     "import { componentMapperInstance } from '../utils/ComponentMapper';",
   ].join('\n');
 
