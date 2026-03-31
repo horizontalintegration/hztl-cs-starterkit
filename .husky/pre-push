@@ -1,22 +1,18 @@
 #!/usr/bin/env bash
 # --- Run lint ---
 echo "Running lint..."
-LINT_OUTPUT=$(npm run lint 2>&1)
-RESULT=$?
-if [ $RESULT -ne 0 ]; then
-  echo "">&2
-  echo "❌ Lint failed. Fix the following errors before pushing:">&2
-  echo "">&2
-  echo "$LINT_OUTPUT">&2
-  echo "">&2
+npm run lint
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Lint failed. Fix the errors above before pushing."
   exit 1
 fi
 # --- Run Build ---
-echo "Running Build..."
+echo "Running build..."
 npm run build
-RESULT=$?
-if [ $RESULT -ne 0 ]; then
-  echo "Build has failed, fix errors before committing.">&2
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Build failed. Fix the errors above before pushing."
   exit 1
 fi
 

@@ -6,6 +6,7 @@ import { toPascalCase } from '@/utils/string-utils';
 type AccordionProps = any;
 
 const Default = (props: AccordionProps) => {
+  console.log('Accordion Props:', props);
   const { base, heading } = defaultVariants();
 
   return (

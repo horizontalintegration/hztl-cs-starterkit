@@ -66,6 +66,7 @@ import { toPascalCase } from '@/utils/string-utils';
 type ${componentName}Props = any;
 
 const Default = (props: ${componentName}Props) => {
+  console.log('${componentName} Props:', props);
   const { base, heading } = defaultVariants();
 
   return (
