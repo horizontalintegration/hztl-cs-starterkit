@@ -13,6 +13,7 @@
   "license": "MIT",
   "scripts": {
     "tsgen": "csdx tsgen -a starterkit-delivery-token -o \"./.generated/index.ts\" -p \"I\" --branch=main --no-doc --include-system-fields --include-editable-tags",
+    "scaffold": "tsx scripts/scaffold-component.ts",
     "gen-config": "tsx scripts/generate-component-mapper.ts",
     "fetch-languages": "tsx --require dotenv-flow/config scripts/fetch-language.ts",
     "gen-config:watch": "tsx scripts/generate-component-mapper.ts --watch",

@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 # --- Run lint ---
 echo "Running lint..."
-npm run lint
+LINT_OUTPUT=$(npm run lint 2>&1)
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
-  echo "Linting has failed, fix errors before committing.">&2
+  echo "">&2
+  echo "❌ Lint failed. Fix the following errors before pushing:">&2
+  echo "">&2
+  echo "$LINT_OUTPUT">&2
+  echo "">&2
   exit 1
 fi
 # --- Run Build ---
