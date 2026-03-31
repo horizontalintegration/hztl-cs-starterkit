@@ -86,7 +86,7 @@ export const Container = ({
           fill={true}
           objectFit={backgroundImage.image_fit_options || 'cover'}
           objectPosition={backgroundImage.image_position_options || 'center'}
-          fetchPriority="high"
+          preload
           loading="lazy"
         />
       )}
@@ -94,4 +94,3 @@ export const Container = ({
     </Tag>
   );
 };
-

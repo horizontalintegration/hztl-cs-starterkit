@@ -24,7 +24,7 @@ export interface ImageWrapperProps {
   /** Enhanced image object from CMS */
   image?: IEnhancedImage | null;
   /** Load with priority (above-the-fold) */
-  priority?: boolean;
+  preload?: boolean;
   /** Responsive sizes attribute */
   sizes?: string;
   /** Image quality (1-100) */
@@ -39,8 +39,6 @@ export interface ImageWrapperProps {
   placeholder?: 'blur' | 'empty';
   /** Base64 blur placeholder */
   blurDataURL?: string;
-  /** Fetch priority */
-  fetchPriority?: 'high' | 'low' | 'auto';
   /** Show fallback on error */
   showFallbackImage?: boolean;
   /** Full-bleed layout (edge-to-edge) */
@@ -52,7 +50,7 @@ export interface NextImageProps extends React.ImgHTMLAttributes<HTMLImageElement
   src: string;
   alt: string;
   className?: string;
-  priority?: boolean;
+  preload?: boolean;
   sizes?: string;
   height?: number;
   width?: number;
@@ -111,13 +109,12 @@ const ImageWrapper = ({
   imageClassName,
   image,
   quality = 75,
-  priority = false,
+  preload = false,
   sizes,
   fill,
   loading,
   placeholder,
   blurDataURL,
-  fetchPriority = 'auto',
   showFallbackImage = true,
   isFullBleed = false,
 }: ImageWrapperProps): JSX.Element => {
@@ -161,14 +158,14 @@ const ImageWrapper = ({
     [sizes, dimension?.width, responsive_image]
   );
 
-  const loadingStrategy = loading || (priority ? 'eager' : 'lazy');
+  const loadingStrategy = loading || 'lazy';
 
   // Build Next.js Image props
   const nextImageProps: NextImageProps = useMemo(() => {
     const props: NextImageProps = {
       alt: alternate_text || title || 'Image',
       className: imageClassName,
-      priority,
+      preload,
       sizes: optimalSizes,
       src: isError ? DefaultFallbackImage.src : (url ?? ''),
       style: {
@@ -177,7 +174,6 @@ const ImageWrapper = ({
       },
       quality: Math.max(1, Math.min(100, quality)),
       loading: loadingStrategy,
-      fetchPriority,
     };
 
     if (placeholder === 'blur' && blurDataURL) {
@@ -207,7 +203,7 @@ const ImageWrapper = ({
     alternate_text,
     title,
     imageClassName,
-    priority,
+    preload,
     optimalSizes,
     url,
     quality,
@@ -218,7 +214,6 @@ const ImageWrapper = ({
     validatedDimensions,
     image_fit_options,
     image_position_options,
-    fetchPriority,
     isError,
   ]);
 
