@@ -4,10 +4,9 @@
  * Supports multiple layout variants and Contentstack Live Preview for real-time content editing.
  */
 
-import { tv } from 'tailwind-variants';
-
 import { IHeroBannerModularBlock } from '@/.generated';
-import { Container } from '@/components/primitives/Container';
+import { defaultVariants, leftAlignedSplitVariants } from './HeroBanner.styles';
+import { Container } from '@/components/primitives/Container/Container';
 import { ButtonWrapper } from '@/helpers/Wrappers/ButtonWrapper/ButtonWrapper';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import { toPascalCase } from '@/utils/string-utils';
@@ -22,7 +21,7 @@ import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
  * @returns {JSX.Element} Rendered default hero banner variant
  */
 export const Default = (props: IHeroBannerModularBlock) => {
-  const { base, heading, description, ctaGroupWrapper } = DEFAULT_VARIANTS();
+  const { base, heading, description, ctaGroupWrapper } = defaultVariants();
 
   return (
     <Container
@@ -63,7 +62,7 @@ export const Default = (props: IHeroBannerModularBlock) => {
  */
 export const LeftAlignedSplit = (props: IHeroBannerModularBlock) => {
   const { contentWrapper, base, heading, description, ctaGroupWrapper } =
-    LEFT_ALIGNED_SPLIT_VARIANTS();
+    leftAlignedSplitVariants();
 
   return (
     <Container
@@ -126,48 +125,3 @@ export const HeroBanner = (props: IHeroBannerModularBlock) => {
     variants[toPascalCase(props.component_variant) as keyof typeof variants] || Default;
   return <Component {...props} />;
 };
-
-const DEFAULT_VARIANTS = tv({
-  slots: {
-    base: [
-      'w-full',
-      'flex',
-      'flex-col',
-      'justify-center',
-      'gap-4',
-      'py-20',
-      'px-6',
-      'md:px-12',
-      'xl:px-20',
-      'relative',
-      'max-w-screen-2xl',
-      'mx-auto',
-    ],
-    heading: ['heading-1', 'text-white', 'w-full'],
-    description: ['lead-copy', 'text-white', 'w-full'],
-    ctaGroupWrapper: ['flex', 'flex-col', 'md:flex-row', 'flex-wrap', 'justify-start', 'gap-4'],
-  },
-});
-
-const LEFT_ALIGNED_SPLIT_VARIANTS = tv({
-  slots: {
-    contentWrapper: ['w-full', 'flex', 'flex-col', 'md:flex-row'],
-    base: [
-      'w-full',
-      'flex',
-      'flex-col',
-      'justify-center',
-      'gap-4',
-      'py-20',
-      'px-6',
-      'md:px-12',
-      'xl:px-20',
-      'relative',
-      'max-w-screen-2xl',
-      'mx-auto',
-    ],
-    heading: ['heading-1', 'text-textPrimary', 'w-full'],
-    description: ['lead-copy', 'text-light-black', 'w-full'],
-    ctaGroupWrapper: ['flex', 'flex-col', 'md:flex-row', 'flex-wrap', 'justify-start', 'gap-4'],
-  },
-});

@@ -258,10 +258,11 @@ const findComponentFiles = (
     } else if (entry.isFile()) {
       // Check if file is a component (React/TypeScript/JavaScript)
       if (
-        entry.name.endsWith('.tsx') ||
+        (entry.name.endsWith('.tsx') ||
         entry.name.endsWith('.jsx') ||
         entry.name.endsWith('.ts') ||
-        entry.name.endsWith('.js')
+        entry.name.endsWith('.js')) &&
+        !entry.name.includes('.styles.')
       ) {
         const isClient = isClientComponent(fullPath);
         componentFiles.push({
@@ -355,17 +356,11 @@ const generateRegistryFile = (
   fileName: string,
   description: string
 ) => {
-  // Generate import statements for all components
-  const imports = Array.from(componentMap.entries())
-    .map(([componentName, { file, dir }]) => {
-      const absPath = path.join(dir, file);
-      const relImportPath = getRelativeImportPath(absPath).replace(/\.(tsx|jsx|js|ts)$/, '');
-      return `import { ${componentName} } from '${relImportPath}';`;
-    })
-    .join('\n');
-
-  // Import the ComponentMapper instance
-  const mapperImport = "import { componentMapperInstance } from '../utils/ComponentMapper';";
+  // Import the ComponentMapper instance (and next/dynamic only when there are components to register)
+  const imports = [
+    ...(componentMap.size > 0 ? ["import dynamic from 'next/dynamic';"] : []),
+    "import { componentMapperInstance } from '../utils/ComponentMapper';",
+  ].join('\n');
 
   // Generate TypeScript union type of all component names
   const exportComponentTypes =
@@ -375,17 +370,14 @@ const generateRegistryFile = (
         .join(' | ')};`
       : `export type ComponentTypes = never;`;
 
-  // Generate component registration statements
-  const componentRegistrations = Array.from(componentMap.keys())
-    .map((componentName) => {
-      return `componentMapperInstance.register('${componentName}', ${componentName});`;
-    })
-    .join('\n');
-
-  // Generate named exports for barrel file
-  const exports = Array.from(componentMap.keys())
-    .map((componentName) => {
-      return `  ${componentName},`;
+  // Generate dynamic component registration statements
+  // Uses next/dynamic for code splitting — each component is loaded only when rendered.
+  // SSR is enabled by default, so server-rendered HTML is stable (no layout shift).
+  const componentRegistrations = Array.from(componentMap.entries())
+    .map(([componentName, { file, dir }]) => {
+      const absPath = path.join(dir, file);
+      const relImportPath = getRelativeImportPath(absPath).replace(/\.(tsx|jsx|js|ts)$/, '');
+      return `componentMapperInstance.register('${componentName}', dynamic(() => import('${relImportPath}').then(mod => ({ default: mod.${componentName} }))));`;
     })
     .join('\n');
 
@@ -395,21 +387,17 @@ const generateRegistryFile = (
 // Registry Type: ${description}
 
 ${imports}
-${mapperImport}
 
 // Component names as a type
 ${exportComponentTypes}
 
-// Register all components with the ComponentMapper
+// Register all components with dynamic imports for code splitting
+// Each component is loaded on demand — only the components used on a page are shipped to the client.
+// next/dynamic has SSR enabled by default, so HTML is pre-rendered (no layout shift).
 ${componentRegistrations}
 
 // Export the componentMapperInstance for use in the application
 export const componentMapper = componentMapperInstance;
-
-// Export all components individually
-export {
-${exports}
-};
 `;
 
   // Write the barrel file to disk

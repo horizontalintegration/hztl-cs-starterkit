@@ -7,3 +7,5 @@ package-lock.json
 logs
 _backup_*
 .cursor/mcp.json
+themes/tokens/_active.css
+.DS_Store

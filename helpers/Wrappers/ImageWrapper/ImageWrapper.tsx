@@ -7,8 +7,8 @@
 'use client';
 
 import { JSX, useMemo, useState } from 'react';
-import { tv } from 'tailwind-variants';
 import Image from 'next/image';
+import { imageWrapperVariants } from './ImageWrapper.styles';
 
 import { IEnhancedImage } from '@/.generated';
 import { isValidNextImageDomain } from '@/lib/next-config/plugins/images';
@@ -102,7 +102,7 @@ const getOptimalSizes = (
  * Optimized image component with CMS integration and responsive sizing.
  * Handles Contentstack images with automatic fallbacks, responsive behavior,
  * and Next.js Image optimization.
- * 
+ *
  * @example
  * <ImageWrapper image={cmsImage} priority sizes="(max-width: 768px) 100vw, 50vw" />
  */
@@ -123,30 +123,26 @@ const ImageWrapper = ({
 }: ImageWrapperProps): JSX.Element => {
   const [isError, setIsError] = useState(false);
 
-  if (!image || !image.image?.url) {
-    return <></>;
-  }
-
-  // Extract CMS image data
-  const { title, url, dimension } = image.image;
-  const {
-    alternate_text,
-    responsive_image,
-    image_fit_options,
-    image_position_options,
-    dimensions,
-    rounded_image,
-  } = image;
+  // Extract CMS image data (safe to access conditionally inside hooks)
+  const title = image?.image?.title;
+  const url = image?.image?.url;
+  const dimension = image?.image?.dimension;
+  const alternate_text = image?.alternate_text;
+  const responsive_image = image?.responsive_image;
+  const image_fit_options = image?.image_fit_options;
+  const image_position_options = image?.image_position_options;
+  const dimensions = image?.dimensions;
+  const rounded_image = image?.rounded_image;
 
   // Validate dimensions for non-fill images
   const validatedDimensions = useMemo(() => {
-    if (fill) return null;
+    if (fill || !url) return null;
     return validateDimensions(dimension?.width, dimension?.height);
-  }, [dimension?.width, dimension?.height, fill]);
+  }, [dimension?.width, dimension?.height, fill, url]);
 
   // Calculate static dimensions for non-responsive images
   const staticDimensions = useMemo(() => {
-    if (responsive_image) return null;
+    if (responsive_image || !url) return null;
 
     const width = dimensions?.image_width || '100%';
     const height = dimensions?.image_height || 'auto';
@@ -157,7 +153,7 @@ const ImageWrapper = ({
     );
 
     return validated || { width, height };
-  }, [dimensions?.image_width, dimensions?.image_height, responsive_image]);
+  }, [dimensions?.image_width, dimensions?.image_height, responsive_image, url]);
 
   // Generate optimal sizes attribute
   const optimalSizes = useMemo(
@@ -174,7 +170,7 @@ const ImageWrapper = ({
       className: imageClassName,
       priority,
       sizes: optimalSizes,
-      src: isError ? DefaultFallbackImage.src : url,
+      src: isError ? DefaultFallbackImage.src : (url ?? ''),
       style: {
         width: '100%',
         height: '100%',
@@ -226,9 +222,9 @@ const ImageWrapper = ({
     isError,
   ]);
 
-  const isValidDomain = useMemo(() => isValidNextImageDomain(url), [url]);
+  const isValidDomain = useMemo(() => isValidNextImageDomain(url ?? ''), [url]);
 
-  const { wrapperBase, fallbackImageBase } = IMAGE_WRAPPER_VARIANTS({
+  const { wrapperBase, fallbackImageBase } = imageWrapperVariants({
     isFill: !!fill,
     roundedImage: !!rounded_image,
     isFullBleed: !!isFullBleed,
@@ -241,6 +237,10 @@ const ImageWrapper = ({
       height: staticDimensions.height,
     };
   }, [responsive_image, staticDimensions]);
+
+  if (!image || !url) {
+    return <></>;
+  }
 
   return (
     <div className={cn(wrapperBase(), wrapperClassName)} style={wrapperStyle}>
@@ -268,27 +268,3 @@ const ImageWrapper = ({
 };
 
 export default ImageWrapper;
-
-const IMAGE_WRAPPER_VARIANTS = tv({
-  slots: {
-    wrapperBase: ['w-full', 'h-auto'],
-    fallbackImageBase: ['w-full', 'h-auto'],
-  },
-  variants: {
-    isFill: {
-      true: {
-        wrapperBase: ['relative'],
-      },
-    },
-    roundedImage: {
-      true: {
-        wrapperBase: ['rounded-lg', 'overflow-hidden'],
-      },
-    },
-    isFullBleed: {
-      true: {
-        wrapperBase: ['w-screen', 'left-[calc(-50vw+50%)]', 'right-[calc(-50vw+50%)]', 'relative'],
-      },
-    },
-  },
-});

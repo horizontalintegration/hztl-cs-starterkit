@@ -14,14 +14,15 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
-import { tv, VariantProps } from 'tailwind-variants';
+import { VariantProps } from 'tailwind-variants';
 
 import { SvgIcon } from '@/helpers/SvgIcon';
+import { modalVariants } from './ModalWrapper.styles';
 
 /**
  * Props interface for ModalWrapper component.
  */
-interface ModalWrapperProps extends VariantProps<typeof MODAL_VARIANTS> {
+interface ModalWrapperProps extends VariantProps<typeof modalVariants> {
     /** Modal content to display */
     children: React.ReactNode;
     /** Controls modal visibility */
@@ -154,7 +155,7 @@ export default function ModalWrapper({
     // Don't render if not open
     if (!isOpen) return null;
 
-    const { overlay, modal, closeButton, modalContent } = MODAL_VARIANTS({ size });
+    const { overlay, modal, closeButton, modalContent } = modalVariants({ size });
 
     return (
         <div
@@ -197,77 +198,3 @@ export default function ModalWrapper({
     );
 }
 
-/**
- * Tailwind variants for modal styling with size options.
- */
-const MODAL_VARIANTS = tv({
-    slots: {
-        overlay: [
-            'fixed',
-            'inset-0',
-            'bg-black/50',
-            'backdrop-blur-sm',
-            'z-50',
-            'flex',
-            'flex-col',
-            'justify-center',
-            'items-center',
-            'p-4',
-            'animate-in',
-            'fade-in',
-            'duration-200',
-        ],
-        modal: [
-            'bg-white',
-            'rounded-lg',
-            'shadow-2xl',
-            'w-full',
-            'relative',
-            'outline-none',
-            'animate-in',
-            'zoom-in-95',
-            'slide-in-from-bottom-4',
-            'duration-200',
-            'overflow-y-auto',
-            'max-h-[90vh]',
-        ],
-        closeButton: [
-            'absolute',
-            'top-4',
-            'right-4',
-            'z-10',
-            'p-2',
-            'rounded-md',
-            'hover:bg-gray-100',
-            'focus:outline-none',
-            'focus:ring-2',
-            'focus:ring-blue-500',
-            'focus:ring-offset-2',
-            'transition-colors',
-            'duration-200',
-        ],
-        modalContent: ['p-6'],
-    },
-    variants: {
-        size: {
-            sm: {
-                modal: ['md:max-w-md'],
-            },
-            md: {
-                modal: ['md:max-w-2xl'],
-            },
-            lg: {
-                modal: ['md:max-w-4xl'],
-            },
-            xl: {
-                modal: ['md:max-w-6xl'],
-            },
-            full: {
-                modal: ['md:max-w-[95vw]'],
-            },
-        },
-    },
-    defaultVariants: {
-        size: 'md',
-    },
-});

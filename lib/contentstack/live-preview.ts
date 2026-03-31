@@ -18,7 +18,12 @@ import { createStack, getEndpoints, isPreviewModeEnabled } from './delivery-stac
  * - Edit buttons for content editors
  * - Automatic cleanup on production builds
  */
+let initialized = false;
+
 export function initLivePreview() {
+  if (initialized) return;
+  initialized = true;
+
   const stack = createStack();
   const endpoints = getEndpoints();
 

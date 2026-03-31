@@ -5,8 +5,8 @@
  */
 
 import { JSX, memo } from 'react';
-import { tv } from 'tailwind-variants';
 import { iconMap, IconMapKeys } from './iconMap';
+import { iconVariants } from './SvgIcon.styles';
 
 /** Available icon names from iconMap registry */
 export type IconTypes = IconMapKeys;
@@ -62,7 +62,7 @@ const SvgIcon = ({
 
   return (
     <svg
-      className={ICON_VARIANTS({ className, size })}
+      className={iconVariants({ className, size })}
       fill={fill}
       viewBox={viewBox}
       data-icon={icon}
@@ -76,18 +76,3 @@ const SvgIcon = ({
 
 export default memo(SvgIcon);
 
-const ICON_VARIANTS = tv({
-  base: [],
-  variants: {
-    size: {
-      xxs: ['!h-3', '!w-3'],
-      xs: ['!h-4', '!w-4'],
-      s: ['!h-6', '!w-6'],
-      sm: ['!h-8', '!w-8'], // (default)
-      m: ['!h-12', '!w-12'],
-      md: ['!h-16', '!w-16'],
-      lg: ['!h-24', '!w-24'],
-      em: ['!h-em', '!w-em'], // Inherit from font size
-    },
-  },
-});

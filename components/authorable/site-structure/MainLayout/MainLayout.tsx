@@ -5,9 +5,9 @@
  */
 
 import { JSX } from 'react';
-import { tv } from 'tailwind-variants';
 
 import { IPage } from '@/.generated';
+import { mainLayoutVariants } from './MainLayout.styles';
 import { ComponentRenderer } from '@/components/primitives/ComponentRenderer';
 import { LivePreview } from '@/components/primitives/LivePreview';
 
@@ -45,7 +45,7 @@ export const MainLayout = ({ page, pageContentTypeUID = 'page' }: MainLayoutProp
     },
   };
 
-  const { base, mainContentWrapper, mainContent } = MAIN_LAYOUT_VARIANTS();
+  const { base, mainContentWrapper, mainContent } = mainLayoutVariants();
 
   return (
     <>
@@ -70,10 +70,3 @@ export const MainLayout = ({ page, pageContentTypeUID = 'page' }: MainLayoutProp
   );
 };
 
-const MAIN_LAYOUT_VARIANTS = tv({
-  slots: {
-    base: ['grid', 'grid-cols-1', 'w-full', 'bg-white'],
-    mainContentWrapper: ['relative'],
-    mainContent: ['absolute', 'left-0'],
-  },
-});

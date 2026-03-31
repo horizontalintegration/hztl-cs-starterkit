@@ -5,11 +5,11 @@
  */
 
 import React, { CSSProperties, PropsWithChildren } from 'react';
-import { tv } from 'tailwind-variants';
 
 import { IEnhancedImage } from '@/.generated';
 import { cn } from '@/utils/cn';
 import Image from 'next/image';
+import { containerVariants } from './Container.styles';
 
 /**
  * Props interface for Container component.
@@ -70,7 +70,7 @@ export const Container = ({
   const hasBackgroundImage = !!backgroundImage?.image?.url;
 
   // Apply Tailwind variants based on props
-  const { base, wrapper } = CONTAINER_VARIANTS({
+  const { base, wrapper } = containerVariants({
     inlinePadding,
     blockPadding,
     fullBleed,
@@ -95,37 +95,3 @@ export const Container = ({
   );
 };
 
-const CONTAINER_VARIANTS = tv({
-  slots: {
-    base: ['w-full', 'mx-auto', 'flex', 'flex-col', 'justify-center'],
-    wrapper: ['w-full', 'mx-auto', 'max-w-screen-2xl'],
-  },
-  variants: {
-    inlinePadding: {
-      true: {
-        base: ['px-5', 'md:px-10'],
-      },
-      false: {
-        base: ['px-0', 'md:px-0'],
-      },
-    },
-    blockPadding: {
-      true: {
-        base: ['py-5', 'md:py-10'],
-      },
-      false: {
-        base: ['py-0', 'md:py-0'],
-      },
-    },
-    fullBleed: {
-      true: {
-        base: ['w-screen', 'relative', 'left-[calc(-50vw+50%)]', 'right-[calc(-50vw+50%)]'],
-      },
-    },
-    hasBackgroundImage: {
-      true: {
-        base: ['relative'],
-      },
-    },
-  },
-});
