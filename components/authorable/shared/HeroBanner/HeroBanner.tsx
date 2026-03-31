@@ -26,8 +26,6 @@ export const Default = (props: IHeroBannerModularBlock) => {
   return (
     <Container
       backgroundImage={props.banner_image}
-      blockPadding={false}
-      inlinePadding={false}
       componentName="authorable/shared/content/hero-banner/default"
     >
       <div className={base()} {...getCSLPAttributes(props.$?.banner_image)}>
@@ -65,11 +63,7 @@ export const LeftAlignedSplit = (props: IHeroBannerModularBlock) => {
     leftAlignedSplitVariants();
 
   return (
-    <Container
-      blockPadding={false}
-      inlinePadding={false}
-      componentName="authorable/shared/content/hero-banner/left-aligned-split"
-    >
+    <Container componentName="HeroBanner" containerBleed>
       <div className={contentWrapper()}>
         <div className={base()} {...getCSLPAttributes(props.$?.banner_image)}>
           {/* Hero heading */}

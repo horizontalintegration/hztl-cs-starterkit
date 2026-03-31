@@ -4,7 +4,7 @@
  * Supports background images, full-bleed layouts, configurable padding, and Contentstack Live Preview.
  */
 
-import React, { CSSProperties, PropsWithChildren } from 'react';
+import { CSSProperties, PropsWithChildren } from 'react';
 
 import { IEnhancedImage } from '@/.generated';
 
@@ -21,12 +21,12 @@ interface ContainerProps {
   className?: string;
   /** Enable full-bleed layout (extends beyond parent container bounds) */
   fullBleed?: boolean;
+  /** Enable bleed till page template */
+  containerBleed?: boolean;
   /** Enable vertical padding (top/bottom) */
-  blockPadding?: boolean;
+  verticalPadding?: boolean;
   /** Background image configuration from CMS */
   backgroundImage?: IEnhancedImage;
-  /** Enable horizontal padding (left/right) */
-  inlinePadding?: boolean;
   /** HTML tag to render (defaults to 'section') */
   tag?: 'section' | 'div' | 'header' | 'footer';
   /** HTML id attribute */
@@ -58,9 +58,9 @@ export const Container = ({
   componentName,
   className,
   fullBleed = false,
+  containerBleed = false,
+  verticalPadding = false,
   backgroundImage,
-  inlinePadding = true,
-  blockPadding = true,
   children,
   tag = 'section',
   id,
@@ -71,10 +71,10 @@ export const Container = ({
 
   // Apply Tailwind variants based on props
   const { base, wrapper } = containerVariants({
-    inlinePadding,
-    blockPadding,
     fullBleed,
     hasBackgroundImage: hasBackgroundImage,
+    containerBleed,
+    verticalPadding,
   });
 
   return (
