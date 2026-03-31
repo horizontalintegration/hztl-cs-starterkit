@@ -2,17 +2,17 @@
 # --- Run lint ---
 echo "Running lint..."
 npm run lint
-RESULT=$?
-if [ $RESULT -ne 0 ]; then
-  echo "Linting has failed, fix errors before committing.">&2
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Lint failed. Fix the errors above before pushing."
   exit 1
 fi
 # --- Run Build ---
-echo "Running Build..."
+echo "Running build..."
 npm run build
-RESULT=$?
-if [ $RESULT -ne 0 ]; then
-  echo "Build has failed, fix errors before committing.">&2
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Build failed. Fix the errors above before pushing."
   exit 1
 fi
 

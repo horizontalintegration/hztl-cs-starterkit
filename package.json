@@ -1,18 +1,11 @@
 {
-  "name": "kickstart-next",
-  "version": "1.0.3",
-  "private": false,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/contentstack/kickstart-next"
-  },
-  "description": "Contentstack Kickstarts are the minimum amount of code needed to connect to Contentstack.",
-  "author": "Tim Benniks <tim.benniks@contentstack.com>",
-  "annotation": "Lo Etheridge <lo.etheridge@contentstack.com>",
-  "homepage": "https://contentstack.com",
-  "license": "MIT",
+  "name": "srpnet",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SRPNET Repo",
   "scripts": {
     "tsgen": "csdx tsgen -a starterkit-delivery-token -o \"./.generated/index.ts\" -p \"I\" --branch=main --no-doc --include-system-fields --include-editable-tags",
+    "scaffold": "tsx scripts/scaffold-component.ts",
     "gen-config": "tsx scripts/generate-component-mapper.ts",
     "fetch-languages": "tsx --require dotenv-flow/config scripts/fetch-language.ts",
     "gen-config:watch": "tsx scripts/generate-component-mapper.ts --watch",
