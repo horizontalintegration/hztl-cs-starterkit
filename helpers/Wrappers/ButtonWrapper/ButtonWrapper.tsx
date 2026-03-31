@@ -10,7 +10,7 @@ import { JSX, useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import { IEnhancedCta } from '@/.generated';
-import { cn } from '@/utils/cn';
+
 import { buttonVariants, modalContentVariants } from './ButtonWrapper.styles';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import ModalWrapper from '../ModalWrapper/ModalWrapper';
@@ -61,9 +61,6 @@ export const ButtonWrapper = ({
 }: ButtonWrapperProps): JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  //Early return if no CTA or href
-  if (!cta && !href && !onClick) return <></>;
-
   // Default values
   const defaultVariant = 'primary';
   const defaultSize = 'variable';
@@ -99,16 +96,20 @@ export const ButtonWrapper = ({
     [disabled, onClick]
   );
 
+  // Early return if no CTA or href
+  if (!cta && !href && !onClick) return <></>;
+
   const base = buttonVariants({
     variant: ctaVariant,
     size: ctaSize,
     disabled,
     focusRing,
+    class: className,
   });
 
   // Common props for both button and link
   const commonProps = {
-    className: cn(base, className),
+    className: base,
     'data-component': 'helpers/fieldwrappers/buttonwrapper',
     'aria-label':
       ariaLabel || (shouldOpenInNewTab ? `${linkTitle} (Opens in a new tab)` : undefined),

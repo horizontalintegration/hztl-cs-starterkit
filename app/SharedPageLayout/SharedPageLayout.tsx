@@ -11,7 +11,7 @@ import { Header } from '@/components/authorable/site-structure/Header/Header';
 import { Footer } from '@/components/authorable/site-structure/Footer/Footer';
 import { BackToTop } from '@/components/authorable/site-structure/BackToTop/BackToTop';
 import { MainLayout } from '@/components/authorable/site-structure/MainLayout/MainLayout';
-import { cn } from '@/utils/cn';
+
 
 /**
  * Props interface for SharedPageLayout component.
@@ -47,7 +47,7 @@ export async function SharedPageLayout({
   const { base, main } = pageLayoutVariants();
 
   return (
-    <div tabIndex={-1} className={cn(base())}>
+    <div tabIndex={-1} className={base()}>
       {/* Render header if available from CMS */}
       {header && <Header {...header} />}
 

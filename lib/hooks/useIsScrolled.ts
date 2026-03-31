@@ -4,8 +4,6 @@
  * Shared state across all consumers (e.g., header styling).
  */
 
-'use client';
-
 import { useCallback, useEffect, useState } from 'react';
 import { singletonHook } from 'react-singleton-hook';
 

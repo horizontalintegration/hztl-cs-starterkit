@@ -89,7 +89,7 @@ export const LeftAlignedSplit = (props: IHeroBannerModularBlock) => {
             ))}
           </div>
         </div>
-        <ImageWrapper image={props.banner_image} preload={true} />
+        <ImageWrapper image={props.banner_image} />
       </div>
     </Container>
   );

@@ -7,7 +7,7 @@
 import React, { CSSProperties, PropsWithChildren } from 'react';
 
 import { IEnhancedImage } from '@/.generated';
-import { cn } from '@/utils/cn';
+
 import Image from 'next/image';
 import { containerVariants } from './Container.styles';
 
@@ -78,7 +78,7 @@ export const Container = ({
   });
 
   return (
-    <Tag className={cn(base(), className)} data-component={componentName} id={id}>
+    <Tag className={base({ class: className })} data-component={componentName} id={id}>
       {hasBackgroundImage && (
         <Image
           src={backgroundImage.image?.url || ''}

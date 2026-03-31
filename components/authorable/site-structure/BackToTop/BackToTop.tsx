@@ -12,7 +12,6 @@ import { backToTopVariants } from './BackToTop.styles';
 import { useIsScrolled } from '@/lib/hooks/useIsScrolled';
 import { useGlobalLabels } from '@/context/GlobalLabelContext';
 
-
 /**
  * Back to Top button component.
  * Appears fixed at the bottom-right of the page when user scrolls down.
@@ -46,10 +45,7 @@ export const BackToTop = () => {
   const { base, button, label } = backToTopVariants({ isVisible: isScrolled });
 
   return (
-    <div
-      className={base()}
-      data-component="authorable/shared/site-structure/backtotop"
-    >
+    <div className={base()} data-component="authorable/shared/site-structure/backtotop">
       {/* Main button with icon */}
       <button
         className={button()}

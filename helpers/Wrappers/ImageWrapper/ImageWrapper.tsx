@@ -12,7 +12,7 @@ import { imageWrapperVariants } from './ImageWrapper.styles';
 
 import { IEnhancedImage } from '@/.generated';
 import { isValidNextImageDomain } from '@/lib/next-config/plugins/images';
-import { cn } from '@/utils/cn';
+
 import { getCSLPAttributes } from '@/utils/type-guards';
 import DefaultFallbackImage from '@/public/images/default-fallback-image.webp';
 
@@ -238,13 +238,13 @@ const ImageWrapper = ({
   }
 
   return (
-    <div className={cn(wrapperBase(), wrapperClassName)} style={wrapperStyle}>
+    <div className={wrapperBase({ class: wrapperClassName })} style={wrapperStyle}>
       {!isError && (
         <Image
           data-component="helpers/fieldwrappers/imagewrapper"
           {...nextImageProps}
           unoptimized={!isValidDomain}
-          className={cn(imageClassName)}
+          className={imageClassName}
           onError={() => setIsError(true)}
           {...getCSLPAttributes(image.$?.image)}
         />
