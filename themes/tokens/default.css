@@ -22,6 +22,14 @@
     --theme-color-dark-green: #1d781d;
     --theme-color-sky-blue: #379cd2;
     --theme-color-light-black: #333333;
+    --theme-color-accent-light-blue: #77c5d5;
+    --theme-color-hover-accent-light-blue: #4e93a6;
+    --theme-color-accent-orange: #cc8a00;
+    --theme-color-hover-accent-orange: #a5770e;
+    --theme-color-accent-green: #78aa00;
+    --theme-color-hover-accent-green: #517910;
+    --theme-color-accent-yellow: #cfb500;
+    --theme-color-hover-accent-yellow: #a79a0e;
 
     /* Typography */
     --theme-font-size-heading-1: 2.5rem;

@@ -9,7 +9,6 @@
   --font-srpeffra: var(--theme-font-srpeffra);
 
   /* Colors */
-  --color-dark-blue: var(--theme-color-dark-blue);
   --color-primary: var(--theme-color-primary);
   --color-secondary: var(--theme-color-secondary);
   --color-tertiary: var(--theme-color-tertiary);
@@ -22,4 +21,12 @@
   --color-dark-green: var(--theme-color-dark-green);
   --color-sky-blue: var(--theme-color-sky-blue);
   --color-light-black: var(--theme-color-light-black);
+  --color-accent-light-blue: var(--theme-color-accent-light-blue);
+  --color-hover-accent-light-blue: var(--theme-color-hover-accent-light-blue);
+  --color-accent-orange: var(--theme-color-accent-orange);
+  --color-hover-accent-orange: var(--theme-color-hover-accent-orange);
+  --color-accent-green: var(--theme-color-accent-green);
+  --color-hover-accent-green: var(--theme-color-hover-accent-green);
+  --color-accent-yellow: var(--theme-color-accent-yellow);
+  --color-hover-accent-yellow: var(--theme-color-hover-accent-yellow);
 }

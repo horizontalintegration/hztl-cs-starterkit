@@ -22,7 +22,7 @@ import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
  * @returns {JSX.Element} Rendered default hero banner variant
  */
 export const Default = (props: IHeroBannerModularBlock) => {
-  const { base, heading, description, ctaGroupWrapper, cta } = DEFAULT_VARIANTS();
+  const { base, heading, description, ctaGroupWrapper } = DEFAULT_VARIANTS();
 
   return (
     <Container
@@ -45,9 +45,7 @@ export const Default = (props: IHeroBannerModularBlock) => {
         {/* CTA buttons group */}
         <div className={ctaGroupWrapper()}>
           {props.banner_cta?.map((ctaItem, index) => (
-            <div className={cta()} key={`${ctaItem.link?.title}-${index}`}>
-              <ButtonWrapper cta={ctaItem} />
-            </div>
+            <ButtonWrapper cta={ctaItem} key={`${ctaItem.link?.title}-${index}`} />
           ))}
         </div>
       </div>
@@ -64,7 +62,7 @@ export const Default = (props: IHeroBannerModularBlock) => {
  * @returns {JSX.Element} Rendered left-aligned split hero banner variant
  */
 export const LeftAlignedSplit = (props: IHeroBannerModularBlock) => {
-  const { contentWrapper, base, heading, description, ctaGroupWrapper, cta } =
+  const { contentWrapper, base, heading, description, ctaGroupWrapper } =
     LEFT_ALIGNED_SPLIT_VARIANTS();
 
   return (
@@ -88,9 +86,7 @@ export const LeftAlignedSplit = (props: IHeroBannerModularBlock) => {
           {/* CTA buttons group */}
           <div className={ctaGroupWrapper()}>
             {props.banner_cta?.map((ctaItem, index) => (
-              <div className={cta()} key={`${ctaItem.link?.title}-${index}`}>
-                <ButtonWrapper cta={ctaItem} />
-              </div>
+              <ButtonWrapper cta={ctaItem} key={`${ctaItem.link?.title}-${index}`} />
             ))}
           </div>
         </div>
@@ -147,9 +143,8 @@ const DEFAULT_VARIANTS = tv({
       'max-w-screen-2xl',
       'mx-auto',
     ],
-    heading: ['heading-1', 'text-textPrimary', 'w-full'],
-    description: ['lead-copy', 'text-light-black', 'w-full'],
-    cta: ['w-full', 'md:w-fit'],
+    heading: ['heading-1', 'text-white', 'w-full'],
+    description: ['lead-copy', 'text-white', 'w-full'],
     ctaGroupWrapper: ['flex', 'flex-col', 'md:flex-row', 'flex-wrap', 'justify-start', 'gap-4'],
   },
 });
@@ -173,7 +168,6 @@ const LEFT_ALIGNED_SPLIT_VARIANTS = tv({
     ],
     heading: ['heading-1', 'text-textPrimary', 'w-full'],
     description: ['lead-copy', 'text-light-black', 'w-full'],
-    cta: ['w-full', 'md:w-fit'],
     ctaGroupWrapper: ['flex', 'flex-col', 'md:flex-row', 'flex-wrap', 'justify-start', 'gap-4'],
   },
 });

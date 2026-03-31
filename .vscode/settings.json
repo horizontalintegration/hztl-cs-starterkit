@@ -1,4 +1,5 @@
 {
+    "tailwindCSS.experimental.configFile": "./app.css",
     "tailwindCSS.experimental.classRegex": [
         // Match tailwind-variants arrays: ['class1', 'class2']
         [
@@ -35,5 +36,6 @@
     "files.associations": {
         "*.css": "tailwindcss"
     },
+    "tailwindCSS.classFunctions": ["tv"],
     "search.useIgnoreFiles": true
 }
