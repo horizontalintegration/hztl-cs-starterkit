@@ -80,24 +80,11 @@ export type IModularBlocksExtension<T> = {
   [P in keyof T]?: T[P] & { _metadata?: { uid?: string } };
 };
 
-export interface IAccordionModularBlock {
-  _version?: number;
-  expand_label?: string;
-  collapse_label?: string;
-  enable_expand_all: boolean;
-  reference: IAccordionItem[];
-  $?: {
-    expand_label?: CSLPFieldMapping;
-    collapse_label?: CSLPFieldMapping;
-    enable_expand_all?: CSLPFieldMapping;
-    reference?: CSLPFieldMapping;
-  };
-}
-
 export interface IEnhancedCta {
   _version?: number;
   link?: ILink;
   opens_in_new_tab: boolean;
+  has_font_awesome_icons: boolean;
   left_font_awesome_icon_class?: string;
   right_font_awesome_icon_class?: string;
   cta_variant:
@@ -132,6 +119,7 @@ export interface IEnhancedCta {
   $?: {
     link?: CSLPFieldMapping;
     opens_in_new_tab?: CSLPFieldMapping;
+    has_font_awesome_icons?: CSLPFieldMapping;
     left_font_awesome_icon_class?: CSLPFieldMapping;
     right_font_awesome_icon_class?: CSLPFieldMapping;
     cta_variant?: CSLPFieldMapping;
@@ -139,6 +127,76 @@ export interface IEnhancedCta {
     adobe_datalayer_fields?: CSLPFieldMapping;
     modal_cta?: CSLPFieldMapping;
     modal_content?: CSLPFieldMapping;
+  };
+}
+
+export interface IAccordionModularBlock {
+  _version?: number;
+  expand_label?: string;
+  collapse_label?: string;
+  enable_expand_all: boolean;
+  reference: IAccordionItem[];
+  $?: {
+    expand_label?: CSLPFieldMapping;
+    collapse_label?: CSLPFieldMapping;
+    enable_expand_all?: CSLPFieldMapping;
+    reference?: CSLPFieldMapping;
+  };
+}
+
+export interface IEnhancedImage {
+  _version?: number;
+  image?: IFile | null;
+  alternate_text?: string;
+  responsive_image: boolean;
+  dimensions?: {
+    image_width?: number | null;
+    image_height?: number | null;
+    $?: {
+      image_width?: CSLPFieldMapping;
+      image_height?: CSLPFieldMapping;
+    };
+  };
+  image_fit_options?: ("cover" | "contain") | null;
+  image_position_options?:
+    | (
+        | "center"
+        | "center left"
+        | "center right"
+        | "top"
+        | "top left"
+        | "top right"
+        | "bottom"
+        | "bottom left"
+        | "bottom right"
+      )
+    | null;
+  rounded_image: boolean;
+  $?: {
+    image?: CSLPFieldMapping;
+    alternate_text?: CSLPFieldMapping;
+    responsive_image?: CSLPFieldMapping;
+    dimensions?: CSLPFieldMapping;
+    image_fit_options?: CSLPFieldMapping;
+    image_position_options?: CSLPFieldMapping;
+    rounded_image?: CSLPFieldMapping;
+  };
+}
+
+export interface ISitemapSetting {
+  _version?: number;
+  change_frequency:
+    | "always"
+    | "hourly"
+    | "daily"
+    | "weekly"
+    | "monthly"
+    | "yearly"
+    | "never";
+  priority?: number | null;
+  $?: {
+    change_frequency?: CSLPFieldMapping;
+    priority?: CSLPFieldMapping;
   };
 }
 
@@ -235,62 +293,6 @@ export interface ISeo {
   };
 }
 
-export interface IEnhancedImage {
-  _version?: number;
-  image?: IFile | null;
-  alternate_text?: string;
-  responsive_image: boolean;
-  dimensions?: {
-    image_width?: number | null;
-    image_height?: number | null;
-    $?: {
-      image_width?: CSLPFieldMapping;
-      image_height?: CSLPFieldMapping;
-    };
-  };
-  image_fit_options?: ("cover" | "contain") | null;
-  image_position_options?:
-    | (
-        | "center"
-        | "center left"
-        | "center right"
-        | "top"
-        | "top left"
-        | "top right"
-        | "bottom"
-        | "bottom left"
-        | "bottom right"
-      )
-    | null;
-  rounded_image: boolean;
-  $?: {
-    image?: CSLPFieldMapping;
-    alternate_text?: CSLPFieldMapping;
-    responsive_image?: CSLPFieldMapping;
-    dimensions?: CSLPFieldMapping;
-    image_fit_options?: CSLPFieldMapping;
-    image_position_options?: CSLPFieldMapping;
-    rounded_image?: CSLPFieldMapping;
-  };
-}
-
-export interface ISitemapSetting {
-  _version?: number;
-  change_frequency:
-    | "always"
-    | "hourly"
-    | "daily"
-    | "weekly"
-    | "monthly"
-    | "yearly"
-    | "never";
-  priority?: number | null;
-  $?: {
-    change_frequency?: CSLPFieldMapping;
-    priority?: CSLPFieldMapping;
-  };
-}
-
 export interface IAccordionItem extends ISystemFields {
   _version?: number;
   title: string;
@@ -298,6 +300,101 @@ export interface IAccordionItem extends ISystemFields {
   $?: {
     title?: CSLPFieldMapping;
     description?: CSLPFieldMapping;
+  };
+}
+
+export interface IComponents extends ISystemFields {
+  hero_banner: IHeroBannerModularBlock;
+  accordion: IAccordionModularBlock;
+  cta_button: IEnhancedCta;
+}
+
+export interface IPage extends ISystemFields {
+  _version?: number;
+  title: string;
+  url: string;
+  components?: IModularBlocksExtension<IComponents>[];
+  seo?: ISeo;
+  sitemap_setting?: ISitemapSetting;
+  taxonomies?: ITaxonomy | ITaxonomyEntry[];
+  $?: {
+    title?: CSLPFieldMapping;
+    url?: CSLPFieldMapping;
+    components?: CSLPFieldMapping;
+    seo?: CSLPFieldMapping;
+    sitemap_setting?: CSLPFieldMapping;
+    taxonomies?: CSLPFieldMapping;
+  };
+}
+
+export interface IDictionaryItems extends ISystemFields {
+  _version?: number;
+  title: string;
+  back_to_top_label?: string;
+  language_selector_label?: string;
+  is_selected_label?: string;
+  $?: {
+    title?: CSLPFieldMapping;
+    back_to_top_label?: CSLPFieldMapping;
+    language_selector_label?: CSLPFieldMapping;
+    is_selected_label?: CSLPFieldMapping;
+  };
+}
+
+export interface IHeader extends ISystemFields {
+  _version?: number;
+  title: string;
+  logo?: IEnhancedImage;
+  logo_link?: ILink;
+  main_navigation?: {
+    navigation_title?: string;
+    main_navigation_links?: IEnhancedCta[];
+    sub_navigation?: {
+      sub_navigation_title?: string;
+      global_field?: IEnhancedCta[];
+      final_navigation?: {
+        title?: string;
+        global_field?: IEnhancedCta[];
+        $?: {
+          title?: CSLPFieldMapping;
+          global_field?: CSLPFieldMapping;
+        };
+      }[];
+      $?: {
+        sub_navigation_title?: CSLPFieldMapping;
+        global_field?: CSLPFieldMapping;
+        final_navigation?: CSLPFieldMapping;
+      };
+    }[];
+    $?: {
+      navigation_title?: CSLPFieldMapping;
+      main_navigation_links?: CSLPFieldMapping;
+      sub_navigation?: CSLPFieldMapping;
+    };
+  }[];
+  taxonomies?: ITaxonomy | ITaxonomyEntry[];
+  $?: {
+    title?: CSLPFieldMapping;
+    logo?: CSLPFieldMapping;
+    logo_link?: CSLPFieldMapping;
+    main_navigation?: CSLPFieldMapping;
+    taxonomies?: CSLPFieldMapping;
+  };
+}
+
+export interface IFooter extends ISystemFields {
+  _version?: number;
+  title: string;
+  logo?: IEnhancedImage;
+  logo_link?: ILink;
+  copyright_text?: string;
+  taxonomies?: ITaxonomy | ITaxonomyEntry[];
+  $?: {
+    title?: CSLPFieldMapping;
+    logo?: CSLPFieldMapping;
+    logo_link?: CSLPFieldMapping;
+    copyright_text?: CSLPFieldMapping;
+    taxonomies?: CSLPFieldMapping;
   };
 }
 
@@ -370,100 +467,5 @@ export interface IRedirectMappings extends ISystemFields {
   $?: {
     title?: CSLPFieldMapping;
     mappings?: CSLPFieldMapping;
-  };
-}
-
-export interface IDictionaryItems extends ISystemFields {
-  _version?: number;
-  title: string;
-  back_to_top_label?: string;
-  language_selector_label?: string;
-  is_selected_label?: string;
-  $?: {
-    title?: CSLPFieldMapping;
-    back_to_top_label?: CSLPFieldMapping;
-    language_selector_label?: CSLPFieldMapping;
-    is_selected_label?: CSLPFieldMapping;
-  };
-}
-
-export interface IFooter extends ISystemFields {
-  _version?: number;
-  title: string;
-  logo?: IEnhancedImage;
-  logo_link?: ILink;
-  copyright_text?: string;
-  taxonomies?: ITaxonomy | ITaxonomyEntry[];
-  $?: {
-    title?: CSLPFieldMapping;
-    logo?: CSLPFieldMapping;
-    logo_link?: CSLPFieldMapping;
-    copyright_text?: CSLPFieldMapping;
-    taxonomies?: CSLPFieldMapping;
-  };
-}
-
-export interface IComponents extends ISystemFields {
-  hero_banner: IHeroBannerModularBlock;
-  accordion: IAccordionModularBlock;
-  cta_button: IEnhancedCta;
-}
-
-export interface IPage extends ISystemFields {
-  _version?: number;
-  title: string;
-  url: string;
-  components?: IModularBlocksExtension<IComponents>[];
-  seo?: ISeo;
-  sitemap_setting?: ISitemapSetting;
-  taxonomies?: ITaxonomy | ITaxonomyEntry[];
-  $?: {
-    title?: CSLPFieldMapping;
-    url?: CSLPFieldMapping;
-    components?: CSLPFieldMapping;
-    seo?: CSLPFieldMapping;
-    sitemap_setting?: CSLPFieldMapping;
-    taxonomies?: CSLPFieldMapping;
-  };
-}
-
-export interface IHeader extends ISystemFields {
-  _version?: number;
-  title: string;
-  logo?: IEnhancedImage;
-  logo_link?: ILink;
-  main_navigation?: {
-    navigation_title?: string;
-    main_navigation_links?: IEnhancedCta[];
-    sub_navigation?: {
-      sub_navigation_title?: string;
-      global_field?: IEnhancedCta[];
-      final_navigation?: {
-        title?: string;
-        global_field?: IEnhancedCta[];
-        $?: {
-          title?: CSLPFieldMapping;
-          global_field?: CSLPFieldMapping;
-        };
-      }[];
-      $?: {
-        sub_navigation_title?: CSLPFieldMapping;
-        global_field?: CSLPFieldMapping;
-        final_navigation?: CSLPFieldMapping;
-      };
-    }[];
-    $?: {
-      navigation_title?: CSLPFieldMapping;
-      main_navigation_links?: CSLPFieldMapping;
-      sub_navigation?: CSLPFieldMapping;
-    };
-  }[];
-  taxonomies?: ITaxonomy | ITaxonomyEntry[];
-  $?: {
-    title?: CSLPFieldMapping;
-    logo?: CSLPFieldMapping;
-    logo_link?: CSLPFieldMapping;
-    main_navigation?: CSLPFieldMapping;
-    taxonomies?: CSLPFieldMapping;
   };
 }

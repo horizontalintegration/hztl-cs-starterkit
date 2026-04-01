@@ -61,9 +61,10 @@ const generateComponentFile = (componentName: string): string => {
   return `import { defaultVariants } from './${componentName}.styles';
 import { Container } from '@/components/primitives/Container/Container';
 import { toPascalCase } from '@/utils/string-utils';
+import { IBaseComponentProps } from '@/lib/types';
 
-// TODO: Replace 'any' with the generated CMS type once available
-type ${componentName}Props = any;
+// TODO: Replace IBaseComponentProps with the generated CMS type once available
+type ${componentName}Props = IBaseComponentProps;
 
 const Default = (props: ${componentName}Props) => {
   console.log('${componentName} Props:', props);
