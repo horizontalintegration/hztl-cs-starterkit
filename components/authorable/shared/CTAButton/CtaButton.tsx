@@ -1,14 +1,20 @@
 import { Container } from '@/components/primitives/Container/Container';
-import { ButtonWrapper } from '@/helpers/Wrappers/ButtonWrapper/ButtonWrapper';
 import { toPascalCase } from '@/utils/string-utils';
+import { IBaseComponentProps } from '@/lib/types';
+import { IEnhancedCta } from '@/.generated';
+import { ButtonWrapper } from '@/helpers/Wrappers/ButtonWrapper/ButtonWrapper';
+import { defaultVariants } from './CtaButton.styles';
 
-// TODO: Replace 'any' with the generated CMS type once available
-type CtaButtonProps = any;
+type CtaButtonProps = IEnhancedCta & IBaseComponentProps;
 
 const Default = (props: CtaButtonProps) => {
+  const base = defaultVariants();
+
   return (
-    <Container componentName="CTAButton">
-      <ButtonWrapper cta={props} />
+    <Container componentName="CtaButton">
+      <div className={base}>
+        <ButtonWrapper cta={props} />
+      </div>
     </Container>
   );
 };
@@ -18,7 +24,8 @@ const variants = {
 };
 
 export const CtaButton = (props: CtaButtonProps) => {
-  const Component =
-    variants[toPascalCase(props.component_variant) as keyof typeof variants] || Default;
+  const Component = props.component_variant
+    ? variants[toPascalCase(props.component_variant) as keyof typeof variants]
+    : Default;
   return <Component {...props} />;
 };

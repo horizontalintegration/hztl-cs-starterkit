@@ -154,6 +154,16 @@ export interface ISocialLink {
   };
 }
 
+export interface INavigationLink {
+  _version?: number;
+  link?: ILink;
+  open_in_new_window: boolean;
+  $?: {
+    link?: CSLPFieldMapping;
+    open_in_new_window?: CSLPFieldMapping;
+  };
+}
+
 export interface IAccordionModularBlock {
   _version?: number;
   expand_label?: string;

@@ -84,8 +84,9 @@ const variants = {
 };
 
 export const ${componentName} = (props: ${componentName}Props) => {
-  const Component =
-    variants[toPascalCase(props.component_variant) as keyof typeof variants] || Default;
+  const Component = props.component_variant
+    ? variants[toPascalCase(props.component_variant) as keyof typeof variants]
+    : Default;
   return <Component {...props} />;
 };
 `;
