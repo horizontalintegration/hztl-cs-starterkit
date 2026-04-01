@@ -16,8 +16,6 @@ import { srpSans, srpEffra } from '@/app/fonts';
 // Register all components for SSR — ComponentMapper must resolve both server
 // and client components during server-side rendering
 import '@/temp/registered-components';
-import '@/temp/registered-client-only-components';
-import Head from 'next/head';
 
 /**
  * Props interface for RootLayout component.
@@ -49,11 +47,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <html lang="en" data-theme={theme} className={`${srpSans.variable} ${srpEffra.variable}`}>
-      <Head>
-        {/* Head elements: scripts and tracking */}
+      <head>
         <Scripts />
-        <PageViewTracker />
-      </Head>
+      </head>
+      <PageViewTracker />
 
       {/* Main content area */}
       <body className="font-srpsans bg-tertiary">{children}</body>

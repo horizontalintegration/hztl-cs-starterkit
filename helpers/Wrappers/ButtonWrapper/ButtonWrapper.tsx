@@ -33,8 +33,6 @@ export interface ButtonWrapperProps extends React.HTMLAttributes<HTMLButtonEleme
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   /** Button type (for button mode) */
   type?: 'button' | 'submit' | 'reset';
-  /** ARIA label for accessibility */
-  ariaLabel?: string;
 }
 
 /**
@@ -57,7 +55,6 @@ export const ButtonWrapper = ({
   className,
   onClick,
   type = 'button',
-  ariaLabel,
 }: ButtonWrapperProps): JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -111,8 +108,10 @@ export const ButtonWrapper = ({
   const commonProps = {
     className: base,
     'data-component': 'helpers/fieldwrappers/buttonwrapper',
-    'aria-label':
-      ariaLabel || (shouldOpenInNewTab ? `${linkTitle} (Opens in a new tab)` : undefined),
+    'aria-label': shouldOpenInNewTab ? `${linkTitle} (Opens in a new tab)` : linkTitle,
+    clickname: cta?.adobe_datalayer_fields?.click_name || linkTitle,
+    clicktype: cta?.adobe_datalayer_fields?.click_type || (isLink ? 'link' : 'button'),
+    clicklocation: cta?.adobe_datalayer_fields?.click_location || 'body',
     ...getCSLPAttributes(cta?.$?.link),
   };
 
@@ -130,7 +129,17 @@ export const ButtonWrapper = ({
           aria-disabled={disabled}
           tabIndex={disabled ? -1 : undefined}
         >
+          {cta?.left_font_awesome_icon_class && (
+            <span>
+              <i className={cta.left_font_awesome_icon_class}></i>
+            </span>
+          )}
           {linkTitle}
+          {cta?.right_font_awesome_icon_class && (
+            <span>
+              <i className={cta.right_font_awesome_icon_class}></i>
+            </span>
+          )}
         </button>
         <ModalWrapper
           isOpen={isModalOpen}
@@ -161,21 +170,47 @@ export const ButtonWrapper = ({
         onClick={handleClick}
         {...commonProps}
       >
+        {cta?.left_font_awesome_icon_class && (
+          <span>
+            <i className={cta.left_font_awesome_icon_class}></i>
+          </span>
+        )}
         {linkTitle}
+        {cta?.right_font_awesome_icon_class && (
+          <span>
+            <i className={cta.right_font_awesome_icon_class}></i>
+          </span>
+        )}
+        {isExternal && (
+          <span>
+            <i className="fas fa-arrow-up-right"></i>
+          </span>
+        )}
       </Link>
     );
   }
 
   // Render as Button
   return (
-    <Link
-      href={linkHref}
-      target={shouldOpenInNewTab ? '_blank' : undefined}
-      rel={shouldOpenInNewTab ? 'noopener noreferrer' : undefined}
+    <button
+      type={type}
       onClick={handleClick}
+      disabled={disabled}
+      aria-disabled={disabled}
+      tabIndex={disabled ? -1 : undefined}
       {...commonProps}
     >
+      {cta?.left_font_awesome_icon_class && (
+        <span>
+          <i className={cta.left_font_awesome_icon_class}></i>
+        </span>
+      )}
       {linkTitle}
-    </Link>
+      {cta?.right_font_awesome_icon_class && (
+        <span>
+          <i className={cta.right_font_awesome_icon_class}></i>
+        </span>
+      )}
+    </button>
   );
 };

@@ -9,9 +9,9 @@
  *
  * Examples:
  *   npx tsx scripts/scaffold-component.ts CardBlock
- *   npx tsx scripts/scaffold-component.ts CardBlock --path components/authorable/shared/content
+ *   npx tsx scripts/scaffold-component.ts CardBlock --path components/authorable/shared
  *
- * Default path: components/authorable/shared/content
+ * Default path: components/authorable/shared
  */
 
 import fs from 'fs';

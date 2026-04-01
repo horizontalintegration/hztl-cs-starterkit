@@ -23,8 +23,6 @@ export interface ImageWrapperProps {
   imageClassName?: string;
   /** Enhanced image object from CMS */
   image?: IEnhancedImage | null;
-  /** Load with priority (above-the-fold) */
-  preload?: boolean;
   /** Responsive sizes attribute */
   sizes?: string;
   /** Image quality (1-100) */
@@ -33,6 +31,8 @@ export interface ImageWrapperProps {
   style?: React.CSSProperties;
   /** Image fills parent container */
   fill?: boolean;
+  /** FetchPriority strategy */
+  fetchPriority?: 'high' | 'low' | 'auto';
   /** Loading strategy */
   loading?: 'lazy' | 'eager';
   /** Placeholder type */
@@ -57,6 +57,7 @@ export interface NextImageProps extends React.ImgHTMLAttributes<HTMLImageElement
   style: React.CSSProperties;
   fill?: boolean;
   quality?: number;
+  fetchPriority?: 'high' | 'low' | 'auto';
   loading?: 'lazy' | 'eager';
   placeholder?: 'blur' | 'empty';
   blurDataURL?: string;
@@ -109,10 +110,10 @@ const ImageWrapper = ({
   imageClassName,
   image,
   quality = 75,
-  preload = false,
   sizes,
   fill,
-  loading,
+  fetchPriority = 'auto',
+  loading = 'lazy',
   placeholder,
   blurDataURL,
   showFallbackImage = true,
@@ -158,14 +159,12 @@ const ImageWrapper = ({
     [sizes, dimension?.width, responsive_image]
   );
 
-  const loadingStrategy = loading || 'lazy';
-
   // Build Next.js Image props
   const nextImageProps: NextImageProps = useMemo(() => {
     const props: NextImageProps = {
       alt: alternate_text || title || 'Image',
       className: imageClassName,
-      preload,
+      fetchPriority,
       sizes: optimalSizes,
       src: isError ? DefaultFallbackImage.src : (url ?? ''),
       style: {
@@ -173,7 +172,7 @@ const ImageWrapper = ({
         height: '100%',
       },
       quality: Math.max(1, Math.min(100, quality)),
-      loading: loadingStrategy,
+      loading,
     };
 
     if (placeholder === 'blur' && blurDataURL) {
@@ -203,11 +202,11 @@ const ImageWrapper = ({
     alternate_text,
     title,
     imageClassName,
-    preload,
+    fetchPriority,
     optimalSizes,
     url,
     quality,
-    loadingStrategy,
+    loading,
     placeholder,
     blurDataURL,
     fill,
