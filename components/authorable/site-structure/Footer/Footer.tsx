@@ -7,7 +7,6 @@
 
 import { IFooter } from '@/.generated';
 import { footerVariants } from './Footer.styles';
-import { getCSLPAttributes } from '@/utils/type-guards';
 
 /**
  * Footer component that renders site-wide footer content.
@@ -25,16 +24,16 @@ import { getCSLPAttributes } from '@/utils/type-guards';
  * @returns {JSX.Element} Rendered footer component
  */
 export const Footer = (props: IFooter) => {
-  const { base, container, content, copyright } = footerVariants();
+  // Get current year for copyright text
+  const currentYear = new Date().getFullYear();
+  const { base, container, content } = footerVariants();
+  console.log('Footer Props:', props);
 
   return (
     <footer className={base()}>
       <div className={container()}>
         <div className={content()}>
-          {/* Copyright text with Live Preview support */}
-          <p className={copyright()} {...getCSLPAttributes(props.$?.title)}>
-            {props.title}
-          </p>
+          <h2>Footer</h2>
         </div>
       </div>
     </footer>
