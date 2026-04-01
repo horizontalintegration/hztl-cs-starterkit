@@ -11,7 +11,6 @@ import Link from 'next/link';
 import { headerVariants } from './Header.styles';
 
 import { CSLPFieldMapping, IEnhancedImage, IHeader, ILink } from '@/.generated';
-import { useIsScrolled } from '@/lib/hooks/useIsScrolled';
 import { LanguageSelector } from './LanguageSelector/LanguageSelector';
 import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
 import { getCSLPAttributes } from '@/utils/type-guards';
@@ -52,7 +51,7 @@ export const Logo = ({ logo, logoLink, $ }: LogoProps) => {
 
 /**
  * Site header component with sticky positioning and dynamic styling.
- * 
+ *
  * Features:
  * - Sticky positioning that follows user scroll
  * - Dynamic padding that reduces when user scrolls (for space efficiency)
@@ -70,11 +69,7 @@ export const Logo = ({ logo, logoLink, $ }: LogoProps) => {
  * ```
  */
 export const Header = (props: IHeader) => {
-  // Track whether user has scrolled to adjust header padding
-  const isScrolled = useIsScrolled();
-
-  const { base, wrapper, inner, menuWrapper, menuContainer, languageWrapper } =
-    headerVariants({ isScrolled });
+  const { base, wrapper, inner, menuWrapper, menuContainer, languageWrapper } = headerVariants();
 
   return (
     <header className={base()} id="header">
@@ -83,11 +78,7 @@ export const Header = (props: IHeader) => {
           <div className={menuWrapper()}>
             {/* Left side: Logo */}
             <div className={menuContainer()}>
-              <Logo
-                logo={props.logo}
-                logoLink={props.logo_link}
-                $={props.$?.logo_link}
-              />
+              <Logo logo={props.logo} logoLink={props.logo_link} $={props.$?.logo_link} />
             </div>
 
             {/* Right side: Language selector */}
@@ -100,4 +91,3 @@ export const Header = (props: IHeader) => {
     </header>
   );
 };
-

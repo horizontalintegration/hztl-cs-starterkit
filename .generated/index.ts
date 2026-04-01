@@ -76,10 +76,30 @@ export interface ISystemFields {
   title?: string;
 }
 
+export type IModularBlocksExtension<T> = {
+  [P in keyof T]?: T[P] & { _metadata?: { uid?: string } };
+};
+
+export interface IAccordionModularBlock {
+  _version?: number;
+  expand_label?: string;
+  collapse_label?: string;
+  enable_expand_all: boolean;
+  reference: IAccordionItem[];
+  $?: {
+    expand_label?: CSLPFieldMapping;
+    collapse_label?: CSLPFieldMapping;
+    enable_expand_all?: CSLPFieldMapping;
+    reference?: CSLPFieldMapping;
+  };
+}
+
 export interface IEnhancedCta {
   _version?: number;
   link?: ILink;
   opens_in_new_tab: boolean;
+  left_font_awesome_icon_class?: string;
+  right_font_awesome_icon_class?: string;
   cta_variant:
     | "primary"
     | "primary-outline"
@@ -88,9 +108,18 @@ export interface IEnhancedCta {
     | "light-blue"
     | "orange"
     | "green"
-    | "yellow"
-    | "link";
+    | "yellow";
   cta_size: "fixed" | "variable";
+  adobe_datalayer_fields?: {
+    click_type?: string;
+    click_location?: string;
+    click_name?: string;
+    $?: {
+      click_type?: CSLPFieldMapping;
+      click_location?: CSLPFieldMapping;
+      click_name?: CSLPFieldMapping;
+    };
+  };
   modal_cta: boolean;
   modal_content?: {
     title?: string;
@@ -103,8 +132,11 @@ export interface IEnhancedCta {
   $?: {
     link?: CSLPFieldMapping;
     opens_in_new_tab?: CSLPFieldMapping;
+    left_font_awesome_icon_class?: CSLPFieldMapping;
+    right_font_awesome_icon_class?: CSLPFieldMapping;
     cta_variant?: CSLPFieldMapping;
     cta_size?: CSLPFieldMapping;
+    adobe_datalayer_fields?: CSLPFieldMapping;
     modal_cta?: CSLPFieldMapping;
     modal_content?: CSLPFieldMapping;
   };
@@ -259,6 +291,16 @@ export interface ISitemapSetting {
   };
 }
 
+export interface IAccordionItem extends ISystemFields {
+  _version?: number;
+  title: string;
+  description: string;
+  $?: {
+    title?: CSLPFieldMapping;
+    description?: CSLPFieldMapping;
+  };
+}
+
 export interface ISiteSettings extends ISystemFields {
   _version?: number;
   title: string;
@@ -363,13 +405,15 @@ export interface IFooter extends ISystemFields {
 
 export interface IComponents extends ISystemFields {
   hero_banner: IHeroBannerModularBlock;
+  accordion: IAccordionModularBlock;
+  cta_button: IEnhancedCta;
 }
 
 export interface IPage extends ISystemFields {
   _version?: number;
   title: string;
   url: string;
-  components?: IComponents[];
+  components?: IModularBlocksExtension<IComponents>[];
   seo?: ISeo;
   sitemap_setting?: ISitemapSetting;
   taxonomies?: ITaxonomy | ITaxonomyEntry[];
