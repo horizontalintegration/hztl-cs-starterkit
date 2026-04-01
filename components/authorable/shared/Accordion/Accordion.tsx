@@ -1,9 +1,10 @@
 import { defaultVariants } from './Accordion.styles';
 import { Container } from '@/components/primitives/Container/Container';
 import { toPascalCase } from '@/utils/string-utils';
+import { IBaseComponentProps } from '@/lib/types';
+import { IAccordionModularBlock } from '@/.generated';
 
-// TODO: Replace 'any' with the generated CMS type once available
-type AccordionProps = any;
+type AccordionProps = IAccordionModularBlock & IBaseComponentProps;
 
 const Default = (props: AccordionProps) => {
   console.log('Accordion Props:', props);
@@ -23,7 +24,8 @@ const variants = {
 };
 
 export const Accordion = (props: AccordionProps) => {
-  const Component =
-    variants[toPascalCase(props.component_variant) as keyof typeof variants] || Default;
+  const Component = props.component_variant
+    ? variants[toPascalCase(props.component_variant) as keyof typeof variants]
+    : Default;
   return <Component {...props} />;
 };

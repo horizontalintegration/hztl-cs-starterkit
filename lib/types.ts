@@ -10,6 +10,15 @@ export interface IExtendedProps {
   extendedProps?: Record<string, any>;
 }
 
+/** Base props shared by all CMS components. Use as a fallback before the generated type is available. */
+export interface IBaseComponentProps {
+  component_variant?: string;
+  componentName?: string;
+  extendedProps?: Record<string, any>;
+  $?: Record<string, any>;
+  [key: string]: any;
+}
+
 /** Params for fetching multiple entries by content type */
 export type GetEntries = {
   contentTypeUid: string;
