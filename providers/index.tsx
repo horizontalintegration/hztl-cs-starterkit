@@ -12,9 +12,7 @@ import React from 'react';
 import { IDictionaryItems } from '@/.generated';
 import { GlobalLabelsProvider } from '@/context/GlobalLabelContext';
 
-// Register all components in the client boundary
-// Both registries use next/dynamic (SSR-enabled), so they render correctly on server and client
-import '@/temp/registered-components';
+// Register client components within the client boundary
 import '@/temp/registered-client-only-components';
 
 /**
