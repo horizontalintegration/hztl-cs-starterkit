@@ -130,6 +130,28 @@ export interface IEnhancedCta {
   };
 }
 
+export interface ISocialLink {
+  _version?: number;
+  social_link?: ILink;
+  social_icon?: IFile | null;
+  social_icon_alt_text?: string;
+  $?: {
+    social_link?: CSLPFieldMapping;
+    social_icon?: CSLPFieldMapping;
+    social_icon_alt_text?: CSLPFieldMapping;
+  };
+}
+
+export interface INavigationLink {
+  _version?: number;
+  link?: ILink;
+  open_in_new_window: boolean;
+  $?: {
+    link?: CSLPFieldMapping;
+    open_in_new_window?: CSLPFieldMapping;
+  };
+}
+
 export interface IAccordionModularBlock {
   _version?: number;
   expand_label?: string;
@@ -296,10 +318,14 @@ export interface ISeo {
 export interface IAccordionItem extends ISystemFields {
   _version?: number;
   title: string;
+  accordion_title: string;
   description: string;
+  taxonomies?: ITaxonomy | ITaxonomyEntry[];
   $?: {
     title?: CSLPFieldMapping;
+    accordion_title?: CSLPFieldMapping;
     description?: CSLPFieldMapping;
+    taxonomies?: CSLPFieldMapping;
   };
 }
 
@@ -385,15 +411,34 @@ export interface IHeader extends ISystemFields {
 export interface IFooter extends ISystemFields {
   _version?: number;
   title: string;
-  logo?: IEnhancedImage;
-  logo_link?: ILink;
-  copyright_text?: string;
+  footer_section?: MaxTuple<
+    {
+      section_heading?: string;
+      navigation_link?: INavigationLink[];
+      $?: {
+        section_heading?: CSLPFieldMapping;
+        navigation_link?: CSLPFieldMapping;
+      };
+    },
+    2
+  >;
+  social_connect_section?: {
+    section_heading?: string;
+    social_links?: ISocialLink[];
+    policy_and_terms?: string;
+    copyright_details?: string;
+    $?: {
+      section_heading?: CSLPFieldMapping;
+      social_links?: CSLPFieldMapping;
+      policy_and_terms?: CSLPFieldMapping;
+      copyright_details?: CSLPFieldMapping;
+    };
+  };
   taxonomies?: ITaxonomy | ITaxonomyEntry[];
   $?: {
     title?: CSLPFieldMapping;
-    logo?: CSLPFieldMapping;
-    logo_link?: CSLPFieldMapping;
-    copyright_text?: CSLPFieldMapping;
+    footer_section?: CSLPFieldMapping;
+    social_connect_section?: CSLPFieldMapping;
     taxonomies?: CSLPFieldMapping;
   };
 }

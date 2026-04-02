@@ -12,8 +12,9 @@ import React from 'react';
 import { IDictionaryItems } from '@/.generated';
 import { GlobalLabelsProvider } from '@/context/GlobalLabelContext';
 
-// Register client components for client-side bundle
-// Ensures ComponentMapper has access to client components during hydration
+// Register all components in the client boundary
+// Both registries use next/dynamic (SSR-enabled), so they render correctly on server and client
+import '@/temp/registered-components';
 import '@/temp/registered-client-only-components';
 
 /**

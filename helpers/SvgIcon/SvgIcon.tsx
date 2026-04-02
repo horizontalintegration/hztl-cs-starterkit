@@ -5,8 +5,8 @@
  */
 
 import { JSX, memo } from 'react';
+import { tv } from 'tailwind-variants';
 import { iconMap, IconMapKeys } from './iconMap';
-import { iconVariants } from './SvgIcon.styles';
 
 /** Available icon names from iconMap registry */
 export type IconTypes = IconMapKeys;
@@ -27,7 +27,7 @@ export interface SvgIconProps {
   fill?: SVGFill;
   /** Icon name from iconMap registry */
   icon: IconTypes;
-  /** Icon size preset (defaults to 'sm' = 32px) */
+  /** Icon size preset. Omit to control size freely via className. */
   size?: SvgIconSize;
   /** SVG viewBox (defaults to '0 0 24 24') */
   viewBox?: string;
@@ -35,10 +35,26 @@ export interface SvgIconProps {
   title?: string;
 }
 
+const iconVariants = tv({
+  base: [],
+  variants: {
+    size: {
+      xxs: ['h-3!', 'w-3!'],
+      xs: ['h-4!', 'w-4!'],
+      s: ['h-6!', 'w-6!'],
+      sm: ['h-8!', 'w-8!'],
+      m: ['h-12!', 'w-12!'],
+      md: ['h-16!', 'w-16!'],
+      lg: ['h-24!', 'w-24!'],
+      em: ['h-em!', 'w-em!'],
+    },
+  },
+});
+
 /**
  * Renders an SVG icon with consistent sizing and dynamic loading.
  * Icons are lazy-loaded from iconMap for optimal bundle size.
- * 
+ *
  * @example
  * <SvgIcon icon="chevron-down" size="sm" fill="currentColor" />
  */
@@ -46,7 +62,7 @@ const SvgIcon = ({
   className,
   fill = 'currentColor',
   icon,
-  size = 'sm',
+  size,
   viewBox = '0 0 24 24',
   title,
 }: SvgIconProps): JSX.Element => {
@@ -75,4 +91,3 @@ const SvgIcon = ({
 };
 
 export default memo(SvgIcon);
-

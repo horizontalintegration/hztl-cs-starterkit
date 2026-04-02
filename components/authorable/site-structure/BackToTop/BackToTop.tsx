@@ -51,8 +51,6 @@ export const BackToTop = () => {
         className={button()}
         onClick={scrollToTop}
         aria-label={globalLabels.back_to_top_label || fallbackText}
-        aria-hidden={!isScrolled}
-        disabled={!isScrolled}
         type="button"
       >
         {/* Hidden text for screen readers */}

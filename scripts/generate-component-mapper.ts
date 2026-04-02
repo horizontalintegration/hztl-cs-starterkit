@@ -108,9 +108,7 @@ const isClientComponent = (filePath: string): boolean => {
     // Look before the first import statement (handles large doc strings)
     const firstImportIndex = content.search(/^import\s/m);
     const beforeImports =
-      firstImportIndex !== -1
-        ? content.slice(0, firstImportIndex)
-        : content.slice(0, 500); // First 500 chars if no imports
+      firstImportIndex !== -1 ? content.slice(0, firstImportIndex) : content.slice(0, 500); // First 500 chars if no imports
 
     const hasUseClientDirective =
       beforeImports.includes("'use client'") || beforeImports.includes('"use client"');
@@ -259,9 +257,9 @@ const findComponentFiles = (
       // Check if file is a component (React/TypeScript/JavaScript)
       if (
         (entry.name.endsWith('.tsx') ||
-        entry.name.endsWith('.jsx') ||
-        entry.name.endsWith('.ts') ||
-        entry.name.endsWith('.js')) &&
+          entry.name.endsWith('.jsx') ||
+          entry.name.endsWith('.ts') ||
+          entry.name.endsWith('.js')) &&
         !entry.name.includes('.styles.')
       ) {
         const isClient = isClientComponent(fullPath);
@@ -304,16 +302,16 @@ export const generateRegisteredComponents = () => {
         const componentName = path.basename(file, path.extname(file));
         const componentData = { file, dir: fileDir };
 
-        // Add client components to client-only map
         if (isClient) {
+          // Add client components to client-only map
           if (!clientOnlyComponentMap.has(componentName)) {
             clientOnlyComponentMap.set(componentName, componentData);
           }
-        }
-
-        // Add all components to main component map
-        if (!componentMap.has(componentName)) {
-          componentMap.set(componentName, componentData);
+        } else {
+          // Add server components to main component map
+          if (!componentMap.has(componentName)) {
+            componentMap.set(componentName, componentData);
+          }
         }
       });
     }
@@ -330,7 +328,7 @@ export const generateRegisteredComponents = () => {
 
     // Display summary
     console.log(`✅ Generated component registries:`);
-    console.log(`   📦 Components: ${componentMap.size} components`);
+    console.log(`   📦 Server: ${componentMap.size} components`);
     console.log(`   🎨 Client: ${clientOnlyComponentMap.size} components`);
 
     return {
@@ -363,12 +361,14 @@ const generateRegistryFile = (
   ].join('\n');
 
   // Generate TypeScript union type of all component names
+  const isClient = description.toLowerCase().includes('client');
+  const typeName = isClient ? 'ClientComponents' : 'ServerComponents';
   const exportComponentTypes =
     componentMap.size > 0
-      ? `export type ComponentTypes = ${Array.from(componentMap.keys())
-        .map((componentName) => `'${componentName}'`)
-        .join(' | ')};`
-      : `export type ComponentTypes = never;`;
+      ? `export type ${typeName} = ${Array.from(componentMap.keys())
+          .map((componentName) => `'${componentName}'`)
+          .join(' | ')};`
+      : `export type ${typeName} = never;`;
 
   // Generate dynamic component registration statements
   // Uses next/dynamic for code splitting — each component is loaded only when rendered.
@@ -466,7 +466,7 @@ const startWatchMode = () => {
         debouncedGenerate();
       }
     })
-    .on('ready', () => { })
+    .on('ready', () => {})
     .on('error', (error) => {
       console.error('❌ Watcher error:', error);
     });

@@ -9,12 +9,14 @@ import { IExtendedProps } from '@/lib/types';
 import { componentMapperInstance } from '@/utils/ComponentMapper';
 import { toPascalCase } from '@/utils/string-utils';
 import { NotFound } from './NotFound';
+import { ServerComponents } from '@/temp/registered-components';
+import { ClientComponents } from '@/temp/registered-client-only-components';
 
 interface ReferencePlaceholderProps extends IExtendedProps {
   /** Array of referenced content items from CMS */
   references: Array<ISystemFields>;
   /** Optional: Override component name for all references */
-  componentName?: string;
+  componentName?: ServerComponents | ClientComponents;
   /** Reserved for future filtering functionality */
   referencesToInclude?: string | Array<string>;
 }
@@ -22,7 +24,7 @@ interface ReferencePlaceholderProps extends IExtendedProps {
 /**
  * Dynamically renders CMS reference fields by mapping content types to components.
  * Shows NotFound placeholder if component doesn't exist.
- * 
+ *
  * @example
  * <ReferencePlaceholder references={page.modular_blocks} extendedProps={{ locale: 'en-us' }} />
  */
