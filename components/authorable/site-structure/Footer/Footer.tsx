@@ -7,7 +7,6 @@
 
 import { IFooter } from '@/.generated';
 import { footerVariants } from './Footer.styles';
-import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
 import { getCSLPAttributes } from '@/utils/type-guards';
 
 /**
@@ -26,28 +25,18 @@ import { getCSLPAttributes } from '@/utils/type-guards';
  * @returns {JSX.Element} Rendered footer component
  */
 export const Footer = (props: IFooter) => {
-  // Get current year for copyright text
-  const currentYear = new Date().getFullYear();
-  const { base, container, content, logoWrapper, copyright } = footerVariants();
+  const { base, container, content, copyright } = footerVariants();
 
   return (
     <footer className={base()}>
       <div className={container()}>
         <div className={content()}>
-          {/* Logo */}
-          {props.logo && (
-            <div className={logoWrapper()}>
-              <ImageWrapper image={props.logo} />
-            </div>
-          )}
-
           {/* Copyright text with Live Preview support */}
-          <p className={copyright()} {...getCSLPAttributes(props.$?.copyright_text)}>
-            {props.copyright_text || `© ${currentYear} All rights reserved.`}
+          <p className={copyright()} {...getCSLPAttributes(props.$?.title)}>
+            {props.title}
           </p>
         </div>
       </div>
     </footer>
   );
 };
-
