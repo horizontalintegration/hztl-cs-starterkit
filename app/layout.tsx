@@ -13,9 +13,10 @@ import PageViewTracker from '@/components/primitives/PageViewTracker';
 import { getTheme } from '@/lib/theme';
 import { srpSans, srpEffra } from '@/app/fonts';
 
-// Register server components for server-side rendering
-// This ensures ComponentMapper has access to all server components during SSR
+// Register all components so ComponentMapper can resolve them during SSR
+// Both registries use next/dynamic which handles SSR + client hydration
 import '@/temp/registered-components';
+import '@/temp/registered-client-only-components';
 import Head from 'next/head';
 
 /**
