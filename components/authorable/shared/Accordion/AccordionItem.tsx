@@ -1,9 +1,11 @@
+'use client';
+
 import { accordionItemVariants } from './Accordion.styles';
 import SvgIcon from '@/helpers/SvgIcon/SvgIcon';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import { IBaseComponentProps } from '@/lib/types';
 import { IAccordionItem } from '@/.generated';
-import PlainTextWrapper from '@/helpers/Wrappers/PlainTextWrapper/PlainTextWrapper';
+import RichTextWrapper from '@/helpers/Wrappers/RichTextWrapper/RichTextWrapper';
 
 type AccordionItemProps = IAccordionItem & IBaseComponentProps;
 
@@ -35,7 +37,7 @@ export const AccordionItem = (props: AccordionItemProps) => {
       </button>
       <div className={contentWrapper()}>
         <div className={contentInner()}>
-          <PlainTextWrapper
+          <RichTextWrapper
             content={description}
             className={itemContent()}
             {...getCSLPAttributes($?.description)}

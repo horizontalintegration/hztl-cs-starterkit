@@ -80,6 +80,18 @@ export type IModularBlocksExtension<T> = {
   [P in keyof T]?: T[P] & { _metadata?: { uid?: string } };
 };
 
+export interface INavigationLink {
+  _version?: number;
+  page_reference?: IPage[];
+  link?: ILink;
+  open_in_new_window: boolean;
+  $?: {
+    page_reference?: CSLPFieldMapping;
+    link?: CSLPFieldMapping;
+    open_in_new_window?: CSLPFieldMapping;
+  };
+}
+
 export interface IEnhancedCta {
   _version?: number;
   link?: ILink;
@@ -139,16 +151,6 @@ export interface ISocialLink {
     social_link?: CSLPFieldMapping;
     social_icon?: CSLPFieldMapping;
     social_icon_alt_text?: CSLPFieldMapping;
-  };
-}
-
-export interface INavigationLink {
-  _version?: number;
-  link?: ILink;
-  open_in_new_window: boolean;
-  $?: {
-    link?: CSLPFieldMapping;
-    open_in_new_window?: CSLPFieldMapping;
   };
 }
 

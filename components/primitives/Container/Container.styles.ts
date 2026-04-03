@@ -2,8 +2,8 @@ import { tv } from 'tailwind-variants';
 
 export const containerVariants = tv({
   slots: {
-    base: ['w-full', 'mx-auto', 'flex', 'flex-col', 'justify-center', 'bg-white'],
-    wrapper: ['w-full', 'mx-auto', 'max-w-component'],
+    base: ['w-full', 'px-7.5 lg:px-0 mx-auto', 'flex flex-col justify-center', 'bg-white'],
+    wrapper: ['w-full lg:max-w-component', 'mx-auto'],
   },
   variants: {
     verticalPadding: {

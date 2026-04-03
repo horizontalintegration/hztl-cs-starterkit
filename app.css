@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Safelist possible CMS-driven utility classes that won't be detected at build time */
+@source inline("{,sm:,lm:,md:,lg:,xl:,2xl:}{hidden,block,inline-block,inline,flex,inline-flex,grid,inline-grid,contents,list-item,table,table-row,table-cell,flow-root}");
+
 /* Theme token mappings (--theme-* → Tailwind tokens) */
 @import './themes/mappings.css';
 
