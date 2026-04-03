@@ -258,6 +258,7 @@
     font-size: 1.125rem;
     line-height: 1.875rem;
     text-decoration: none;
+    margin-bottom: 16px;
   }
 
   a.btn-variable,
