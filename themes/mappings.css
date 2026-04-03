@@ -33,6 +33,8 @@
   --color-light-green: var(--theme-color-light-green);
   --color-dark-green: var(--theme-color-dark-green);
   --color-sky-blue: var(--theme-color-sky-blue);
+  --color-primary-border: var(--theme-color-primary-border);
+  --color-active-accent-blue: var(--theme-color-active-accent-blue);
   --color-light-black: var(--theme-color-light-black);
   --color-accent-light-blue: var(--theme-color-accent-light-blue);
   --color-hover-accent-light-blue: var(--theme-color-hover-accent-light-blue);
