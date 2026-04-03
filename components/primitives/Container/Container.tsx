@@ -33,6 +33,8 @@ interface ContainerProps {
   id?: string;
   /** Additional inline styles */
   style?: CSSProperties;
+  /** Apply bottom margin (mb-12). Defaults to true. Set false to remove spacing. */
+  bottomMargin?: boolean;
 }
 
 /**
@@ -60,6 +62,7 @@ export const Container = ({
   fullBleed = false,
   containerBleed = false,
   verticalPadding = false,
+  bottomMargin = true,
   backgroundImage,
   children,
   tag = 'section',
@@ -75,6 +78,7 @@ export const Container = ({
     hasBackgroundImage: hasBackgroundImage,
     containerBleed,
     verticalPadding,
+    bottomMargin,
   });
 
   return (

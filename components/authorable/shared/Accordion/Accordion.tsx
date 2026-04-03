@@ -9,6 +9,7 @@ import { getCSLPAttributes } from '@/utils/type-guards';
 import { toPascalCase } from '@/utils/string-utils';
 import { IBaseComponentProps } from '@/lib/types';
 import { IAccordionModularBlock } from '@/.generated';
+import { Col, Row } from '@/components/primitives/Grid';
 
 type AccordionProps = IAccordionModularBlock & IBaseComponentProps;
 
@@ -39,33 +40,37 @@ const Default = (props: AccordionProps) => {
 
   return (
     <Container componentName="Accordion">
-      <div className={base()}>
-        {enable_expand_all && (
-          <div className={header()}>
-            <button
-              className={expandAllButton()}
-              onClick={toggleAll}
-              aria-expanded={allExpanded}
-              {...getCSLPAttributes(props.$?.expand_label)}
-            >
-              {allExpanded ? collapse_label : expand_label}
-              <SvgIcon
-                icon="chevron-down"
-                size="xs"
-                fill="currentColor"
-                className={expandAllChevron()}
+      <Row>
+        <Col md={8} offsetMd={2}>
+          <div className={base()}>
+            {enable_expand_all && (
+              <div className={header()}>
+                <button
+                  className={expandAllButton()}
+                  onClick={toggleAll}
+                  aria-expanded={allExpanded}
+                  {...getCSLPAttributes(props.$?.expand_label)}
+                >
+                  {allExpanded ? collapse_label : expand_label}
+                  <SvgIcon
+                    icon="chevron-down"
+                    size="xs"
+                    fill="currentColor"
+                    className={expandAllChevron()}
+                  />
+                </button>
+              </div>
+            )}
+            <ul className={itemList()}>
+              <ReferencePlaceholder
+                componentName="AccordionItem"
+                references={reference ?? []}
+                extendedProps={{ openItemUids, onToggle: toggleItem }}
               />
-            </button>
+            </ul>
           </div>
-        )}
-        <ul className={itemList()}>
-          <ReferencePlaceholder
-            componentName="AccordionItem"
-            references={reference ?? []}
-            extendedProps={{ openItemUids, onToggle: toggleItem }}
-          />
-        </ul>
-      </div>
+        </Col>
+      </Row>
     </Container>
   );
 };
