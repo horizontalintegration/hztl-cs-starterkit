@@ -55,6 +55,7 @@ export const ButtonWrapper = ({
   type = 'button',
 }: ButtonWrapperProps): JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const pageRef = cta?.page_reference?.[0];
 
   // Default values
   const defaultVariant = 'primary';
@@ -66,8 +67,9 @@ export const ButtonWrapper = ({
   const ctaSize = cta?.cta_size || defaultSize;
 
   // Determine rendering mode (link vs button)
-  const isLink = !!href || !!cta?.link?.href;
-  const linkHref = cta?.link?.href || href || undefined;
+  // pageRefUrl takes highest priority, then cta.link.href, then custom href prop
+  const isLink = !!pageRef?.url || !!href || !!cta?.link?.href;
+  const linkHref = pageRef?.url || cta?.link?.href || href || undefined;
   const linkTitle = cta?.link?.title || customLabel || undefined;
 
   if (!linkTitle) return <></>; // Early return if title is missing
