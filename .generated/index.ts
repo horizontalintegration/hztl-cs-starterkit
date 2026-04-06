@@ -154,16 +154,6 @@ export interface ISocialLink {
   };
 }
 
-export interface INavigationLink {
-  _version?: number;
-  link?: ILink;
-  open_in_new_window: boolean;
-  $?: {
-    link?: CSLPFieldMapping;
-    open_in_new_window?: CSLPFieldMapping;
-  };
-}
-
 export interface IAccordionModularBlock {
   _version?: number;
   expand_label?: string;
@@ -426,10 +416,10 @@ export interface IFooter extends ISystemFields {
   footer_section?: MaxTuple<
     {
       section_heading?: string;
-      navigation_link?: INavigationLink[];
+      navigation_links?: INavigationLink[];
       $?: {
         section_heading?: CSLPFieldMapping;
-        navigation_link?: CSLPFieldMapping;
+        navigation_links?: CSLPFieldMapping;
       };
     },
     2
