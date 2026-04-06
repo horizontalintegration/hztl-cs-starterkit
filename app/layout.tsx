@@ -16,6 +16,7 @@ import { srpSans, srpEffra } from '@/app/fonts';
 // Register all components for SSR — ComponentMapper must resolve both server
 // and client components during server-side rendering
 import '@/temp/registered-components';
+import '@/temp/registered-client-only-components';
 
 /**
  * Props interface for RootLayout component.
