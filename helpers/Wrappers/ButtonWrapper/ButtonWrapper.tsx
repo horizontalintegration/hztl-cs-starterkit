@@ -8,9 +8,7 @@
 
 import { JSX, useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
-
 import { IEnhancedCta } from '@/.generated';
-
 import { buttonVariants, modalContentVariants } from './ButtonWrapper.styles';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import ModalWrapper from '../ModalWrapper/ModalWrapper';
@@ -33,8 +31,6 @@ export interface ButtonWrapperProps extends React.HTMLAttributes<HTMLButtonEleme
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   /** Button type (for button mode) */
   type?: 'button' | 'submit' | 'reset';
-  /** ARIA label for accessibility */
-  ariaLabel?: string;
 }
 
 /**
@@ -57,9 +53,9 @@ export const ButtonWrapper = ({
   className,
   onClick,
   type = 'button',
-  ariaLabel,
 }: ButtonWrapperProps): JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const pageRef = cta?.page_reference?.[0];
 
   // Default values
   const defaultVariant = 'primary';
@@ -71,14 +67,23 @@ export const ButtonWrapper = ({
   const ctaSize = cta?.cta_size || defaultSize;
 
   // Determine rendering mode (link vs button)
-  const isLink = !!href || !!cta?.link?.href;
-  const linkHref = cta?.link?.href || href || '#';
-  const linkTitle = cta?.link?.title || customLabel || '';
+  // pageRefUrl takes highest priority, then cta.link.href, then custom href prop
+  const isLink = !!pageRef?.url || !!href || !!cta?.link?.href;
+  const linkHref = pageRef?.url || cta?.link?.href || href || undefined;
+  const linkTitle = cta?.link?.title || customLabel || undefined;
+
+  if (!linkTitle) return <></>; // Early return if title is missing
+  if (!linkHref && !onClick) return <></>; // Early return if no href or onClick provided
 
   // Check if link is external
   const isExternal = useMemo(() => {
     if (!isLink) return false;
-    return linkHref.startsWith('http') || linkHref.startsWith('https') || linkHref.startsWith('//');
+    return (
+      linkHref?.startsWith('http') ||
+      linkHref?.startsWith('https') ||
+      linkHref?.startsWith('//') ||
+      opensInNewTab
+    );
   }, [isLink, linkHref]);
 
   // Determine new tab behavior
@@ -96,9 +101,6 @@ export const ButtonWrapper = ({
     [disabled, onClick]
   );
 
-  // Early return if no CTA or href
-  if (!cta && !href && !onClick) return <></>;
-
   const base = buttonVariants({
     variant: ctaVariant,
     size: ctaSize,
@@ -110,10 +112,34 @@ export const ButtonWrapper = ({
   // Common props for both button and link
   const commonProps = {
     className: base,
-    'data-component': 'helpers/fieldwrappers/buttonwrapper',
-    'aria-label':
-      ariaLabel || (shouldOpenInNewTab ? `${linkTitle} (Opens in a new tab)` : undefined),
+    'aria-label': shouldOpenInNewTab ? `${linkTitle} (Opens in a new tab)` : linkTitle,
+    clickname: cta?.adobe_datalayer_fields?.click_name || linkTitle,
+    clicktype: cta?.adobe_datalayer_fields?.click_type || (isLink ? 'link' : 'button'),
+    clicklocation: cta?.adobe_datalayer_fields?.click_location || 'body',
     ...getCSLPAttributes(cta?.$?.link),
+  };
+
+  const ctaContent = () => {
+    return (
+      <>
+        {cta?.has_font_awesome_icons && cta?.left_font_awesome_icon_class && (
+          <span>
+            <i className={cta.left_font_awesome_icon_class}></i>
+          </span>
+        )}
+        {linkTitle}
+        {cta?.has_font_awesome_icons && cta?.right_font_awesome_icon_class && (
+          <span>
+            <i className={cta.right_font_awesome_icon_class}></i>
+          </span>
+        )}
+        {isExternal && (
+          <span>
+            <i className="fas fa-arrow-up-right"></i>
+          </span>
+        )}
+      </>
+    );
   };
 
   // Render as Modal
@@ -130,7 +156,7 @@ export const ButtonWrapper = ({
           aria-disabled={disabled}
           tabIndex={disabled ? -1 : undefined}
         >
-          {linkTitle}
+          {ctaContent()}
         </button>
         <ModalWrapper
           isOpen={isModalOpen}
@@ -152,7 +178,7 @@ export const ButtonWrapper = ({
   }
 
   // Render as Link
-  if (isLink) {
+  if (isLink && linkHref) {
     return (
       <Link
         href={linkHref}
@@ -161,21 +187,22 @@ export const ButtonWrapper = ({
         onClick={handleClick}
         {...commonProps}
       >
-        {linkTitle}
+        {ctaContent()}
       </Link>
     );
   }
 
   // Render as Button
   return (
-    <Link
-      href={linkHref}
-      target={shouldOpenInNewTab ? '_blank' : undefined}
-      rel={shouldOpenInNewTab ? 'noopener noreferrer' : undefined}
+    <button
+      type={type}
       onClick={handleClick}
+      disabled={disabled}
+      aria-disabled={disabled}
+      tabIndex={disabled ? -1 : undefined}
       {...commonProps}
     >
-      {linkTitle}
-    </Link>
+      {ctaContent()}
+    </button>
   );
 };

@@ -80,21 +80,10 @@ export type IModularBlocksExtension<T> = {
   [P in keyof T]?: T[P] & { _metadata?: { uid?: string } };
 };
 
-export interface INavigationLink {
-  _version?: number;
-  page_reference?: IPage[];
-  link?: ILink;
-  open_in_new_window: boolean;
-  $?: {
-    page_reference?: CSLPFieldMapping;
-    link?: CSLPFieldMapping;
-    open_in_new_window?: CSLPFieldMapping;
-  };
-}
-
 export interface IEnhancedCta {
   _version?: number;
   link?: ILink;
+  page_reference?: IPage[];
   opens_in_new_tab: boolean;
   has_font_awesome_icons: boolean;
   left_font_awesome_icon_class?: string;
@@ -130,6 +119,7 @@ export interface IEnhancedCta {
   };
   $?: {
     link?: CSLPFieldMapping;
+    page_reference?: CSLPFieldMapping;
     opens_in_new_tab?: CSLPFieldMapping;
     has_font_awesome_icons?: CSLPFieldMapping;
     left_font_awesome_icon_class?: CSLPFieldMapping;
@@ -139,6 +129,18 @@ export interface IEnhancedCta {
     adobe_datalayer_fields?: CSLPFieldMapping;
     modal_cta?: CSLPFieldMapping;
     modal_content?: CSLPFieldMapping;
+  };
+}
+
+export interface INavigationLink {
+  _version?: number;
+  page_reference?: IPage[];
+  link?: ILink;
+  open_in_new_window: boolean;
+  $?: {
+    page_reference?: CSLPFieldMapping;
+    link?: CSLPFieldMapping;
+    open_in_new_window?: CSLPFieldMapping;
   };
 }
 
@@ -416,10 +418,10 @@ export interface IFooter extends ISystemFields {
   footer_section?: MaxTuple<
     {
       section_heading?: string;
-      navigation_link?: INavigationLink[];
+      navigation_links?: INavigationLink[];
       $?: {
         section_heading?: CSLPFieldMapping;
-        navigation_link?: CSLPFieldMapping;
+        navigation_links?: CSLPFieldMapping;
       };
     },
     2

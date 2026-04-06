@@ -90,7 +90,7 @@ export const Container = ({
           fill={true}
           objectFit={backgroundImage.image_fit_options || 'cover'}
           objectPosition={backgroundImage.image_position_options || 'center'}
-          preload
+          fetchPriority="high"
           loading="lazy"
         />
       )}
