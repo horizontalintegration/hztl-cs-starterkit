@@ -25,7 +25,6 @@ import { footerVariants } from './Footer.styles';
  */
 export const Footer = (props: IFooter) => {
   // Get current year for copyright text
-  const currentYear = new Date().getFullYear();
   const { base, container, content } = footerVariants();
   console.log('Footer Props:', props);
 
