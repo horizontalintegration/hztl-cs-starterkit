@@ -11,7 +11,7 @@
     "gen-config:watch": "tsx scripts/generate-component-mapper.ts --watch",
     "gen-theme": "tsx --require dotenv-flow/config scripts/generate-theme-css.ts",
     "next:build": "next build",
-    "next:dev": "cross-env NODE_OPTIONS='--inspect' next dev",
+    "next:dev": "next dev",
     "next:start": "next start",
     "dev": "cross-env NODE_ENV=development npm-run-all --serial fetch-languages tsgen gen-theme --parallel gen-config:watch next:dev",
     "build": "cross-env NODE_ENV=production npm-run-all --serial fetch-languages gen-theme gen-config next:build",
