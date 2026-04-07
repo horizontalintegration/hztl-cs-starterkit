@@ -69,7 +69,6 @@ export const Logo = ({ logo, logoLink, $ }: LogoProps) => {
  * ```
  */
 export const Header = (props: IHeader) => {
-  console.log('props', props);
   const { base, wrapper, inner, menuWrapper, menuContainer, languageWrapper } = headerVariants();
 
   return (
@@ -79,7 +78,7 @@ export const Header = (props: IHeader) => {
           <div className={menuWrapper()}>
             {/* Left side: Logo */}
             <div className={menuContainer()}>
-              {/* <Logo logo={props.logo} logoLink={props.logo_link} $={props.$?.logo_link} /> */}
+              <Logo logo={props.desktop_logo} logoLink={props.logo_link} $={props.$?.logo_link} />
             </div>
 
             {/* Right side: Language selector */}
