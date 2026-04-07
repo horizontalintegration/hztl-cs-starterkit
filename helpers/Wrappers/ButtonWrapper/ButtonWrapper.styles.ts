@@ -61,13 +61,12 @@ export const buttonVariants = tv({
         'hover:bg-hover-accent-yellow',
         'hover:text-white',
       ],
-      link: ['text-black', 'bg-transparent', 'hover:underline', 'p-0', 'h-auto'],
     },
     disabled: {
       true: ['cursor-not-allowed', 'opacity-50', 'pointer-events-none'],
     },
     focusRing: {
-      true: ['focus:ring-2', 'focus:ring-blue-500', 'focus:ring-offset-2'],
+      true: ['focus:shadow-[0_0_0_0.2rem_rgba(0,123,255,0.5)]', 'focus:outline-none'],
     },
   },
 });

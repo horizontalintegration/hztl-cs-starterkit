@@ -9,9 +9,9 @@
  *
  * Examples:
  *   npx tsx scripts/scaffold-component.ts CardBlock
- *   npx tsx scripts/scaffold-component.ts CardBlock --path components/authorable/shared/content
+ *   npx tsx scripts/scaffold-component.ts CardBlock --path components/authorable/shared
  *
- * Default path: components/authorable/shared/content
+ * Default path: components/authorable/shared
  */
 
 import fs from 'fs';
@@ -84,8 +84,9 @@ const variants = {
 };
 
 export const ${componentName} = (props: ${componentName}Props) => {
-  const Component =
-    variants[toPascalCase(props.component_variant) as keyof typeof variants] || Default;
+  const Component = props.component_variant
+    ? variants[toPascalCase(props.component_variant) as keyof typeof variants]
+    : Default;
   return <Component {...props} />;
 };
 `;

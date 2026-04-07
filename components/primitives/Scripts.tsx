@@ -24,12 +24,14 @@ import Script from 'next/script';
 export const Scripts = () => {
   return (
     <>
-      <link rel="preconnect" href="https://cdn.contentstack.io" />
-      <link rel="preconnect" href="https://images.contentstack.io" />
-      <link rel="dns-prefetch" href="https://api.contentstack.io" />
-      <link rel="dns-prefetch" href="https://contentstack.com" />
-      <link rel="dns-prefetch" href="https://contentstack.io" />
-      <Script src="https://kit.fontawesome.com/5d1b6c536d.js" crossOrigin="anonymous" />
+      <link rel="preconnect" href="https://azure-na-cdn.contentstack.com/" />
+      <link rel="preconnect" href="https://azure-na-images.contentstack.com/" />
+      <link rel="dns-prefetch" href="https://azure-na-api.contentstack.com/" />
+      <Script
+        src="https://kit.fontawesome.com/5d1b6c536d.js"
+        crossOrigin="anonymous"
+        strategy="beforeInteractive"
+      />
     </>
   );
 };

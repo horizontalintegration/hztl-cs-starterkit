@@ -8,7 +8,6 @@
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
-import React from 'react';
 import { Locales } from '@contentstack/management/types/stack/contentType/entry';
 
 import { extractAndSetLanguage, isLanguageSupported } from '@/lib/contentstack/language';
@@ -171,19 +170,22 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
 
     // Build language alternate URLs for hreflang tags
     if (localesList && localesList.locales.length > 0) {
-      languageUrls = localesList.locales.reduce((acc, locale) => {
-        // Skip non-localized entries
-        if (locale.code !== DEFAULT_LOCALE && !locale.localized) return acc;
+      languageUrls = localesList.locales.reduce(
+        (acc, locale) => {
+          // Skip non-localized entries
+          if (locale.code !== DEFAULT_LOCALE && !locale.localized) return acc;
 
-        // Default locale uses clean URL without locale prefix
-        if (locale.code === DEFAULT_LOCALE) {
-          acc[DEFAULT_LOCALE] = `${baseUrl}${urlPath}`;
+          // Default locale uses clean URL without locale prefix
+          if (locale.code === DEFAULT_LOCALE) {
+            acc[DEFAULT_LOCALE] = `${baseUrl}${urlPath}`;
+            return acc;
+          }
+
+          acc[locale.code as string] = `${baseUrl}/${locale.code}${urlPath}`;
           return acc;
-        }
-
-        acc[locale.code as string] = `${baseUrl}/${locale.code}${urlPath}`;
-        return acc;
-      }, {} as Record<string, string>);
+        },
+        {} as Record<string, string>
+      );
     }
 
     // Extract SEO metadata from CMS page data
@@ -210,7 +212,7 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
       icon: siteSetting?.favicons?.icon?.url || '/favicon.ico',
       shortcut: siteSetting?.favicons?.icon?.url || '/favicon.ico',
       apple: siteSetting?.favicons?.apple_touch?.url || '/favicon.ico',
-    }
+    };
     const canonicalUrl =
       resolvedParams?.locale === DEFAULT_LOCALE
         ? `${baseUrl}${urlPath}`
@@ -227,13 +229,15 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
         : false;
 
     // Parse custom meta tags from CMS
-    const customMetadata: Record<string, string> | undefined =
-      page.seo?.custom_meta_tags?.reduce((acc, tag) => {
+    const customMetadata: Record<string, string> | undefined = page.seo?.custom_meta_tags?.reduce(
+      (acc, tag) => {
         if (tag.name && tag.content) {
           acc[tag.name] = tag.content;
         }
         return acc;
-      }, {} as Record<string, string>);
+      },
+      {} as Record<string, string>
+    );
 
     return {
       title: metadata.pageTitle,
@@ -242,9 +246,9 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
       alternates: isNotFoundPage
         ? undefined
         : {
-          canonical: canonicalUrl,
-          languages: languageUrls,
-        },
+            canonical: canonicalUrl,
+            languages: languageUrls,
+          },
       icons: favicons,
       openGraph: {
         type: metadata.openGraphType,
