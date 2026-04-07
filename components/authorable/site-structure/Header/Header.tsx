@@ -69,6 +69,7 @@ export const Logo = ({ logo, logoLink, $ }: LogoProps) => {
  * ```
  */
 export const Header = (props: IHeader) => {
+  console.log('props', props);
   const { base, wrapper, inner, menuWrapper, menuContainer, languageWrapper } = headerVariants();
 
   return (
