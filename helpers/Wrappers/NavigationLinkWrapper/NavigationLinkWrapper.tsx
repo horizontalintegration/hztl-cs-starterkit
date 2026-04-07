@@ -8,10 +8,11 @@ import { getCSLPAttributes } from '@/utils/type-guards';
 
 export interface NavigationLinkWrapperProps {
   navigationLink: INavigationLink;
-  clickLocation: string;
+  clickLocation?: string;
   label?: string;
   className?: string;
   siteSection?: string;
+  shouldRenderNewTabIcon?: boolean;
 }
 
 export const NavigationLinkWrapper = ({
@@ -20,7 +21,10 @@ export const NavigationLinkWrapper = ({
   label,
   className,
   siteSection,
-}: NavigationLinkWrapperProps) => {
+  children,
+  shouldRenderNewTabIcon = true,
+  ...rest
+}: React.PropsWithChildren<NavigationLinkWrapperProps>) => {
   const { link, open_in_new_window, page_reference, $ } = navigationLink;
 
   const pageRef = page_reference?.[0];
@@ -56,9 +60,10 @@ export const NavigationLinkWrapper = ({
       aria-label={newTab ? `${linkLabel} (Opens in a new tab)` : linkLabel}
       {...analyticsProps}
       {...getCSLPAttributes($?.link)}
+      {...rest}
     >
-      {linkLabel}
-      {newTab && (
+      {children || linkLabel}
+      {shouldRenderNewTabIcon && newTab && (
         <span aria-hidden="true">
           <i className="fa-solid fa-arrow-up-right text-blue-500"></i>
         </span>

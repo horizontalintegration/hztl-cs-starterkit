@@ -5,12 +5,12 @@
  * Automatically generates copyright year with fallback text.
  */
 
-import Link from 'next/link';
 import { IFooter } from '@/.generated';
 import { footerVariants } from './Footer.styles';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import { Container } from '@/components/primitives/Container/Container';
 import PlainTextWrapper from '@/helpers/Wrappers/PlainTextWrapper/PlainTextWrapper';
+import { NavigationLinkWrapper } from '@/helpers/Wrappers/NavigationLinkWrapper/NavigationLinkWrapper';
 
 /**
  * Footer component that renders site-wide footer content.
@@ -69,10 +69,10 @@ export const Footer = ({ footer_section, social_connect_section }: IFooter) => {
                         key={linkIndex}
                         className={`${sectionLinkItem()} ${navLink.link.href.startsWith('tel:') && telLink()}`}
                       >
-                        <Link
+                        <NavigationLinkWrapper
+                          clickLocation={section.section_heading}
+                          navigationLink={navLink}
                           className={sectionLink()}
-                          {...navLink.link}
-                          {...getCSLPAttributes(navLink.$?.link)}
                           aria-label={
                             navLink.link.href.startsWith('tel:')
                               ? `Call ${navLink.link.href.replace('tel:', '')}`
@@ -86,7 +86,7 @@ export const Footer = ({ footer_section, social_connect_section }: IFooter) => {
                               {navLink.link.href.replace('tel:', '')}
                             </strong>
                           )}
-                        </Link>
+                        </NavigationLinkWrapper>
                       </li>
                     )
                 )}
@@ -112,12 +112,16 @@ export const Footer = ({ footer_section, social_connect_section }: IFooter) => {
               return (
                 linkItem.social_link && (
                   <li key={index} className={socialLinkItem()}>
-                    <Link
-                      {...linkItem.social_link}
-                      {...getCSLPAttributes(linkItem.$?.social_link)}
-                      target={isExternal ? '_blank' : '_self'}
-                      rel={isExternal ? 'noopener noreferrer' : undefined}
+                    <NavigationLinkWrapper
+                      navigationLink={{
+                        link: linkItem.social_link,
+                        open_in_new_window: isExternal,
+                        $: { link: linkItem.$?.social_link },
+                      }}
+                      label={linkItem.social_icon_alt_text}
+                      clickLocation={social_connect_section?.section_heading}
                       aria-label={`${linkItem.social_icon_alt_text}${isExternal ? ' (opens in new tab)' : ''}`}
+                      shouldRenderNewTabIcon={false}
                     >
                       <img
                         src={linkItem.social_icon?.url}
@@ -126,7 +130,7 @@ export const Footer = ({ footer_section, social_connect_section }: IFooter) => {
                         {...getCSLPAttributes(linkItem.$?.social_icon)}
                         aria-hidden="true"
                       />
-                    </Link>
+                    </NavigationLinkWrapper>
                   </li>
                 )
               );
