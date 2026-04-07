@@ -80,21 +80,40 @@ export type IModularBlocksExtension<T> = {
   [P in keyof T]?: T[P] & { _metadata?: { uid?: string } };
 };
 
-export interface INavigationLink {
+export interface ITabbedContentModularBlock {
   _version?: number;
-  page_reference?: IPage[];
-  link?: ILink;
-  open_in_new_window: boolean;
+  tab_variant?: ("Horizontal" | "Vertical") | null;
+  tab_content_iteam?: {
+    tab_title?: string;
+    tab_icon?: IFile | null;
+    tab_content_type?: ("RTE" | "Image") | null;
+    rte?: string;
+    image_data?: {
+      image?: IFile | null;
+      image_caption?: string;
+      $?: {
+        image?: CSLPFieldMapping;
+        image_caption?: CSLPFieldMapping;
+      };
+    };
+    $?: {
+      tab_title?: CSLPFieldMapping;
+      tab_icon?: CSLPFieldMapping;
+      tab_content_type?: CSLPFieldMapping;
+      rte?: CSLPFieldMapping;
+      image_data?: CSLPFieldMapping;
+    };
+  }[];
   $?: {
-    page_reference?: CSLPFieldMapping;
-    link?: CSLPFieldMapping;
-    open_in_new_window?: CSLPFieldMapping;
+    tab_variant?: CSLPFieldMapping;
+    tab_content_iteam?: CSLPFieldMapping;
   };
 }
 
 export interface IEnhancedCta {
   _version?: number;
   link?: ILink;
+  page_reference?: IPage[];
   opens_in_new_tab: boolean;
   has_font_awesome_icons: boolean;
   left_font_awesome_icon_class?: string;
@@ -130,6 +149,7 @@ export interface IEnhancedCta {
   };
   $?: {
     link?: CSLPFieldMapping;
+    page_reference?: CSLPFieldMapping;
     opens_in_new_tab?: CSLPFieldMapping;
     has_font_awesome_icons?: CSLPFieldMapping;
     left_font_awesome_icon_class?: CSLPFieldMapping;
@@ -142,29 +162,90 @@ export interface IEnhancedCta {
   };
 }
 
-export interface ISocialLink {
+export interface IMediaFullWidth {
   _version?: number;
-  social_link?: ILink;
-  social_icon?: IFile | null;
-  social_icon_alt_text?: string;
+  image?: IFile | null;
+  image_alt?: string;
+  show_video: boolean;
+  video_id?: string;
   $?: {
-    social_link?: CSLPFieldMapping;
-    social_icon?: CSLPFieldMapping;
-    social_icon_alt_text?: CSLPFieldMapping;
+    image?: CSLPFieldMapping;
+    image_alt?: CSLPFieldMapping;
+    show_video?: CSLPFieldMapping;
+    video_id?: CSLPFieldMapping;
   };
 }
 
-export interface IAccordionModularBlock {
+export interface IIframe {
   _version?: number;
-  expand_label?: string;
-  collapse_label?: string;
-  enable_expand_all: boolean;
-  reference: IAccordionItem[];
+  url?: string;
+  title?: string;
+  width?: number | null;
+  height?: number | null;
   $?: {
-    expand_label?: CSLPFieldMapping;
-    collapse_label?: CSLPFieldMapping;
-    enable_expand_all?: CSLPFieldMapping;
-    reference?: CSLPFieldMapping;
+    url?: CSLPFieldMapping;
+    title?: CSLPFieldMapping;
+    width?: CSLPFieldMapping;
+    height?: CSLPFieldMapping;
+  };
+}
+
+export interface IQuote {
+  _version?: number;
+  quote_content?: string;
+  author_name?: string;
+  author_info?: string;
+  text_color?: IColorList;
+  background_color?: IColorList;
+  border_color?: IColorList;
+  $?: {
+    quote_content?: CSLPFieldMapping;
+    author_name?: CSLPFieldMapping;
+    author_info?: CSLPFieldMapping;
+    text_color?: CSLPFieldMapping;
+    background_color?: CSLPFieldMapping;
+    border_color?: CSLPFieldMapping;
+  };
+}
+
+export interface IRteModularBlock {
+  _version?: number;
+  rte?: string;
+  $?: {
+    rte?: CSLPFieldMapping;
+  };
+}
+
+export interface ICtaBar {
+  _version?: number;
+  title?: string;
+  description?: string;
+  cta?: IEnhancedCta;
+  $?: {
+    title?: CSLPFieldMapping;
+    description?: CSLPFieldMapping;
+    cta?: CSLPFieldMapping;
+  };
+}
+
+export interface IImageCarousel {
+  _version?: number;
+  carousel_item?: {
+    carousel_image?: IFile | null;
+    title?: string;
+    description?: string;
+    cta?: IEnhancedCta;
+    $?: {
+      carousel_image?: CSLPFieldMapping;
+      title?: CSLPFieldMapping;
+      description?: CSLPFieldMapping;
+      cta?: CSLPFieldMapping;
+    };
+  }[];
+  carousel_full_width: boolean;
+  $?: {
+    carousel_item?: CSLPFieldMapping;
+    carousel_full_width?: CSLPFieldMapping;
   };
 }
 
@@ -172,8 +253,7 @@ export interface IEnhancedImage {
   _version?: number;
   image?: IFile | null;
   alternate_text?: string;
-  responsive_image: boolean;
-  dimensions?: {
+  custom_dimensions?: {
     image_width?: number | null;
     image_height?: number | null;
     $?: {
@@ -199,11 +279,56 @@ export interface IEnhancedImage {
   $?: {
     image?: CSLPFieldMapping;
     alternate_text?: CSLPFieldMapping;
-    responsive_image?: CSLPFieldMapping;
-    dimensions?: CSLPFieldMapping;
+    custom_dimensions?: CSLPFieldMapping;
     image_fit_options?: CSLPFieldMapping;
     image_position_options?: CSLPFieldMapping;
     rounded_image?: CSLPFieldMapping;
+  };
+}
+
+export interface ISocialLink {
+  _version?: number;
+  social_link?: ILink;
+  social_icon?: IFile | null;
+  social_icon_alt_text?: string;
+  $?: {
+    social_link?: CSLPFieldMapping;
+    social_icon?: CSLPFieldMapping;
+    social_icon_alt_text?: CSLPFieldMapping;
+  };
+}
+
+export interface INavigationLink {
+  _version?: number;
+  page_reference?: IPage[];
+  link?: ILink;
+  open_in_new_window: boolean;
+  $?: {
+    page_reference?: CSLPFieldMapping;
+    link?: CSLPFieldMapping;
+    open_in_new_window?: CSLPFieldMapping;
+  };
+}
+
+export interface IColorList {
+  _version?: number;
+  color_list?: ("#125590" | "#007DB3") | null;
+  $?: {
+    color_list?: CSLPFieldMapping;
+  };
+}
+
+export interface IAccordionModularBlock {
+  _version?: number;
+  expand_label?: string;
+  collapse_label?: string;
+  enable_expand_all: boolean;
+  reference: IAccordionItem[];
+  $?: {
+    expand_label?: CSLPFieldMapping;
+    collapse_label?: CSLPFieldMapping;
+    enable_expand_all?: CSLPFieldMapping;
+    reference?: CSLPFieldMapping;
   };
 }
 
@@ -332,15 +457,46 @@ export interface IAccordionItem extends ISystemFields {
 }
 
 export interface IComponents extends ISystemFields {
-  hero_banner: IHeroBannerModularBlock;
   accordion: IAccordionModularBlock;
   cta_button: IEnhancedCta;
+  quote: IQuote;
+  cta_bar: ICtaBar;
+  iframe: IIframe;
+  image_carousel: IImageCarousel;
+  rte: IRteModularBlock;
+  tabbed_content: ITabbedContentModularBlock;
+  media_full_width: IMediaFullWidth;
 }
 
 export interface IPage extends ISystemFields {
   _version?: number;
   title: string;
   url: string;
+  hero_banner?: {
+    banner_media?: {
+      banner_type: "imageBanner" | "videoBanner";
+      banner_image?: IFile | null;
+      image_alt_text?: string;
+      video_id?: string;
+      $?: {
+        banner_type?: CSLPFieldMapping;
+        banner_image?: CSLPFieldMapping;
+        image_alt_text?: CSLPFieldMapping;
+        video_id?: CSLPFieldMapping;
+      };
+    };
+    banner_title?: string;
+    banner_description?: string;
+    banner_cta?: IEnhancedCta;
+    banner_content_alignment?: ("left" | "center" | "right") | null;
+    $?: {
+      banner_media?: CSLPFieldMapping;
+      banner_title?: CSLPFieldMapping;
+      banner_description?: CSLPFieldMapping;
+      banner_cta?: CSLPFieldMapping;
+      banner_content_alignment?: CSLPFieldMapping;
+    };
+  };
   components?: IModularBlocksExtension<IComponents>[];
   seo?: ISeo;
   sitemap_setting?: ISitemapSetting;
@@ -348,6 +504,7 @@ export interface IPage extends ISystemFields {
   $?: {
     title?: CSLPFieldMapping;
     url?: CSLPFieldMapping;
+    hero_banner?: CSLPFieldMapping;
     components?: CSLPFieldMapping;
     seo?: CSLPFieldMapping;
     sitemap_setting?: CSLPFieldMapping;
@@ -372,40 +529,84 @@ export interface IDictionaryItems extends ISystemFields {
 export interface IHeader extends ISystemFields {
   _version?: number;
   title: string;
-  logo?: IEnhancedImage;
+  desktop_logo?: IEnhancedImage;
+  mobile_logo?: IEnhancedImage;
   logo_link?: ILink;
-  main_navigation?: {
-    navigation_title?: string;
-    main_navigation_links?: IEnhancedCta[];
-    sub_navigation?: {
-      sub_navigation_title?: string;
-      global_field?: IEnhancedCta[];
-      final_navigation?: {
-        title?: string;
-        global_field?: IEnhancedCta[];
-        $?: {
-          title?: CSLPFieldMapping;
-          global_field?: CSLPFieldMapping;
-        };
-      }[];
+  search_box_placeholder?: string;
+  nav_level_one?: {
+    nav_level_one_title?: string;
+    show_account_login_section: boolean;
+    my_account_login?: {
+      login_form_label?: string;
+      username_field_placeholder?: string;
+      password_field_placeholder?: string;
+      login_button_label?: string;
+      forgot_password_label?: string;
+      signup_content?: string;
+      disclaimer_note?: string;
       $?: {
-        sub_navigation_title?: CSLPFieldMapping;
-        global_field?: CSLPFieldMapping;
-        final_navigation?: CSLPFieldMapping;
+        login_form_label?: CSLPFieldMapping;
+        username_field_placeholder?: CSLPFieldMapping;
+        password_field_placeholder?: CSLPFieldMapping;
+        login_button_label?: CSLPFieldMapping;
+        forgot_password_label?: CSLPFieldMapping;
+        signup_content?: CSLPFieldMapping;
+        disclaimer_note?: CSLPFieldMapping;
       };
-    }[];
+    };
+    featured_section?: {
+      featured_content?: string;
+      featured_link?: IEnhancedCta;
+      featured_image?: IEnhancedImage;
+      $?: {
+        featured_content?: CSLPFieldMapping;
+        featured_link?: CSLPFieldMapping;
+        featured_image?: CSLPFieldMapping;
+      };
+    };
+    nav_columns?: MaxTuple<
+      {
+        nav_level_one_links?: INavigationLink[];
+        nav_level_two?: {
+          nav_level_two_title?: string;
+          nav_level_two_links?: INavigationLink[];
+          nav_level_three?: {
+            nav_level_three_title?: string;
+            nav_level_three_links?: INavigationLink[];
+            $?: {
+              nav_level_three_title?: CSLPFieldMapping;
+              nav_level_three_links?: CSLPFieldMapping;
+            };
+          }[];
+          $?: {
+            nav_level_two_title?: CSLPFieldMapping;
+            nav_level_two_links?: CSLPFieldMapping;
+            nav_level_three?: CSLPFieldMapping;
+          };
+        }[];
+        $?: {
+          nav_level_one_links?: CSLPFieldMapping;
+          nav_level_two?: CSLPFieldMapping;
+        };
+      },
+      2
+    >;
     $?: {
-      navigation_title?: CSLPFieldMapping;
-      main_navigation_links?: CSLPFieldMapping;
-      sub_navigation?: CSLPFieldMapping;
+      nav_level_one_title?: CSLPFieldMapping;
+      show_account_login_section?: CSLPFieldMapping;
+      my_account_login?: CSLPFieldMapping;
+      featured_section?: CSLPFieldMapping;
+      nav_columns?: CSLPFieldMapping;
     };
   }[];
   taxonomies?: ITaxonomy | ITaxonomyEntry[];
   $?: {
     title?: CSLPFieldMapping;
-    logo?: CSLPFieldMapping;
+    desktop_logo?: CSLPFieldMapping;
+    mobile_logo?: CSLPFieldMapping;
     logo_link?: CSLPFieldMapping;
-    main_navigation?: CSLPFieldMapping;
+    search_box_placeholder?: CSLPFieldMapping;
+    nav_level_one?: CSLPFieldMapping;
     taxonomies?: CSLPFieldMapping;
   };
 }
@@ -416,10 +617,10 @@ export interface IFooter extends ISystemFields {
   footer_section?: MaxTuple<
     {
       section_heading?: string;
-      navigation_link?: INavigationLink[];
+      navigation_links?: INavigationLink[];
       $?: {
         section_heading?: CSLPFieldMapping;
-        navigation_link?: CSLPFieldMapping;
+        navigation_links?: CSLPFieldMapping;
       };
     },
     2
