@@ -9,10 +9,8 @@
 import { JSX, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { imageWrapperVariants } from './ImageWrapper.styles';
-
 import { IEnhancedImage } from '@/.generated';
 import { isValidNextImageDomain } from '@/lib/next-config/plugins/images';
-
 import { getCSLPAttributes } from '@/utils/type-guards';
 import DefaultFallbackImage from '@/public/images/default-fallback-image.webp';
 
@@ -126,10 +124,9 @@ const ImageWrapper = ({
   const url = image?.image?.url;
   const dimension = image?.image?.dimension;
   const alternate_text = image?.alternate_text;
-  const responsive_image = image?.responsive_image;
   const image_fit_options = image?.image_fit_options;
   const image_position_options = image?.image_position_options;
-  const dimensions = image?.dimensions;
+  const dimensions = image?.custom_dimensions;
   const rounded_image = image?.rounded_image;
 
   // Validate dimensions for non-fill images
@@ -138,9 +135,11 @@ const ImageWrapper = ({
     return validateDimensions(dimension?.width, dimension?.height);
   }, [dimension?.width, dimension?.height, fill, url]);
 
+  const hasCustomDimensions = !!validatedDimensions;
+
   // Calculate static dimensions for non-responsive images
   const staticDimensions = useMemo(() => {
-    if (responsive_image || !url) return null;
+    if (!hasCustomDimensions || !url) return null;
 
     const width = dimensions?.image_width || '100%';
     const height = dimensions?.image_height || 'auto';
@@ -151,12 +150,12 @@ const ImageWrapper = ({
     );
 
     return validated || { width, height };
-  }, [dimensions?.image_width, dimensions?.image_height, responsive_image, url]);
+  }, [dimensions?.image_width, dimensions?.image_height, hasCustomDimensions, url]);
 
   // Generate optimal sizes attribute
   const optimalSizes = useMemo(
-    () => getOptimalSizes(sizes, dimension?.width, responsive_image),
-    [sizes, dimension?.width, responsive_image]
+    () => getOptimalSizes(sizes, dimension?.width, !hasCustomDimensions),
+    [sizes, dimension?.width, hasCustomDimensions]
   );
 
   // Build Next.js Image props
@@ -225,12 +224,12 @@ const ImageWrapper = ({
   });
 
   const wrapperStyle = useMemo(() => {
-    if (responsive_image || !staticDimensions) return undefined;
+    if (!hasCustomDimensions || !staticDimensions) return undefined;
     return {
       width: staticDimensions.width,
       height: staticDimensions.height,
     };
-  }, [responsive_image, staticDimensions]);
+  }, [hasCustomDimensions, staticDimensions]);
 
   if (!image || !url) {
     return <></>;
