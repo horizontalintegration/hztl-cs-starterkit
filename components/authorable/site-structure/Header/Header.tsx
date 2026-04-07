@@ -78,7 +78,7 @@ export const Header = (props: IHeader) => {
           <div className={menuWrapper()}>
             {/* Left side: Logo */}
             <div className={menuContainer()}>
-              <Logo logo={props.logo} logoLink={props.logo_link} $={props.$?.logo_link} />
+              <Logo logo={props.desktop_logo} logoLink={props.logo_link} $={props.$?.logo_link} />
             </div>
 
             {/* Right side: Language selector */}
