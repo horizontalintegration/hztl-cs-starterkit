@@ -9,37 +9,11 @@ import PlainTextWrapper from '../PlainTextWrapper/PlainTextWrapper';
 const ImageCarousel = ({
   carousel_items,
 }: Required<Pick<IImageVideoCarousel, 'carousel_items'>>) => {
-  const {
-    slideContent,
-    captionBox,
-    image,
-    slideTitle,
-    slideDescription,
-    slideCtaWrapper,
-    thumbImage,
-  } = imageCarouselVariants();
-
-  const thumbnails = carousel_items.map((item, index) => (
-    <div key={`thumb-${index}`} className={thumbImage()}>
-      <ImageWrapper
-        image={{
-          image: item.carousel_image,
-          rounded_image: false,
-        }}
-        showFallbackImage
-      />
-    </div>
-  ));
+  const { slideContent, captionBox, image, slideTitle, slideDescription, slideCtaWrapper } =
+    imageCarouselVariants();
 
   return (
-    <CarouselWrapper
-      loop
-      fade
-      showDots
-      showPaginationArrows
-      thumbnails={thumbnails}
-      ariaLabel="Image carousel"
-    >
+    <CarouselWrapper fade showDots showPaginationArrows ariaLabel="Image carousel">
       {carousel_items.map((item, index) => (
         <CarouselSlide key={`image-slide-${index}`} className="basis-full" fade>
           <div className={slideContent()}>
