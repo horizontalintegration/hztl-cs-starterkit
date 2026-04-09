@@ -1,10 +1,10 @@
 /**
  * @file RichTextWrapper.tsx
  * @description Rich text renderer with automatic external link handling and table enhancements.
- * Processes CMS HTML content client-side to add accessibility features and icons.
+ * Processes CMS HTML content server-side to add accessibility features and icons.
  */
 
-import React, { useEffect, useState, JSX } from 'react';
+import React, { JSX } from 'react';
 
 import { CSLPFieldMapping } from '@/.generated';
 import { getCSLPAttributes } from '@/utils/type-guards';
@@ -14,14 +14,15 @@ interface RichTextWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
   content?: string;
   /** Contentstack Live Preview field mapping */
   cslpAttribute?: CSLPFieldMapping;
+  /** Parent class name for custom RTE styling */
+  parentClassName?: string;
 }
 
 /**
  * Renders rich text HTML with automatic processing for external links and tables.
  *
  * Features:
- * - Adds target="_blank" to external links
- * - Inserts "Opens in new tab" icon and screen reader text
+ * - Inserts "Opens in new tab" icon and screen reader text on links with target="_blank"
  * - Enhances table cells with data-column attributes for responsive tables
  *
  * @example
@@ -31,20 +32,22 @@ const RichTextWrapper = ({
   content,
   className,
   cslpAttribute,
+  parentClassName = 'rte',
   ...props
 }: RichTextWrapperProps): JSX.Element => {
-  const updatedContent = useUpdatedRichTextContent({ content });
+  const processedContent = processRichTextContent(content);
 
-  if (!updatedContent) return <></>;
+  if (!processedContent) return <></>;
 
   return (
-    <div
-      {...props}
-      className={`rte ${className ?? ''}`}
-      data-component="helpers/fieldwrappers/richtextwrapper"
-      dangerouslySetInnerHTML={{ __html: updatedContent }}
-      {...getCSLPAttributes(cslpAttribute)}
-    />
+    <div className={parentClassName}>
+      <div
+        {...props}
+        className={className}
+        dangerouslySetInnerHTML={{ __html: processedContent }}
+        {...getCSLPAttributes(cslpAttribute)}
+      />
+    </div>
   );
 };
 
@@ -66,52 +69,47 @@ const NEW_TAB_ICON_STRING = `<span class="svg-icon inline-flex align-middle -ml-
   </span>`;
 
 /**
- * Hook that processes rich text content client-side.
+ * Processes rich text HTML content without DOM APIs — server and client compatible.
  *
  * Processing steps:
- * 1. Identifies external links (http/https or target="_blank")
- * 2. Adds new tab icon and screen reader text to external links
- * 3. Enhances table cells with data-column attributes for responsive styling
+ * 1. Appends new tab icon and screen reader text inside links with target="_blank"
+ * 2. Enhances table cells with data-column attributes for responsive styling
  */
-function useUpdatedRichTextContent({ content }: RichTextWrapperProps) {
-  const [updatedContent, setUpdatedContent] = useState<string>(content || '');
+function processRichTextContent(content?: string): string {
+  if (!content) return '';
 
-  // Process content client-side (requires DOM access)
-  useEffect(() => {
-    const template = document.createElement('template');
-    template.innerHTML = content || '';
+  // Append sr-only text and icon inside all target="_blank" links
+  let processed = content.replace(
+    /(<a\s[^>]*target=["']_blank["'][^>]*>)([\s\S]*?)(<\/a>)/gi,
+    (_match, openTag, innerHtml, closeTag) =>
+      `${openTag}${innerHtml}<span class="sr-only"> (Opens in a new tab)</span> ${NEW_TAB_ICON_STRING}${closeTag}`
+  );
 
-    // Find all external links
-    const externalLinks = [...template.content.querySelectorAll('a')].filter((a) => {
-      return a.attributes.getNamedItem('target')?.value === '_blank';
-    });
+  // Add data-column attributes to tbody cells based on thead headers
+  processed = processed.replace(/<table[\s\S]*?<\/table>/gi, (tableHtml) => {
+    const theadMatch = tableHtml.match(/<thead[\s\S]*?<\/thead>/i);
+    if (!theadMatch) return tableHtml;
 
-    // Enhance external links with target="_blank" and icon
-    externalLinks.forEach((a) => {
-      a.setAttribute('target', '_blank');
-      a.innerHTML = `${a.innerHTML}<span class="sr-only"> (Opens in a new tab)</span> ${NEW_TAB_ICON_STRING}`;
-    });
+    const headers: string[] = [];
+    const thRegex = /<th[^>]*>([\s\S]*?)<\/th>/gi;
+    let thMatch;
+    while ((thMatch = thRegex.exec(theadMatch[0])) !== null) {
+      headers.push(thMatch[1].replace(/<[^>]+>/g, '').trim());
+    }
 
-    // Enhance table cells with column names for responsive styling
-    const tables = template.content.querySelectorAll('table');
-    tables.forEach((table) => {
-      const headerElements = table.querySelectorAll('thead th');
+    if (headers.length === 0) return tableHtml;
 
-      if (headerElements.length > 0) {
-        const headers = Array.from(headerElements).map((th) => th.textContent?.trim() || '');
+    let cellIndex = 0;
+    return tableHtml.replace(/<tbody[\s\S]*?<\/tbody>/gi, (tbodyHtml) =>
+      tbodyHtml.replace(/<(td|th)([^>]*)>/gi, (_match, tag, attrs) => {
+        const column = headers[cellIndex % headers.length];
+        cellIndex++;
+        return `<${tag}${attrs} data-column="${column}">`;
+      })
+    );
+  });
 
-        const cells = table.querySelectorAll('tbody td, tbody th');
-        cells.forEach((cell, index) => {
-          const columnIndex = index % headers.length;
-          cell.setAttribute('data-column', headers[columnIndex]);
-        });
-      }
-    });
-
-    setUpdatedContent(template.innerHTML);
-  }, [content]);
-
-  return updatedContent;
+  return processed;
 }
 
 export default RichTextWrapper;

@@ -29,7 +29,7 @@ export const HeaderFeaturedSection = ({
     clicktype: 'menu',
     clicklocation: 'headerNav',
     sitesection: 'SRP Promos',
-    clickName: `${featuredSection.featured_content} ${featuredSection.featured_link?.title}`,
+    clickname: `${featuredSection.featured_content} ${featuredSection.featured_link?.title}`,
   };
 
   return (

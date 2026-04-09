@@ -9,8 +9,8 @@ import { IFooter } from '@/.generated';
 import { footerVariants } from './Footer.styles';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import { Container } from '@/components/primitives/Container/Container';
-import PlainTextWrapper from '@/helpers/Wrappers/PlainTextWrapper/PlainTextWrapper';
 import { NavigationLinkWrapper } from '@/helpers/Wrappers/NavigationLinkWrapper/NavigationLinkWrapper';
+import RichTextWrapper from '@/helpers/Wrappers/RichTextWrapper/RichTextWrapper';
 
 /**
  * Footer component that renders site-wide footer content.
@@ -140,10 +140,11 @@ export const Footer = ({ footer_section, social_connect_section }: IFooter) => {
           {/* Legal Section */}
           <div className={legal()}>
             {social_connect_section?.policy_and_terms && (
-              <PlainTextWrapper
+              <RichTextWrapper
                 content={social_connect_section.policy_and_terms}
                 {...getCSLPAttributes(social_connect_section?.$?.policy_and_terms)}
                 className={policyAndTerms()}
+                parentClassName=""
               />
             )}
             {social_connect_section?.copyright_details && (
