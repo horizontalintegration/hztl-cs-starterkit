@@ -39,6 +39,7 @@ export const iconMap = {
   share: dynamic(() => import('./icons/icon--share')),
   'share-close': dynamic(() => import('./icons/icon--share-close')),
   'chevron-right': dynamic(() => import('./icons/icon--chevron-right')),
+  'chevron-left': dynamic(() => import('./icons/icon--chevron-left')),
   checkmark: dynamic(() => import('./icons/icon--checkmark')),
   'arrow-dash-right': dynamic(() => import('./icons/icon--arrow-dash-right')),
   'alert-neutral': dynamic(() => import('./icons/icon--alert-neutral')),

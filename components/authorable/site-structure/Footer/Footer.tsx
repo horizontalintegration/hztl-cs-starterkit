@@ -48,7 +48,7 @@ export const Footer = ({ footer_section, social_connect_section }: IFooter) => {
   } = footerVariants();
 
   return (
-    <Container tag="footer" className={base()} aria-label="Site footer">
+    <Container containerBleed tag="footer" className={base()} aria-label="Site footer">
       <div className={wrapper()}>
         {footer_section?.map((section, index) => {
           const headingId = `footer-section-${index}`;
@@ -64,24 +64,24 @@ export const Footer = ({ footer_section, social_connect_section }: IFooter) => {
               <ul className={sectionLinks()} aria-labelledby={headingId}>
                 {section.navigation_links?.map(
                   (navLink, linkIndex) =>
-                    navLink.link?.href && (
+                    (navLink.page_reference || navLink.link?.href) && (
                       <li
                         key={linkIndex}
-                        className={`${sectionLinkItem()} ${navLink.link.href.startsWith('tel:') && telLink()}`}
+                        className={`${sectionLinkItem()} ${navLink.link?.href.startsWith('tel:') && telLink()}`}
                       >
                         <NavigationLinkWrapper
                           clickLocation={section.section_heading}
                           navigationLink={navLink}
                           className={sectionLink()}
                           aria-label={
-                            navLink.link.href.startsWith('tel:')
+                            navLink.link?.href.startsWith('tel:')
                               ? `Call ${navLink.link.href.replace('tel:', '')}`
-                              : navLink.link.title
+                              : navLink.link?.title
                           }
-                          {...(navLink.link.href.startsWith('tel:') && { tabIndex: -1 })}
+                          {...(navLink.link?.href.startsWith('tel:') && { tabIndex: -1 })}
                         >
-                          {navLink.link.title}
-                          {navLink.link.href.startsWith('tel:') && (
+                          {navLink.link?.title}
+                          {navLink.link?.href.startsWith('tel:') && (
                             <strong aria-hidden="true">
                               {navLink.link.href.replace('tel:', '')}
                             </strong>
@@ -116,6 +116,7 @@ export const Footer = ({ footer_section, social_connect_section }: IFooter) => {
                       navigationLink={{
                         link: linkItem.social_link,
                         open_in_new_window: isExternal,
+                        english_only_link: false,
                         $: { link: linkItem.$?.social_link },
                       }}
                       label={linkItem.social_icon_alt_text}

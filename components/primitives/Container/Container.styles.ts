@@ -3,7 +3,7 @@ import { tv } from 'tailwind-variants';
 export const containerVariants = tv({
   slots: {
     base: ['w-full', 'px-7.5 md:px-0 mx-auto', 'flex flex-col justify-center', 'bg-white'],
-    wrapper: ['w-full', 'mx-auto'],
+    wrapper: ['w-full max-w-component', 'mx-auto'],
   },
   variants: {
     verticalPadding: {

@@ -80,33 +80,38 @@ export type IModularBlocksExtension<T> = {
   [P in keyof T]?: T[P] & { _metadata?: { uid?: string } };
 };
 
-export interface ITabbedContentModularBlock {
+export interface IImageVideoCarousel {
   _version?: number;
-  tab_variant?: ("Horizontal" | "Vertical") | null;
-  tab_content_iteam?: {
-    tab_title?: string;
-    tab_icon?: IFile | null;
-    tab_content_type?: ("RTE" | "Image") | null;
-    rte?: string;
-    image_data?: {
-      image?: IFile | null;
-      image_caption?: string;
-      $?: {
-        image?: CSLPFieldMapping;
-        image_caption?: CSLPFieldMapping;
-      };
-    };
+  carousel_type?: ("Image" | "Video") | null;
+  carousel_items?: {
+    carousel_image?: IFile | null;
+    image_alt?: string;
+    video_id?: string;
+    title?: string;
+    description?: string;
+    cta?: IEnhancedCta;
     $?: {
-      tab_title?: CSLPFieldMapping;
-      tab_icon?: CSLPFieldMapping;
-      tab_content_type?: CSLPFieldMapping;
-      rte?: CSLPFieldMapping;
-      image_data?: CSLPFieldMapping;
+      carousel_image?: CSLPFieldMapping;
+      image_alt?: CSLPFieldMapping;
+      video_id?: CSLPFieldMapping;
+      title?: CSLPFieldMapping;
+      description?: CSLPFieldMapping;
+      cta?: CSLPFieldMapping;
     };
   }[];
+  carousel_full_width: boolean;
   $?: {
-    tab_variant?: CSLPFieldMapping;
-    tab_content_iteam?: CSLPFieldMapping;
+    carousel_type?: CSLPFieldMapping;
+    carousel_items?: CSLPFieldMapping;
+    carousel_full_width?: CSLPFieldMapping;
+  };
+}
+
+export interface ICtaButtonModularBlock {
+  _version?: number;
+  cta?: IEnhancedCta;
+  $?: {
+    cta?: CSLPFieldMapping;
   };
 }
 
@@ -118,16 +123,19 @@ export interface IEnhancedCta {
   has_font_awesome_icons: boolean;
   left_font_awesome_icon_class?: string;
   right_font_awesome_icon_class?: string;
-  cta_variant:
-    | "primary"
-    | "primary-outline"
-    | "supporting"
-    | "supporting-outline"
-    | "light-blue"
-    | "orange"
-    | "green"
-    | "yellow";
-  cta_size: "fixed" | "variable";
+  cta_variant?:
+    | (
+        | "primary"
+        | "primary-outline"
+        | "supporting"
+        | "supporting-outline"
+        | "light-blue"
+        | "orange"
+        | "green"
+        | "yellow"
+      )
+    | null;
+  cta_size?: ("fixed" | "variable") | null;
   adobe_datalayer_fields?: {
     click_type?: string;
     click_location?: string;
@@ -159,6 +167,58 @@ export interface IEnhancedCta {
     adobe_datalayer_fields?: CSLPFieldMapping;
     modal_cta?: CSLPFieldMapping;
     modal_content?: CSLPFieldMapping;
+  };
+}
+
+export interface INavigationLink {
+  _version?: number;
+  page_reference?: IPage[];
+  link?: ILink;
+  open_in_new_window: boolean;
+  english_only_link: boolean;
+  $?: {
+    page_reference?: CSLPFieldMapping;
+    link?: CSLPFieldMapping;
+    open_in_new_window?: CSLPFieldMapping;
+    english_only_link?: CSLPFieldMapping;
+  };
+}
+
+export interface IRteModularBlock {
+  _version?: number;
+  rte?: string;
+  $?: {
+    rte?: CSLPFieldMapping;
+  };
+}
+
+export interface ITabbedContentModularBlock {
+  _version?: number;
+  tab_variant?: ("Horizontal" | "Vertical") | null;
+  tab_content_iteam?: {
+    tab_title?: string;
+    tab_icon?: IFile | null;
+    tab_content_type?: ("RTE" | "Image") | null;
+    rte?: string;
+    image_data?: {
+      image?: IFile | null;
+      image_caption?: string;
+      $?: {
+        image?: CSLPFieldMapping;
+        image_caption?: CSLPFieldMapping;
+      };
+    };
+    $?: {
+      tab_title?: CSLPFieldMapping;
+      tab_icon?: CSLPFieldMapping;
+      tab_content_type?: CSLPFieldMapping;
+      rte?: CSLPFieldMapping;
+      image_data?: CSLPFieldMapping;
+    };
+  }[];
+  $?: {
+    tab_variant?: CSLPFieldMapping;
+    tab_content_iteam?: CSLPFieldMapping;
   };
 }
 
@@ -208,14 +268,6 @@ export interface IQuote {
   };
 }
 
-export interface IRteModularBlock {
-  _version?: number;
-  rte?: string;
-  $?: {
-    rte?: CSLPFieldMapping;
-  };
-}
-
 export interface ICtaBar {
   _version?: number;
   title?: string;
@@ -225,27 +277,6 @@ export interface ICtaBar {
     title?: CSLPFieldMapping;
     description?: CSLPFieldMapping;
     cta?: CSLPFieldMapping;
-  };
-}
-
-export interface IImageCarousel {
-  _version?: number;
-  carousel_item?: {
-    carousel_image?: IFile | null;
-    title?: string;
-    description?: string;
-    cta?: IEnhancedCta;
-    $?: {
-      carousel_image?: CSLPFieldMapping;
-      title?: CSLPFieldMapping;
-      description?: CSLPFieldMapping;
-      cta?: CSLPFieldMapping;
-    };
-  }[];
-  carousel_full_width: boolean;
-  $?: {
-    carousel_item?: CSLPFieldMapping;
-    carousel_full_width?: CSLPFieldMapping;
   };
 }
 
@@ -295,18 +326,6 @@ export interface ISocialLink {
     social_link?: CSLPFieldMapping;
     social_icon?: CSLPFieldMapping;
     social_icon_alt_text?: CSLPFieldMapping;
-  };
-}
-
-export interface INavigationLink {
-  _version?: number;
-  page_reference?: IPage[];
-  link?: ILink;
-  open_in_new_window: boolean;
-  $?: {
-    page_reference?: CSLPFieldMapping;
-    link?: CSLPFieldMapping;
-    open_in_new_window?: CSLPFieldMapping;
   };
 }
 
@@ -458,14 +477,14 @@ export interface IAccordionItem extends ISystemFields {
 
 export interface IComponents extends ISystemFields {
   accordion: IAccordionModularBlock;
-  cta_button: IEnhancedCta;
+  cta_button: ICtaButtonModularBlock;
   quote: IQuote;
   cta_bar: ICtaBar;
   iframe: IIframe;
-  image_carousel: IImageCarousel;
   rte: IRteModularBlock;
   tabbed_content: ITabbedContentModularBlock;
   media_full_width: IMediaFullWidth;
+  image_video_carousel: IImageVideoCarousel;
 }
 
 export interface IPage extends ISystemFields {
@@ -518,11 +537,25 @@ export interface IDictionaryItems extends ISystemFields {
   back_to_top_label?: string;
   language_selector_label?: string;
   is_selected_label?: string;
+  external_link_identifier_icon?: IFile | null;
+  external_link_identifier_label?: string;
+  english_only_identifier_icon?: IFile | null;
+  english_only_identifier_label?: string;
+  hamburger_menu_icon?: IFile | null;
+  menu_label?: string;
+  taxonomies?: ITaxonomy | ITaxonomyEntry[];
   $?: {
     title?: CSLPFieldMapping;
     back_to_top_label?: CSLPFieldMapping;
     language_selector_label?: CSLPFieldMapping;
     is_selected_label?: CSLPFieldMapping;
+    external_link_identifier_icon?: CSLPFieldMapping;
+    external_link_identifier_label?: CSLPFieldMapping;
+    english_only_identifier_icon?: CSLPFieldMapping;
+    english_only_identifier_label?: CSLPFieldMapping;
+    hamburger_menu_icon?: CSLPFieldMapping;
+    menu_label?: CSLPFieldMapping;
+    taxonomies?: CSLPFieldMapping;
   };
 }
 
@@ -538,18 +571,20 @@ export interface IHeader extends ISystemFields {
     show_account_login_section: boolean;
     my_account_login?: {
       login_form_label?: string;
+      login_form_action_url?: string;
       username_field_placeholder?: string;
       password_field_placeholder?: string;
       login_button_label?: string;
-      forgot_password_label?: string;
+      forgot_password_link?: ILink;
       signup_content?: string;
       disclaimer_note?: string;
       $?: {
         login_form_label?: CSLPFieldMapping;
+        login_form_action_url?: CSLPFieldMapping;
         username_field_placeholder?: CSLPFieldMapping;
         password_field_placeholder?: CSLPFieldMapping;
         login_button_label?: CSLPFieldMapping;
-        forgot_password_label?: CSLPFieldMapping;
+        forgot_password_link?: CSLPFieldMapping;
         signup_content?: CSLPFieldMapping;
         disclaimer_note?: CSLPFieldMapping;
       };
