@@ -26,7 +26,10 @@
   --color-secondary: var(--theme-color-secondary);
   --color-tertiary: var(--theme-color-tertiary);
   --color-textPrimary: var(--theme-color-textPrimary);
+  --color-dark-blue: var(--theme-color-dark-blue);
+  --color-ice-blue: var(--theme-color-ice-blue);
   --color-pale-blue: var(--theme-color-pale-blue);
+  --color-medium-gray: var(--theme-color-medium-gray);
   --color-light-gray: var(--theme-color-light-gray);
   --color-orange: var(--theme-color-orange);
   --color-gold: var(--theme-color-gold);

@@ -41,7 +41,7 @@ const Default = (props: AccordionProps) => {
   return (
     <Container componentName="Accordion">
       <Row>
-        <Col md={8} offsetMd={2}>
+        <Col md={8} lg={12} offsetMd={2}>
           <div className={base()}>
             {enable_expand_all && (
               <div className={header()}>
