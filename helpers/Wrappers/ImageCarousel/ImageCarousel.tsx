@@ -4,7 +4,7 @@ import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
 import { ButtonWrapper } from '@/helpers/Wrappers/ButtonWrapper/ButtonWrapper';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import { imageCarouselVariants } from './ImageCarousel.styles';
-import PlainTextWrapper from '../PlainTextWrapper/PlainTextWrapper';
+import RichTextWrapper from '../RichTextWrapper/RichTextWrapper';
 
 const ImageCarousel = ({
   carousel_items,
@@ -36,10 +36,11 @@ const ImageCarousel = ({
                 )}
 
                 {item.description && (
-                  <PlainTextWrapper
+                  <RichTextWrapper
                     className={slideDescription()}
                     content={item.description}
                     {...getCSLPAttributes(item.$?.description)}
+                    parentClassName=""
                   />
                 )}
 

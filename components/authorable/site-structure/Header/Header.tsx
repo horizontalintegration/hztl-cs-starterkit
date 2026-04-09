@@ -1,93 +1,85 @@
-/**
- * @file Header.tsx
- * @description Site header component with sticky navigation, logo, and language selector.
- * Features dynamic styling based on scroll position and responsive layout.
- * Fetches content from Contentstack CMS with Live Preview support.
- */
-
 'use client';
 
-import Link from 'next/link';
-import { headerVariants } from './Header.styles';
-
-import { CSLPFieldMapping, IEnhancedImage, IHeader, ILink } from '@/.generated';
-import { LanguageSelector } from './LanguageSelector/LanguageSelector';
+import { toPascalCase } from '@/utils/string-utils';
+import { IBaseComponentProps } from '@/lib/types';
 import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
-import { getCSLPAttributes } from '@/utils/type-guards';
+import { IHeader } from '@/.generated';
+import Link from 'next/link';
+import { DesktopHeader } from './Desktop Header/DesktopHeader';
+import { desktopHeaderVariants } from './Header.styles';
+import { useGlobalLabels } from '@/context/GlobalLabelContext';
+import Image from 'next/image';
+import PlainTextWrapper from '@/helpers/Wrappers/PlainTextWrapper/PlainTextWrapper';
+import { useState } from 'react';
 
-/**
- * Props interface for Logo component.
- */
-interface LogoProps {
-  /** Logo image from CMS */
-  logo?: IEnhancedImage;
-  /** Logo link configuration from CMS */
-  logoLink?: ILink;
-  /** Contentstack Live Preview field mapping */
-  $?: CSLPFieldMapping;
-}
+type HeaderProps = IBaseComponentProps & IHeader;
 
-/**
- * Logo component that displays the site logo with clickable link.
- * Typically links to the homepage.
- *
- * @param {LogoProps} props - Logo configuration from CMS
- * @returns {JSX.Element | null} Rendered logo or null if data is missing
- */
-export const Logo = ({ logo, logoLink, $ }: LogoProps) => {
-  const { logoContainer } = headerVariants();
+export const Logo = (props: HeaderProps) => {
+  const isLogoLink = props.logo_link?.href;
 
-  // Don't render if logo or link data is missing
-  if (!logo || !logoLink) return null;
-
-  return (
-    <div className={logoContainer()} {...getCSLPAttributes($)}>
-      <Link href={logoLink?.href ?? '/'}>
-        <ImageWrapper image={logo} />
+  if (isLogoLink) {
+    return (
+      <Link href={props.logo_link?.href || '/'}>
+        <ImageWrapper image={props.desktop_logo} wrapperClassName="hidden md:block" />
+        <ImageWrapper image={props.mobile_logo} wrapperClassName="block md:hidden" />
       </Link>
-    </div>
+    );
+  }
+  return (
+    <>
+      <ImageWrapper image={props.desktop_logo} wrapperClassName="hidden md:block" />
+      <ImageWrapper image={props.mobile_logo} wrapperClassName="block md:hidden" />
+    </>
   );
 };
 
-/**
- * Site header component with sticky positioning and dynamic styling.
- *
- * Features:
- * - Sticky positioning that follows user scroll
- * - Dynamic padding that reduces when user scrolls (for space efficiency)
- * - Responsive layout with breakpoint-based spacing
- * - Logo with link to homepage
- * - Language selector for multi-locale support
- * - Contentstack Live Preview integration
- *
- * @param {IHeader} props - Header content from Contentstack CMS
- * @returns {JSX.Element} Rendered site header
- *
- * @example
- * ```tsx
- * <Header logo={logo} logo_link={logoLink} $={fieldMapping} />
- * ```
- */
-export const Header = (props: IHeader) => {
-  const { base, wrapper, inner, menuWrapper, menuContainer, languageWrapper } = headerVariants();
-
+const Default = (props: HeaderProps) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { base, topBar, topBarContainer } = desktopHeaderVariants({
+    menuVisible: false,
+  });
+  const { globalLabels } = useGlobalLabels();
   return (
-    <header className={base()} id="header">
-      <div className={wrapper()}>
-        <div className={inner()}>
-          <div className={menuWrapper()}>
-            {/* Left side: Logo */}
-            <div className={menuContainer()}>
-              <Logo logo={props.desktop_logo} logoLink={props.logo_link} $={props.$?.logo_link} />
-            </div>
-
-            {/* Right side: Language selector */}
-            <div className={languageWrapper()}>
-              <LanguageSelector />
-            </div>
+    <>
+      <header className={base()}>
+        <div className={topBar()}>
+          <div className={topBarContainer()}>
+            <Logo {...props} />
+            <nav className="flex lg:hidden divide-x divide-solid">
+              <button
+                data-mobile-menu-toggle
+                className="flex flex-col items-center justify-center gap-1 cursor-pointer px-4"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                <Image
+                  src={globalLabels.hamburger_menu_icon?.url || ''}
+                  alt={globalLabels.hamburger_menu_icon?.title || ''}
+                  width={globalLabels.hamburger_menu_icon?.dimension?.width}
+                  height={globalLabels.hamburger_menu_icon?.dimension?.height}
+                  className="h-6 w-6"
+                />
+                <PlainTextWrapper
+                  content={globalLabels.menu_label}
+                  cslpAttribute={globalLabels.$?.menu_label}
+                  className="font-medium text-primary text-[min(3.6vw,1rem)] leading-none"
+                ></PlainTextWrapper>
+              </button>
+            </nav>
           </div>
         </div>
-      </div>
-    </header>
+        <DesktopHeader {...props} />
+      </header>
+    </>
   );
+};
+
+const variants = {
+  Default,
+};
+
+export const Header = (props: HeaderProps) => {
+  const Component = props.component_variant
+    ? variants[toPascalCase(props.component_variant) as keyof typeof variants]
+    : Default;
+  return <Component {...props} />;
 };

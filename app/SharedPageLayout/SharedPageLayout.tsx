@@ -7,11 +7,10 @@
 
 import { IFooter, IHeader, IPage } from '@/.generated';
 import { pageLayoutVariants } from './SharedPageLayout.styles';
-import { Header } from '@/components/authorable/site-structure/Header/Header';
 import { Footer } from '@/components/authorable/site-structure/Footer/Footer';
 import { BackToTop } from '@/components/authorable/site-structure/BackToTop/BackToTop';
 import { MainLayout } from '@/components/authorable/site-structure/MainLayout/MainLayout';
-
+import { Header } from '@/components/authorable/site-structure/Header/Header';
 
 /**
  * Props interface for SharedPageLayout component.
@@ -66,4 +65,3 @@ export async function SharedPageLayout({
     </div>
   );
 }
-

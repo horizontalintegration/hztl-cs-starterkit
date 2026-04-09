@@ -11,7 +11,7 @@ import { getCSLPAttributes } from '@/utils/type-guards';
 
 interface PlainTextWrapperProps extends React.HTMLAttributes<HTMLHeadingElement> {
   /** HTML tag to render (defaults to 'span') */
-  tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
+  tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'i';
   /** Contentstack Live Preview field mapping */
   cslpAttribute?: CSLPFieldMapping;
   /** Content to render (HTML string) */
@@ -21,7 +21,7 @@ interface PlainTextWrapperProps extends React.HTMLAttributes<HTMLHeadingElement>
 /**
  * Renders plain text or HTML content with dynamic tag selection.
  * Supports Live Preview for CMS content editing.
- * 
+ *
  * @example
  * <PlainTextWrapper tag="h1" content="<strong>Title</strong>" cslpAttribute={fieldMapping} />
  */
@@ -37,13 +37,9 @@ const PlainTextWrapper = ({
   const Tag: React.ElementType = tag as React.ElementType;
 
   return (
-    <Tag
-      {...props}
-      data-component="helpers/fieldwrappers/plaintextwrapper"
-      className={className}
-      dangerouslySetInnerHTML={{ __html: content }}
-      {...getCSLPAttributes(cslpAttribute)}
-    />
+    <Tag {...props} className={className} {...getCSLPAttributes(cslpAttribute)}>
+      {content}
+    </Tag>
   );
 };
 
