@@ -13,6 +13,8 @@ import { buttonVariants, modalContentVariants } from './ButtonWrapper.styles';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import ModalWrapper from '../ModalWrapper/ModalWrapper';
 import RichTextWrapper from '../RichTextWrapper/RichTextWrapper';
+import Image from 'next/image';
+import { useGlobalLabels } from '@/context/GlobalLabelContext';
 
 export interface ButtonWrapperProps extends React.HTMLAttributes<HTMLButtonElement> {
   /** Enhanced CTA object from Contentstack */
@@ -72,22 +74,15 @@ export const ButtonWrapper = ({
   const linkHref = pageRef?.url || cta?.link?.href || href || undefined;
   const linkTitle = cta?.link?.title || customLabel || undefined;
 
+  // Icon for external link
+  const { globalLabels } = useGlobalLabels();
+  const externalLinkIcon = globalLabels.external_link_identifier_icon;
+
   if (!linkTitle) return <></>; // Early return if title is missing
   if (!linkHref && !onClick) return <></>; // Early return if no href or onClick provided
 
-  // Check if link is external
-  const isExternal = useMemo(() => {
-    if (!isLink) return false;
-    return (
-      linkHref?.startsWith('http') ||
-      linkHref?.startsWith('https') ||
-      linkHref?.startsWith('//') ||
-      opensInNewTab
-    );
-  }, [isLink, linkHref]);
-
   // Determine new tab behavior
-  const shouldOpenInNewTab = opensInNewTab || isExternal;
+  const shouldOpenInNewTab = opensInNewTab && isLink;
 
   // Memoized click handler with disabled state check
   const handleClick = useCallback(
@@ -133,9 +128,15 @@ export const ButtonWrapper = ({
             <i className={cta.right_font_awesome_icon_class}></i>
           </span>
         )}
-        {isExternal && (
-          <span>
-            <i className="fas fa-arrow-up-right"></i>
+        {shouldOpenInNewTab && externalLinkIcon && (
+          <span aria-hidden="true">
+            <Image
+              src={externalLinkIcon?.url}
+              alt={externalLinkIcon.title}
+              className="h-2.5 w-auto"
+              width={externalLinkIcon.dimension?.width}
+              height={externalLinkIcon.dimension?.height}
+            ></Image>
           </span>
         )}
       </>

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { INavigationLink } from '@/.generated';
 import { getSpecificField } from '@/lib/contentstack/entries';
 import { getCSLPAttributes } from '@/utils/type-guards';
+import { useGlobalLabels } from '@/context/GlobalLabelContext';
+import Image from 'next/image';
 
 export interface NavigationLinkWrapperProps {
   navigationLink: INavigationLink;
@@ -13,6 +15,7 @@ export interface NavigationLinkWrapperProps {
   className?: string;
   siteSection?: string;
   shouldRenderNewTabIcon?: boolean;
+  shouldRenderEngOnlyIcon?: boolean;
 }
 
 export const NavigationLinkWrapper = ({
@@ -23,14 +26,16 @@ export const NavigationLinkWrapper = ({
   siteSection,
   children,
   shouldRenderNewTabIcon = true,
+  shouldRenderEngOnlyIcon = true,
   ...rest
 }: React.PropsWithChildren<NavigationLinkWrapperProps>) => {
-  const { link, open_in_new_window, page_reference, $ } = navigationLink;
+  const { link, open_in_new_window, page_reference, english_only_link, $ } = navigationLink;
 
   const pageRef = page_reference?.[0];
   const linkLabel = label || link?.title;
 
   const [href, setHref] = useState<string | undefined>(link?.href);
+  const { globalLabels } = useGlobalLabels();
 
   useEffect(() => {
     if (pageRef?.uid && pageRef?._content_type_uid) {
@@ -43,6 +48,10 @@ export const NavigationLinkWrapper = ({
   if (!linkLabel || !href) return null;
 
   const newTab = open_in_new_window;
+  const newTabIcon = globalLabels.external_link_identifier_icon;
+
+  const engOnlyLink = english_only_link;
+  const engOnlyIcon = globalLabels.english_only_identifier_icon;
 
   const analyticsProps = {
     clicklocation: clickLocation,
@@ -63,9 +72,26 @@ export const NavigationLinkWrapper = ({
       {...rest}
     >
       {children || linkLabel}
-      {shouldRenderNewTabIcon && newTab && (
+      {shouldRenderEngOnlyIcon && engOnlyLink && engOnlyIcon?.url && (
         <span aria-hidden="true">
-          <i className="fa-solid fa-arrow-up-right text-blue-500"></i>
+          <Image
+            src={engOnlyIcon?.url}
+            alt={engOnlyIcon.title}
+            className="h-[0.8rem] w-auto"
+            width={engOnlyIcon.dimension?.width}
+            height={engOnlyIcon.dimension?.height}
+          ></Image>
+        </span>
+      )}
+      {shouldRenderNewTabIcon && newTab && newTabIcon?.url && (
+        <span aria-hidden="true">
+          <Image
+            src={newTabIcon?.url}
+            alt={newTabIcon.title}
+            className="h-2.5 w-auto"
+            width={newTabIcon.dimension?.width}
+            height={newTabIcon.dimension?.height}
+          ></Image>
         </span>
       )}
     </Link>

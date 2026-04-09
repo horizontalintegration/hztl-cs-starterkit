@@ -41,6 +41,8 @@ export interface ImageWrapperProps {
   showFallbackImage?: boolean;
   /** Full-bleed layout (edge-to-edge) */
   isFullBleed?: boolean;
+  /** Children elements (specifically used when image needs to be background image) */
+  children?: React.ReactNode;
 }
 
 /** Internal props for Next.js Image component */
@@ -116,6 +118,7 @@ const ImageWrapper = ({
   blurDataURL,
   showFallbackImage = true,
   isFullBleed = false,
+  children,
 }: ImageWrapperProps): JSX.Element => {
   const [isError, setIsError] = useState(false);
 
@@ -256,6 +259,7 @@ const ImageWrapper = ({
           unoptimized={true}
         />
       )}
+      {children}
     </div>
   );
 };

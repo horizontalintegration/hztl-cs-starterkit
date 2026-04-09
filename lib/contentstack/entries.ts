@@ -147,7 +147,11 @@ export const getEntries = cache(
       const localeToUse = locale || getCurrentLanguage();
 
       const entries = await applySiteFilter(
-        entryQuery.locale(localeToUse).includeFallback().query()
+        entryQuery
+          .locale(localeToUse)
+          .includeFallback()
+          .query()
+          .addParams({ include_dimension: true })
       ).find<T & contentstack.Utils.EntryModel>();
 
       if (entries.entries) {

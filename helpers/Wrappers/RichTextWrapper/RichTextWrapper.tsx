@@ -18,12 +18,12 @@ interface RichTextWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
 
 /**
  * Renders rich text HTML with automatic processing for external links and tables.
- * 
+ *
  * Features:
  * - Adds target="_blank" to external links
  * - Inserts "Opens in new tab" icon and screen reader text
  * - Enhances table cells with data-column attributes for responsive tables
- * 
+ *
  * @example
  * <RichTextWrapper content="<p>Hello <a href='https://example.com'>World</a></p>" />
  */
@@ -67,7 +67,7 @@ const NEW_TAB_ICON_STRING = `<span class="svg-icon inline-flex align-middle -ml-
 
 /**
  * Hook that processes rich text content client-side.
- * 
+ *
  * Processing steps:
  * 1. Identifies external links (http/https or target="_blank")
  * 2. Adds new tab icon and screen reader text to external links
@@ -82,11 +82,9 @@ function useUpdatedRichTextContent({ content }: RichTextWrapperProps) {
     template.innerHTML = content || '';
 
     // Find all external links
-    const externalLinks = [...template.content.querySelectorAll('a')].filter(
-      (a) =>
-        a.attributes.getNamedItem('href')?.value.startsWith('http') ||
-        a.attributes.getNamedItem('target')?.value === '_blank'
-    );
+    const externalLinks = [...template.content.querySelectorAll('a')].filter((a) => {
+      return a.attributes.getNamedItem('target')?.value === '_blank';
+    });
 
     // Enhance external links with target="_blank" and icon
     externalLinks.forEach((a) => {
