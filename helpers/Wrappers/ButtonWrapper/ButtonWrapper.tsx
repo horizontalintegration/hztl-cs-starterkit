@@ -6,7 +6,7 @@
 
 'use client';
 
-import { JSX, useCallback, useMemo, useState } from 'react';
+import { JSX, useCallback, useState } from 'react';
 import Link from 'next/link';
 import { IEnhancedCta } from '@/.generated';
 import { buttonVariants, modalContentVariants } from './ButtonWrapper.styles';
