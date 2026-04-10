@@ -56,9 +56,15 @@ export const HeaderFeaturedSection = ({
                 target={featuredSection.open_in_new_window ? '_blank' : undefined}
                 rel={featuredSection.open_in_new_window ? 'noopener noreferrer' : undefined}
                 className={featuredLink()}
+                {...getCSLPAttributes(featuredSection.$?.featured_link)}
                 {...analyticsProps}
               >
                 {featuredSection.featured_link?.title}
+                {featuredSection.open_in_new_window && (
+                  <span aria-hidden="true">
+                    <i className="fa-solid fa-arrow-up-right"></i>
+                  </span>
+                )}
               </Link>
             )}
           </div>

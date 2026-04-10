@@ -112,17 +112,17 @@ export const ButtonWrapper = ({
     return (
       <>
         {cta?.has_font_awesome_icons && cta?.left_font_awesome_icon_class && (
-          <span>
+          <span aria-hidden="true">
             <i className={cta.left_font_awesome_icon_class}></i>
           </span>
         )}
         {linkTitle}
         {cta?.has_font_awesome_icons && cta?.right_font_awesome_icon_class && (
-          <span>
+          <span aria-hidden="true">
             <i className={cta.right_font_awesome_icon_class}></i>
           </span>
         )}
-        {shouldOpenInNewTab && (
+        {!shouldOpenInNewTab && (
           <span aria-hidden="true">
             <i className="fa-solid fa-arrow-up-right"></i>
           </span>

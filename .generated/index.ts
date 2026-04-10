@@ -100,9 +100,11 @@ export interface IImageVideoCarousel {
     };
   }[];
   carousel_settings?: {
+    loop: boolean;
     autoplay: boolean;
     autoplay_duration?: number | null;
     $?: {
+      loop?: CSLPFieldMapping;
       autoplay?: CSLPFieldMapping;
       autoplay_duration?: CSLPFieldMapping;
     };

@@ -56,7 +56,8 @@ export const desktopHeaderVariants = tv(
       featuredContent: ['text-white font-black uppercase', 'text-[1.5rem] leading-6 mb-3'],
       featuredLink: [
         'px-3 py-1.5 bg-[#f8f9fa] text-primary hover:bg-[#e2e6ea]',
-        'rounded-sm font-block text-[0.8rem] leading-normal min-h-8.75 inline-block tracking-normal',
+        'rounded-sm font-block text-[0.8rem] leading-normal min-h-8.75 tracking-normal',
+        'flex gap-0.5 items-center justify-center w-fit',
       ],
       loginSection: ['mb-6.25 flex flex-col'],
       loginContainer: ['w-full max-w-307.5 mx-auto px-5 pt-5 bg-white'],
