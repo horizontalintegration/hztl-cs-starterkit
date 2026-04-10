@@ -99,11 +99,34 @@ export interface IImageVideoCarousel {
       cta?: CSLPFieldMapping;
     };
   }[];
+  carousel_settings?: {
+    autoplay: boolean;
+    autoplay_duration?: number | null;
+    $?: {
+      autoplay?: CSLPFieldMapping;
+      autoplay_duration?: CSLPFieldMapping;
+    };
+  };
   carousel_full_width: boolean;
   $?: {
     carousel_type?: CSLPFieldMapping;
     carousel_items?: CSLPFieldMapping;
+    carousel_settings?: CSLPFieldMapping;
     carousel_full_width?: CSLPFieldMapping;
+  };
+}
+
+export interface IMediaFullWidth {
+  _version?: number;
+  image?: IFile | null;
+  image_alt?: string;
+  show_video: boolean;
+  video_id?: string;
+  $?: {
+    image?: CSLPFieldMapping;
+    image_alt?: CSLPFieldMapping;
+    show_video?: CSLPFieldMapping;
+    video_id?: CSLPFieldMapping;
   };
 }
 
@@ -219,20 +242,6 @@ export interface ITabbedContentModularBlock {
   $?: {
     tab_variant?: CSLPFieldMapping;
     tab_content_iteam?: CSLPFieldMapping;
-  };
-}
-
-export interface IMediaFullWidth {
-  _version?: number;
-  image?: IFile | null;
-  image_alt?: string;
-  show_video: boolean;
-  video_id?: string;
-  $?: {
-    image?: CSLPFieldMapping;
-    image_alt?: CSLPFieldMapping;
-    show_video?: CSLPFieldMapping;
-    video_id?: CSLPFieldMapping;
   };
 }
 

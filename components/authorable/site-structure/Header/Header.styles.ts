@@ -113,3 +113,89 @@ export const desktopHeaderVariants = tv(
   },
   { twMerge: false }
 );
+
+export const mobileHeaderVariants = tv(
+  {
+    slots: {
+      megaMenuContainer: [
+        'w-full md:w-1/2 bg-primary',
+        'absolute right-0 top-0 z-10',
+        '-translate-y-full transform transition-transform duration-300 ease-in-out',
+        'px-4 pb-4',
+      ],
+      navList: ['flex flex-col'],
+      navItem: ['border-b border-b-white'],
+      navItemTitle: [
+        'text-white font-bold text-[0.938rem] leading-normal uppercase',
+        'py-5 w-full flex items-center justify-between cursor-pointer',
+      ],
+      megaMenu: ['header-animate-fade-out', 'w-full bg-white mt-0.5 pt-3.75 pb-2 px-3.75'],
+      topLinksList: ['mb-5'],
+      topLink: [
+        'flex items-center justify-start gap-2.5 w-full',
+        'p-2.5 font-medium leading-normal text-black',
+        'hover:text-secondary hover:underline',
+      ],
+      levelTwoList: ['flex flex-col mb-5'],
+      levelTwoTitle: [
+        'text-primary font-medium leading-normal uppercase',
+        'pt-2 pb-2.5 w-full flex items-center justify-between',
+        'border-b border-b-[#e2e2e2] cursor-pointer',
+      ],
+      subMegaMenu: ['header-animate-fade-out', 'w-full bg-white mt-0.5 py-2'],
+      levelTwoLink: [
+        'flex justify-start items-center gap-2.5',
+        'p-2.5 font-medium leading-normal',
+        'hover:text-secondary',
+      ],
+      levelThreeTitle: ['text-primary font-bold leading-[1.2]', 'mb-2 inline-block w-full'],
+      levelThreeLink: [
+        'flex justify-start items-center gap-2.5',
+        'p-2.5 font-medium leading-normal',
+        'hover:text-secondary',
+      ],
+      chevronIconL1: ['text-white shrink-0', 'transition-transform duration-250 ease-linear'],
+      chevronIconL2: ['text-gray-600 shrink-0', 'transition-transform duration-250 ease-linear'],
+      loginWrapper: ['flex flex-col gap-4'],
+      loginForm: ['flex flex-col'],
+      loginInput: [
+        'border border-[#767676] rounded-[5px]',
+        'text-black text-[16px] font-medium',
+        'ps-2.5 py-0.5 pe-0.5 h-7.5 w-full my-1.5',
+      ],
+      loginSubmitButton: [
+        'border border-[#007bff] bg-[#0186be] rounded-[3.2px]',
+        'text-white font-black leading-normal text-[0.875rem] uppercase cursor-pointer',
+        'px-2 py-1 w-fit my-1.5',
+      ],
+      loginFooter: ['flex justify-between items-center border-b-4 border-b-[#d7d7d7]'],
+      loginForgotPasswordLink: ['py-3.75 font-bold text-[0.875rem] hover:underline text-primary'],
+    },
+    variants: {
+      mobileMenuOpen: {
+        true: {
+          megaMenuContainer: ['translate-y-0 top-20 md:top-17.5'],
+        },
+      },
+      megaMenuVisible: {
+        true: {
+          megaMenu: ['block header-animate-fade-in'],
+          chevronIconL1: ['rotate-180'],
+        },
+        false: {
+          megaMenu: ['hidden'],
+        },
+      },
+      subMegaMenuVisible: {
+        true: {
+          subMegaMenu: ['block header-animate-fade-in'],
+          chevronIconL2: ['rotate-180'],
+        },
+        false: {
+          subMegaMenu: ['hidden'],
+        },
+      },
+    },
+  },
+  { twMerge: false }
+);

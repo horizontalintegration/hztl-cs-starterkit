@@ -21,8 +21,17 @@ export const DesktopHeader = (props: IHeader) => {
         setActiveMenuIndex(null);
       }
     };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setActiveMenuIndex(null);
+    };
+
     document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   if (!hasLevelOneNavigation) return null;
@@ -37,16 +46,19 @@ export const DesktopHeader = (props: IHeader) => {
             });
             return (
               <div key={index} className={menuItem()}>
-                <li
-                  className={menuItemTitle()}
-                  onClick={() => {
-                    if (!hasMegaMenuContent(levelOneItem)) return;
-                    setActiveMenuIndex(activeMenuIndex === index ? null : index);
-                  }}
-                  {...getCSLPAttributes(levelOneItem.$?.nav_level_one_title)}
-                  aria-expanded={activeMenuIndex === index}
-                >
-                  {levelOneItem.nav_level_one_title}
+                <li>
+                  <button
+                    className={menuItemTitle()}
+                    onClick={() => {
+                      if (!hasMegaMenuContent(levelOneItem)) return;
+                      setActiveMenuIndex(activeMenuIndex === index ? null : index);
+                    }}
+                    aria-expanded={activeMenuIndex === index}
+                    aria-haspopup={hasMegaMenuContent(levelOneItem) ? 'true' : undefined}
+                    {...getCSLPAttributes(levelOneItem.$?.nav_level_one_title)}
+                  >
+                    {levelOneItem.nav_level_one_title}
+                  </button>
                 </li>
 
                 <HeaderNavigation
