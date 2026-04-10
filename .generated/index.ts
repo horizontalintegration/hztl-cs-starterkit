@@ -590,13 +590,15 @@ export interface IHeader extends ISystemFields {
       };
     };
     featured_section?: {
-      featured_content?: string;
-      featured_link?: IEnhancedCta;
       featured_image?: IEnhancedImage;
+      featured_content?: string;
+      featured_link?: ILink;
+      open_in_new_window: boolean;
       $?: {
+        featured_image?: CSLPFieldMapping;
         featured_content?: CSLPFieldMapping;
         featured_link?: CSLPFieldMapping;
-        featured_image?: CSLPFieldMapping;
+        open_in_new_window?: CSLPFieldMapping;
       };
     };
     nav_columns?: MaxTuple<

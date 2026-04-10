@@ -43,6 +43,10 @@ export interface CarouselWrapperProps {
   ariaLabel?: string;
   /** Show prev/next arrows alongside dots (only when available) */
   showPaginationArrows?: boolean;
+  /** Callback fired when the selected slide changes */
+  onSlideChange?: (index: number) => void;
+  /** Enable carousel style based on the container width */
+  isContainerBleedCarousel?: boolean;
 }
 
 export const CarouselWrapper = ({
@@ -62,6 +66,8 @@ export const CarouselWrapper = ({
   thumbsClassName,
   ariaLabel = 'Carousel',
   showPaginationArrows = false,
+  onSlideChange,
+  isContainerBleedCarousel,
 }: CarouselWrapperProps) => {
   // Build plugin list
   const plugins = [
@@ -75,6 +81,7 @@ export const CarouselWrapper = ({
   const [thumbRef, thumbApi] = useEmblaCarousel({
     containScroll: 'keepSnaps',
     dragFree: true,
+    align: 'start',
   });
 
   const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -117,7 +124,8 @@ export const CarouselWrapper = ({
     setCanScrollPrev(emblaApi.canScrollPrev());
     setCanScrollNext(emblaApi.canScrollNext());
     thumbApi?.scrollTo(index);
-  }, [emblaApi, thumbApi]);
+    onSlideChange?.(index);
+  }, [emblaApi, thumbApi, onSlideChange]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -145,10 +153,16 @@ export const CarouselWrapper = ({
     thumbsContainer,
     thumbButton,
     thumbButtonSelected,
-  } = carouselWrapperVariants({ hasThumbnails: thumbnails && thumbnails?.length > 0 });
+  } = carouselWrapperVariants({
+    hasThumbnails: thumbnails && thumbnails?.length > 0,
+    isContainerBleedCarousel,
+  });
+
+  const GAP_SIZE_PX = 32; // gap-8 in pixels
+  const totalGapWidth = (visibleThumbnails - 1) * GAP_SIZE_PX;
 
   const thumbButtonStyle = {
-    width: `calc(100% / ${visibleThumbnails})`,
+    minWidth: `calc((100% - ${totalGapWidth}px) / ${visibleThumbnails})`,
   };
 
   const hasThumbnails = thumbnails && thumbnails.length > 0;
@@ -180,7 +194,7 @@ export const CarouselWrapper = ({
             {thumbnails.map((thumb, index) => (
               <button
                 key={index}
-                className={index === selectedIndex ? thumbButtonSelected() : thumbButton()}
+                className={cn(thumbButton(), index === selectedIndex && thumbButtonSelected())}
                 style={thumbButtonStyle}
                 onClick={() => onThumbClick(index)}
                 aria-label={`Go to slide ${index + 1}`}
@@ -208,7 +222,7 @@ export const CarouselWrapper = ({
             </button>
           )}
 
-          {!thumbnails && showPaginationArrows && (
+          {showPaginationArrows && (
             <button
               onClick={scrollPrev}
               disabled={!loop && !canScrollPrev}
@@ -233,7 +247,7 @@ export const CarouselWrapper = ({
               />
             ))}
 
-          {!thumbnails && showPaginationArrows && (
+          {showPaginationArrows && (
             <button
               onClick={scrollNext}
               disabled={!loop && !canScrollNext}

@@ -9,7 +9,7 @@ export const carouselWrapperVariants = tv({
 
     // Fade-specific: slides stack on top of each other
     fadeContainer: ['flex'],
-    fadeSlide: ['min-w-0 flex-shrink-0 flex-grow-0'],
+    fadeSlide: ['w-full min-w-0 flex-shrink-0 flex-grow-0'],
 
     // Arrow navigation
     arrowButton: [
@@ -47,26 +47,34 @@ export const carouselWrapperVariants = tv({
     ],
 
     // Thumbnail strip
-    thumbsViewport: ['overflow-hidden', 'w-full'],
-    thumbsContainer: ['flex items-center justify-center w-full'],
+    thumbsViewport: ['overflow-hidden', 'w-full', 'mx-auto'],
+    thumbsContainer: ['flex items-stretch justify-start gap-8'],
     thumbButton: [
+      'relative',
       'appearance-none',
-      'border-2 border-transparent rounded overflow-hidden',
-      'cursor-pointer p-0',
-      'opacity-50 transition-opacity hover:opacity-80',
-      'flex-1',
+      'rounded',
+      'cursor-pointer p-1',
+      "before:content-[''] before:w-full before:h-full",
+      'before:absolute before:top-0 before:left-0 before:rounded',
+      'before:border-[2px] before:border-slider-thumb-button-border',
+      'before:pointer-events-none',
     ],
     thumbButtonSelected: [
-      'appearance-none',
-      'border-2 border-primary rounded overflow-hidden',
-      'cursor-pointer p-0 opacity-100',
-      'flex-1',
+      'opacity-100',
+      'before:border-[5px]',
+      'before:w-[calc(100%_+_0px)] before:h-[calc(100%_+_0px)]',
+      'before:border-bright-blue',
     ],
   },
   variants: {
     hasThumbnails: {
       true: {
         viewport: ['mb-5.5'],
+      },
+    },
+    isContainerBleedCarousel: {
+      true: {
+        thumbsViewport: ['px-3'],
       },
     },
   },

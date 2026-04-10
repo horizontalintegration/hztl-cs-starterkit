@@ -1,6 +1,5 @@
 'use client';
-
-import { JSX } from 'react';
+import { forwardRef } from 'react';
 import { vimeoPlayerVariants } from './VimeoPlayer.styles';
 
 export interface VimeoPlayerProps {
@@ -42,34 +41,42 @@ const buildVimeoUrl = ({
   return `https://player.vimeo.com/video/${videoId}?${params.toString()}`;
 };
 
-const VimeoPlayer = ({
-  videoId,
-  title = 'Vimeo video player',
-  autoplay = false,
-  loop = false,
-  showTitle = false,
-  showByline = false,
-  showPortrait = false,
-  className,
-}: VimeoPlayerProps): JSX.Element => {
-  const { wrapper, iframe } = vimeoPlayerVariants();
+const VimeoPlayer = forwardRef<HTMLIFrameElement, VimeoPlayerProps>(
+  (
+    {
+      videoId,
+      title = 'Vimeo video player',
+      autoplay = false,
+      loop = false,
+      showTitle = false,
+      showByline = false,
+      showPortrait = false,
+      className,
+    },
+    ref
+  ) => {
+    const { wrapper, iframe } = vimeoPlayerVariants();
 
-  if (!videoId) return <></>;
+    if (!videoId) return <></>;
 
-  const src = buildVimeoUrl({ videoId, autoplay, loop, showTitle, showByline, showPortrait });
+    const src = buildVimeoUrl({ videoId, autoplay, loop, showTitle, showByline, showPortrait });
 
-  return (
-    <div className={wrapper({ class: className })} data-component="helpers/wrappers/vimeoplayer">
-      <iframe
-        src={src}
-        title={title}
-        className={iframe()}
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowFullScreen
-        loading="lazy"
-      />
-    </div>
-  );
-};
+    return (
+      <div className={wrapper({ class: className })} data-component="helpers/wrappers/vimeoplayer">
+        <iframe
+          ref={ref}
+          src={src}
+          title={title}
+          className={iframe()}
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+);
+
+VimeoPlayer.displayName = 'VimeoPlayer';
 
 export default VimeoPlayer;
