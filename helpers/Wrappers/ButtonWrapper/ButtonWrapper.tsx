@@ -122,7 +122,7 @@ export const ButtonWrapper = ({
             <i className={cta.right_font_awesome_icon_class}></i>
           </span>
         )}
-        {!shouldOpenInNewTab && (
+        {shouldOpenInNewTab && (
           <span aria-hidden="true">
             <i className="fa-solid fa-arrow-up-right"></i>
           </span>
