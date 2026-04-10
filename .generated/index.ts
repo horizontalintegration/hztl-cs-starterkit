@@ -546,7 +546,6 @@ export interface IDictionaryItems extends ISystemFields {
   back_to_top_label?: string;
   language_selector_label?: string;
   is_selected_label?: string;
-  external_link_identifier_icon?: IFile | null;
   external_link_identifier_label?: string;
   english_only_identifier_icon?: IFile | null;
   english_only_identifier_label?: string;
@@ -558,7 +557,6 @@ export interface IDictionaryItems extends ISystemFields {
     back_to_top_label?: CSLPFieldMapping;
     language_selector_label?: CSLPFieldMapping;
     is_selected_label?: CSLPFieldMapping;
-    external_link_identifier_icon?: CSLPFieldMapping;
     external_link_identifier_label?: CSLPFieldMapping;
     english_only_identifier_icon?: CSLPFieldMapping;
     english_only_identifier_label?: CSLPFieldMapping;
