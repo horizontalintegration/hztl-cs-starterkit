@@ -37,7 +37,6 @@ const Default = (props: IframeProps) => {
             style={iframeStyle}
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
             loading="lazy"
-            aria-label={resolvedTitle}
             {...getCSLPAttributes($?.url)}
           />
         </div>
