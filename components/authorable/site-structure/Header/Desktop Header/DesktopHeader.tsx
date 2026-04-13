@@ -46,7 +46,7 @@ export const DesktopHeader = (props: IHeader) => {
             });
             return (
               <div key={index} className={menuItem()}>
-                <li>
+                <li className="h-full">
                   <button
                     className={menuItemTitle()}
                     onClick={() => {

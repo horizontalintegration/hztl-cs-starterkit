@@ -27,11 +27,7 @@ export const Scripts = () => {
       <link rel="preconnect" href="https://azure-na-cdn.contentstack.com/" />
       <link rel="preconnect" href="https://azure-na-images.contentstack.com/" />
       <link rel="dns-prefetch" href="https://azure-na-api.contentstack.com/" />
-      <Script
-        src="https://kit.fontawesome.com/5d1b6c536d.js"
-        crossOrigin="anonymous"
-        strategy="beforeInteractive"
-      />
+      <Script src="https://kit.fontawesome.com/5d1b6c536d.js" crossOrigin="anonymous" />
     </>
   );
 };

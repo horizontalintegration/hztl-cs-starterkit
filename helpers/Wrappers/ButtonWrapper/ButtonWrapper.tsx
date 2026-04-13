@@ -6,7 +6,7 @@
 
 'use client';
 
-import { JSX, useCallback, useState } from 'react';
+import { JSX, useState } from 'react';
 import Link from 'next/link';
 import { IEnhancedCta } from '@/.generated';
 import { buttonVariants, modalContentVariants } from './ButtonWrapper.styles';
@@ -79,16 +79,13 @@ export const ButtonWrapper = ({
   const shouldOpenInNewTab = opensInNewTab && isLink;
 
   // Memoized click handler with disabled state check
-  const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
-      if (disabled) {
-        e.preventDefault();
-        return;
-      }
-      onClick?.(e as React.MouseEvent<HTMLButtonElement>);
-    },
-    [disabled, onClick]
-  );
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+    onClick?.(e as React.MouseEvent<HTMLButtonElement>);
+  };
 
   const base = buttonVariants({
     variant: ctaVariant,
