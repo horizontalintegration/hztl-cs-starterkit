@@ -9,7 +9,7 @@ export const carouselWrapperVariants = tv({
 
     // Fade-specific: slides stack on top of each other
     fadeContainer: ['flex'],
-    fadeSlide: ['min-w-0 flex-shrink-0 flex-grow-0'],
+    fadeSlide: ['w-full min-w-0 flex-shrink-0 flex-grow-0'],
 
     // Arrow navigation
     arrowButton: [
@@ -23,7 +23,12 @@ export const carouselWrapperVariants = tv({
     arrowNext: ['right-2 md:right-4'],
 
     // Dot indicators
-    dotsWrapper: ['flex items-center justify-center gap-3 mt-9.5 mb-4'],
+    controlsWrapper: [
+      'relative',
+      'w-fit',
+      'mx-auto',
+      'flex items-center justify-center gap-3 mt-9.5 mb-4',
+    ],
     dotButton: [
       'w-3 h-3',
       'rounded-full',
@@ -35,8 +40,10 @@ export const carouselWrapperVariants = tv({
     ],
     dotActive: ['bg-dark-blue', 'opacity-100'],
     autoplayButton: [
+      'absolute top-1/2 -translate-y-1/2 left-[calc(100%_+_12px)]',
       'flex items-center justify-center',
-      'cursor-pointer p-1 border-none bg-transparent mr-2',
+      'text-xl text-primary',
+      'cursor-pointer',
     ],
     paginationArrow: [
       'flex items-center justify-center',
@@ -47,26 +54,34 @@ export const carouselWrapperVariants = tv({
     ],
 
     // Thumbnail strip
-    thumbsViewport: ['overflow-hidden', 'w-full'],
-    thumbsContainer: ['flex items-center justify-center w-full'],
+    thumbsViewport: ['overflow-hidden', 'w-full', 'mx-auto'],
+    thumbsContainer: ['flex items-stretch justify-start gap-8'],
     thumbButton: [
+      'relative',
       'appearance-none',
-      'border-2 border-transparent rounded overflow-hidden',
-      'cursor-pointer p-0',
-      'opacity-50 transition-opacity hover:opacity-80',
-      'flex-1',
+      'rounded',
+      'cursor-pointer p-1',
+      "before:content-[''] before:w-full before:h-full",
+      'before:absolute before:top-0 before:left-0 before:rounded',
+      'before:border-[2px] before:border-slider-thumb-button-border',
+      'before:pointer-events-none',
     ],
     thumbButtonSelected: [
-      'appearance-none',
-      'border-2 border-primary rounded overflow-hidden',
-      'cursor-pointer p-0 opacity-100',
-      'flex-1',
+      'opacity-100',
+      'before:border-[5px]',
+      'before:w-[calc(100%_+_0px)] before:h-[calc(100%_+_0px)]',
+      'before:border-bright-blue',
     ],
   },
   variants: {
     hasThumbnails: {
       true: {
         viewport: ['mb-5.5'],
+      },
+    },
+    isContainerBleedCarousel: {
+      true: {
+        thumbsViewport: ['px-3'],
       },
     },
   },

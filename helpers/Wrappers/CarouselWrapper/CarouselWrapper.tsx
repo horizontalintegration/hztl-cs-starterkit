@@ -43,6 +43,10 @@ export interface CarouselWrapperProps {
   ariaLabel?: string;
   /** Show prev/next arrows alongside dots (only when available) */
   showPaginationArrows?: boolean;
+  /** Callback fired when the selected slide changes */
+  onSlideChange?: (index: number) => void;
+  /** Enable carousel style based on the container width */
+  isContainerBleedCarousel?: boolean;
 }
 
 export const CarouselWrapper = ({
@@ -62,6 +66,8 @@ export const CarouselWrapper = ({
   thumbsClassName,
   ariaLabel = 'Carousel',
   showPaginationArrows = false,
+  onSlideChange,
+  isContainerBleedCarousel,
 }: CarouselWrapperProps) => {
   // Build plugin list
   const plugins = [
@@ -75,6 +81,7 @@ export const CarouselWrapper = ({
   const [thumbRef, thumbApi] = useEmblaCarousel({
     containScroll: 'keepSnaps',
     dragFree: true,
+    align: 'start',
   });
 
   const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -117,7 +124,8 @@ export const CarouselWrapper = ({
     setCanScrollPrev(emblaApi.canScrollPrev());
     setCanScrollNext(emblaApi.canScrollNext());
     thumbApi?.scrollTo(index);
-  }, [emblaApi, thumbApi]);
+    onSlideChange?.(index);
+  }, [emblaApi, thumbApi, onSlideChange]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -136,7 +144,7 @@ export const CarouselWrapper = ({
     viewport,
     container,
     fadeContainer,
-    dotsWrapper,
+    controlsWrapper,
     dotButton,
     dotActive,
     autoplayButton,
@@ -145,13 +153,39 @@ export const CarouselWrapper = ({
     thumbsContainer,
     thumbButton,
     thumbButtonSelected,
-  } = carouselWrapperVariants({ hasThumbnails: thumbnails && thumbnails?.length > 0 });
+  } = carouselWrapperVariants({
+    hasThumbnails: thumbnails && thumbnails?.length > 0,
+    isContainerBleedCarousel,
+  });
+
+  const GAP_SIZE_PX = 32; // gap-8 in pixels
+  const totalGapWidth = (visibleThumbnails - 1) * GAP_SIZE_PX;
 
   const thumbButtonStyle = {
-    width: `calc(100% / ${visibleThumbnails})`,
+    minWidth: `calc((100% - ${totalGapWidth}px) / ${visibleThumbnails})`,
   };
 
   const hasThumbnails = thumbnails && thumbnails.length > 0;
+
+  const handleMouseEnter = useCallback(() => {
+    if (!autoplay || !isPlaying || !emblaApi) return;
+    const autoplayPlugin = emblaApi.plugins()?.autoplay as
+      | { isPlaying: () => boolean; stop: () => void; play: () => void }
+      | undefined;
+    if (autoplayPlugin?.isPlaying()) {
+      autoplayPlugin.stop();
+    }
+  }, [autoplay, isPlaying, emblaApi]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!autoplay || !isPlaying || !emblaApi) return;
+    const autoplayPlugin = emblaApi.plugins()?.autoplay as
+      | { isPlaying: () => boolean; stop: () => void; play: () => void }
+      | undefined;
+    if (!autoplayPlugin?.isPlaying()) {
+      autoplayPlugin?.play();
+    }
+  }, [autoplay, isPlaying, emblaApi]);
 
   return (
     <div
@@ -159,6 +193,8 @@ export const CarouselWrapper = ({
       role="region"
       aria-roledescription="carousel"
       aria-label={ariaLabel}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* Main carousel viewport */}
       <div className={viewport({ class: viewportClassName })} ref={emblaRef}>
@@ -180,7 +216,7 @@ export const CarouselWrapper = ({
             {thumbnails.map((thumb, index) => (
               <button
                 key={index}
-                className={index === selectedIndex ? thumbButtonSelected() : thumbButton()}
+                className={cn(thumbButton(), index === selectedIndex && thumbButtonSelected())}
                 style={thumbButtonStyle}
                 onClick={() => onThumbClick(index)}
                 aria-label={`Go to slide ${index + 1}`}
@@ -196,19 +232,8 @@ export const CarouselWrapper = ({
 
       {/* Dot indicators & autoplay toggle */}
       {(showDots || autoplay || showPaginationArrows) && (
-        <div className={dotsWrapper()}>
-          {autoplay && (
-            <button
-              className={autoplayButton()}
-              onClick={toggleAutoplay}
-              aria-label={isPlaying ? 'Pause autoplay' : 'Start autoplay'}
-              type="button"
-            >
-              <SvgIcon icon={isPlaying ? 'carousel-pause' : 'carousel-play'} size="xs" />
-            </button>
-          )}
-
-          {!thumbnails && showPaginationArrows && (
+        <div className={controlsWrapper()}>
+          {showPaginationArrows && (
             <button
               onClick={scrollPrev}
               disabled={!loop && !canScrollPrev}
@@ -233,7 +258,7 @@ export const CarouselWrapper = ({
               />
             ))}
 
-          {!thumbnails && showPaginationArrows && (
+          {showPaginationArrows && (
             <button
               onClick={scrollNext}
               disabled={!loop && !canScrollNext}
@@ -243,6 +268,17 @@ export const CarouselWrapper = ({
               suppressHydrationWarning
             >
               <SvgIcon icon="chevron-right" viewBox="0 0 7 13" />
+            </button>
+          )}
+
+          {autoplay && (
+            <button
+              className={autoplayButton()}
+              onClick={toggleAutoplay}
+              aria-label={isPlaying ? 'Pause autoplay' : 'Start autoplay'}
+              type="button"
+            >
+              <i className={cn('fa-solid', isPlaying ? 'fa-pause' : 'fa-play')}></i>
             </button>
           )}
         </div>

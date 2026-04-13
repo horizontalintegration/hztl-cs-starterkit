@@ -47,4 +47,8 @@
   --color-hover-accent-green: var(--theme-color-hover-accent-green);
   --color-accent-yellow: var(--theme-color-accent-yellow);
   --color-hover-accent-yellow: var(--theme-color-hover-accent-yellow);
+
+  /* Carousel Colors */
+  --color-bright-blue: var(--theme-color-bright-blue);
+  --color-slider-thumb-button-border: var(--theme-color-slider-thumb-button-border);
 }

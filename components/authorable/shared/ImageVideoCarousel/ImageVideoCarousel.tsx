@@ -5,7 +5,7 @@ import VideoCarousel from '@/helpers/Wrappers/VideoCarousel/VideoCarousel';
 import { getCSLPAttributes } from '@/utils/type-guards';
 
 export const ImageVideoCarousel = (props: IImageVideoCarousel) => {
-  const { carousel_items, carousel_full_width, carousel_type } = props;
+  const { carousel_items, carousel_full_width, carousel_type, carousel_settings } = props;
 
   if (!carousel_items || !carousel_items?.length) return null;
 
@@ -16,9 +16,17 @@ export const ImageVideoCarousel = (props: IImageVideoCarousel) => {
       {...getCSLPAttributes(props.$?.carousel_items)}
     >
       {carousel_type === 'Video' ? (
-        <VideoCarousel carousel_items={carousel_items} />
+        <VideoCarousel
+          carousel_items={carousel_items}
+          carousel_settings={carousel_settings}
+          isContainerBleedCarousel={carousel_full_width}
+        />
       ) : (
-        <ImageCarousel carousel_items={carousel_items} />
+        <ImageCarousel
+          carousel_items={carousel_items}
+          isContainerBleedCarousel={carousel_full_width}
+          carousel_settings={carousel_settings}
+        />
       )}
     </Container>
   );

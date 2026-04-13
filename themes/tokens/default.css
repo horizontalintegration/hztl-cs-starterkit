@@ -32,9 +32,11 @@
     --theme-color-accent-yellow: #cfb500;
     --theme-color-hover-accent-yellow: #a79a0e;
 
-    /* Typography */
+    /* Slider colors */
+    --theme-color-bright-blue: #0885bd;
+    --theme-color-slider-thumb-button-border: #939494;
 
-    /* Heading 1 Narrow Layout */
+    /* Typography */ /* Heading 1 Narrow Layout */
     --theme-font-size-heading-1: 2.5rem;
     --theme-line-height-heading-1: 2.75rem;
     --theme-font-weight-heading-1: 700;

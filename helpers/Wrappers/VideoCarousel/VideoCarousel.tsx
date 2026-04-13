@@ -1,20 +1,38 @@
+'use client';
+
+import { useRef, useCallback } from 'react';
 import { IImageVideoCarousel } from '@/.generated';
 import { CarouselWrapper, CarouselSlide } from '@/helpers/Wrappers/CarouselWrapper/CarouselWrapper';
 import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
 import VimeoPlayer from '@/helpers/Wrappers/VimeoPlayer/VimeoPlayer';
-import { ButtonWrapper } from '@/helpers/Wrappers/ButtonWrapper/ButtonWrapper';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import { videoCarouselVariants } from './VideoCarousel.styles';
 
+interface VideoCarouselProps extends Required<Pick<IImageVideoCarousel, 'carousel_items'>> {
+  carousel_settings?: IImageVideoCarousel['carousel_settings'];
+  isContainerBleedCarousel?: boolean;
+}
+
 const VideoCarousel = ({
   carousel_items,
-}: Required<Pick<IImageVideoCarousel, 'carousel_items'>>) => {
-  const { slideContent, slideTitle, slideDescription, slideCtaWrapper, thumbImage } =
-    videoCarouselVariants();
+  carousel_settings,
+  isContainerBleedCarousel = false,
+}: VideoCarouselProps) => {
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+
+  const handleSlideChange = useCallback(() => {
+    // Pause all videos in the carousel by posting to all iframes
+    const iframes = carouselRef.current?.querySelectorAll('iframe');
+    iframes?.forEach((iframe) => {
+      iframe.contentWindow?.postMessage({ method: 'pause' }, '*');
+    });
+  }, []);
+  const { slideContent, thumbContainer, thumbImage, thumbDetails } = videoCarouselVariants();
 
   const thumbnails = carousel_items.map((item, index) => (
-    <div key={`thumb-${index}`} className={thumbImage()} data-video-id={item.video_id}>
+    <div key={`thumb-${index}`} className={thumbContainer()} data-video-id={item.video_id}>
       <ImageWrapper
+        imageClassName={thumbImage()}
         image={{
           image: item.carousel_image,
           rounded_image: false,
@@ -22,52 +40,38 @@ const VideoCarousel = ({
         }}
         showFallbackImage
       />
+      {item.title && (
+        <p className={thumbDetails()} {...getCSLPAttributes(item.$?.title)}>
+          {item.title}
+        </p>
+      )}
     </div>
   ));
 
   return (
-    <CarouselWrapper
-      loop
-      fade
-      showDots
-      showPaginationArrows
-      thumbnails={thumbnails}
-      ariaLabel="Video carousel"
-    >
-      {carousel_items.map((item, index) => (
-        <CarouselSlide key={`video-slide-${index}`} className="basis-full" fade>
-          <div className={slideContent()}>
-            <VimeoPlayer
-              videoId={item.video_id}
-              title={item.title || `Video ${index + 1}`}
-              {...getCSLPAttributes(item.$?.video_id)}
-            />
-
-            {(item.title || item.description || item.cta) && (
-              <div>
-                {item.title && (
-                  <h3 className={slideTitle()} {...getCSLPAttributes(item.$?.title)}>
-                    {item.title}
-                  </h3>
-                )}
-
-                {item.description && (
-                  <p className={slideDescription()} {...getCSLPAttributes(item.$?.description)}>
-                    {item.description}
-                  </p>
-                )}
-
-                {item.cta && (
-                  <div className={slideCtaWrapper()}>
-                    <ButtonWrapper cta={item.cta} {...getCSLPAttributes(item.$?.cta)} />
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </CarouselSlide>
-      ))}
-    </CarouselWrapper>
+    <div ref={carouselRef}>
+      <CarouselWrapper
+        showDots
+        showPaginationArrows
+        thumbnails={thumbnails}
+        ariaLabel="Video carousel"
+        onSlideChange={handleSlideChange}
+        isContainerBleedCarousel={isContainerBleedCarousel}
+        {...carousel_settings}
+      >
+        {carousel_items.map((item, index) => (
+          <CarouselSlide key={`video-slide-${index}`} fade>
+            <div className={slideContent()}>
+              <VimeoPlayer
+                videoId={item.video_id}
+                title={item.title || `Video ${index + 1}`}
+                {...getCSLPAttributes(item.$?.video_id)}
+              />
+            </div>
+          </CarouselSlide>
+        ))}
+      </CarouselWrapper>
+    </div>
   );
 };
 

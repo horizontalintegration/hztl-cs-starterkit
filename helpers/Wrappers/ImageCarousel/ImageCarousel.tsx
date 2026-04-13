@@ -6,14 +6,28 @@ import { getCSLPAttributes } from '@/utils/type-guards';
 import { imageCarouselVariants } from './ImageCarousel.styles';
 import RichTextWrapper from '../RichTextWrapper/RichTextWrapper';
 
+interface ImageCarouselProps extends Required<Pick<IImageVideoCarousel, 'carousel_items'>> {
+  carousel_settings?: IImageVideoCarousel['carousel_settings'];
+  isContainerBleedCarousel?: boolean;
+}
+
 const ImageCarousel = ({
   carousel_items,
-}: Required<Pick<IImageVideoCarousel, 'carousel_items'>>) => {
+  carousel_settings,
+  isContainerBleedCarousel,
+}: ImageCarouselProps) => {
   const { slideContent, captionBox, image, slideTitle, slideDescription, slideCtaWrapper } =
     imageCarouselVariants();
 
   return (
-    <CarouselWrapper fade showDots showPaginationArrows ariaLabel="Image carousel">
+    <CarouselWrapper
+      fade
+      showDots
+      showPaginationArrows
+      isContainerBleedCarousel={isContainerBleedCarousel}
+      ariaLabel="Image carousel"
+      {...carousel_settings}
+    >
       {carousel_items.map((item, index) => (
         <CarouselSlide key={`image-slide-${index}`} className="basis-full" fade>
           <div className={slideContent()}>
