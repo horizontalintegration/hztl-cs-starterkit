@@ -6,6 +6,7 @@ import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
 import { IHeader } from '@/.generated';
 import Link from 'next/link';
 import { DesktopHeader } from './Desktop Header/DesktopHeader';
+import { MobileHeader } from './Mobile Header/MobileHeader';
 import { desktopHeaderVariants } from './Header.styles';
 import { useGlobalLabels } from '@/context/GlobalLabelContext';
 import Image from 'next/image';
@@ -50,6 +51,7 @@ const Default = (props: HeaderProps) => {
                 data-mobile-menu-toggle
                 className="flex flex-col items-center justify-center gap-1 cursor-pointer px-4"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-expanded={mobileMenuOpen}
               >
                 <Image
                   src={globalLabels.hamburger_menu_icon?.url || ''}
@@ -68,6 +70,11 @@ const Default = (props: HeaderProps) => {
           </div>
         </div>
         <DesktopHeader {...props} />
+        <MobileHeader
+          {...props}
+          mobileMenuOpen={mobileMenuOpen}
+          onClose={() => setMobileMenuOpen(false)}
+        />
       </header>
     </>
   );

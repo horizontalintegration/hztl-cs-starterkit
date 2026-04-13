@@ -48,7 +48,6 @@ export const NavigationLinkWrapper = ({
   if (!linkLabel || !href) return null;
 
   const newTab = open_in_new_window;
-  const newTabIcon = globalLabels.external_link_identifier_icon;
 
   const engOnlyLink = english_only_link;
   const engOnlyIcon = globalLabels.english_only_identifier_icon;
@@ -83,15 +82,9 @@ export const NavigationLinkWrapper = ({
           ></Image>
         </span>
       )}
-      {shouldRenderNewTabIcon && newTab && newTabIcon?.url && (
+      {shouldRenderNewTabIcon && newTab && (
         <span aria-hidden="true">
-          <Image
-            src={newTabIcon?.url}
-            alt={newTabIcon.title}
-            className="h-2.5 w-auto"
-            width={newTabIcon.dimension?.width}
-            height={newTabIcon.dimension?.height}
-          ></Image>
+          <i className="fa-solid fa-arrow-up-right text-primary"></i>
         </span>
       )}
     </Link>
