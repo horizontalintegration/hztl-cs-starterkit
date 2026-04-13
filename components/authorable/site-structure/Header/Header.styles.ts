@@ -14,7 +14,7 @@ export const desktopHeaderVariants = tv(
       menuList: ['flex'],
       menuItem: ['grow text-white font-black'],
       menuItemTitle: [
-        'block w-full text-center cursor-pointer',
+        'block w-full h-full text-center cursor-pointer',
         'px-2 py-[0.7rem]',
         'uppercase text-[0.938rem] leading-[1.35]',
         'hover:bg-tertiary/65',
@@ -167,7 +167,7 @@ export const mobileHeaderVariants = tv(
       loginSubmitButton: [
         'border border-[#007bff] bg-[#0186be] rounded-[3.2px]',
         'text-white font-black leading-normal text-[0.875rem] uppercase cursor-pointer',
-        'px-2 py-1 w-fit my-1.5',
+        'px-2 py-1 w-fit my-1.5 min-w-22.5',
       ],
       loginFooter: ['flex justify-between items-center border-b-4 border-b-[#d7d7d7]'],
       loginForgotPasswordLink: ['py-3.75 font-bold text-[0.875rem] hover:underline text-primary'],
