@@ -1,7 +1,7 @@
 'use client';
 import { forwardRef } from 'react';
-import { vimeoPlayerVariants } from './VimeoPlayer.styles';
 import { cn } from 'tailwind-variants';
+import { vimeoPlayerVariants } from './VimeoPlayer.styles';
 
 export interface VimeoPlayerProps {
   /** Vimeo video ID (e.g. "123456789") */
