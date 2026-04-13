@@ -6,18 +6,17 @@ import { Container } from '@/components/primitives/Container/Container';
 import SvgIcon from '@/helpers/SvgIcon/SvgIcon';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import { toPascalCase } from '@/utils/string-utils';
-import { IBaseComponentProps } from '@/lib/types';
+import { IBaseComponentProps, WithMetadata } from '@/lib/types';
 import { IComponents } from '@/.generated';
 import { Col, Row } from '@/components/primitives/Grid';
 import { AccordionItem } from './AccordionItem';
 import { useGlobalLabels } from '@/context/GlobalLabelContext';
 
-type AccordionProps = IComponents['accordion'] & IBaseComponentProps;
+type AccordionProps = WithMetadata<IComponents['accordion']> & IBaseComponentProps;
 
 const Default = (props: AccordionProps) => {
-  const { accordion_items, enable_expand_all, expand_first_item } = props;
+  const { accordion_items, enable_expand_all, expand_first_item, _metadata, componentName } = props;
   const [openItemUids, setOpenItemUids] = useState<Set<string>>(new Set());
-
   const {
     globalLabels: { expand_all_label, collapse_all_label },
   } = useGlobalLabels();
@@ -58,7 +57,7 @@ const Default = (props: AccordionProps) => {
   if (!accordion_items || accordion_items.length === 0) return <></>;
 
   return (
-    <Container componentName="authorable/shared/Accordion">
+    <Container componentName={componentName} id={_metadata?.uid}>
       <Row>
         <Col md={8} lg={12} offsetMd={2}>
           <div className={base()}>

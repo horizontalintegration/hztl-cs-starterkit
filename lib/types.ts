@@ -19,6 +19,14 @@ export interface IBaseComponentProps {
   [key: string]: any;
 }
 
+/** Metadata attached to a modular block / CMS entry. */
+export interface IMetadata {
+  _metadata?: { uid?: string };
+}
+
+/** Helper to add `_metadata` to any given type. */
+export type WithMetadata<T> = T & IMetadata;
+
 /** Params for fetching multiple entries by content type */
 export type GetEntries = {
   contentTypeUid: string;
