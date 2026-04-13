@@ -5,7 +5,7 @@ export const buttonVariants = tv({
     'flex',
     'items-center',
     'justify-center',
-    'gap-2',
+    'gap-0.5',
     'font-medium',
     'transition-all',
     'duration-300',

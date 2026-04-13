@@ -11,33 +11,20 @@ type HeaderIdentifierLegendProps = {
 export const HeaderIdentifierLegend = ({ globalLabels }: HeaderIdentifierLegendProps) => {
   const { identifierLegend, identifierLegendItem, identifierIcon } = desktopHeaderVariants();
 
-  const externalLinkIcon = globalLabels.external_link_identifier_icon;
   const englishOnlyIcon = globalLabels.english_only_identifier_icon;
 
-  const hasExternalLinkIcon = !!externalLinkIcon?.url;
   const hasEnglishOnlyIcon = !!englishOnlyIcon?.url;
-
-  if (!hasExternalLinkIcon && !hasEnglishOnlyIcon) return null;
 
   return (
     <div className={identifierLegend()}>
-      {hasExternalLinkIcon && (
-        <span className={identifierLegendItem()}>
-          <Image
-            src={externalLinkIcon!.url!}
-            alt={externalLinkIcon!.title ?? ''}
-            width={externalLinkIcon!.dimension?.width}
-            height={externalLinkIcon!.dimension?.height}
-            className={identifierIcon()}
-            {...getCSLPAttributes(globalLabels.$?.external_link_identifier_icon)}
-          />
-          <PlainTextWrapper
-            content={`= ${globalLabels.external_link_identifier_label}`}
-            tag="i"
-            cslpAttribute={globalLabels.$?.external_link_identifier_label}
-          />
-        </span>
-      )}
+      <span className={identifierLegendItem()}>
+        <i className="fa-solid fa-arrow-up-right text-primary"></i>
+        <PlainTextWrapper
+          content={`= ${globalLabels.external_link_identifier_label}`}
+          tag="i"
+          cslpAttribute={globalLabels.$?.external_link_identifier_label}
+        />
+      </span>
       {hasEnglishOnlyIcon && (
         <span className={identifierLegendItem()}>
           <Image

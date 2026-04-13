@@ -99,11 +99,36 @@ export interface IImageVideoCarousel {
       cta?: CSLPFieldMapping;
     };
   }[];
+  carousel_settings?: {
+    loop: boolean;
+    autoplay: boolean;
+    autoplay_duration?: number | null;
+    $?: {
+      loop?: CSLPFieldMapping;
+      autoplay?: CSLPFieldMapping;
+      autoplay_duration?: CSLPFieldMapping;
+    };
+  };
   carousel_full_width: boolean;
   $?: {
     carousel_type?: CSLPFieldMapping;
     carousel_items?: CSLPFieldMapping;
+    carousel_settings?: CSLPFieldMapping;
     carousel_full_width?: CSLPFieldMapping;
+  };
+}
+
+export interface IMediaFullWidth {
+  _version?: number;
+  image?: IFile | null;
+  image_alt?: string;
+  show_video: boolean;
+  video_id?: string;
+  $?: {
+    image?: CSLPFieldMapping;
+    image_alt?: CSLPFieldMapping;
+    show_video?: CSLPFieldMapping;
+    video_id?: CSLPFieldMapping;
   };
 }
 
@@ -219,20 +244,6 @@ export interface ITabbedContentModularBlock {
   $?: {
     tab_variant?: CSLPFieldMapping;
     tab_content_iteam?: CSLPFieldMapping;
-  };
-}
-
-export interface IMediaFullWidth {
-  _version?: number;
-  image?: IFile | null;
-  image_alt?: string;
-  show_video: boolean;
-  video_id?: string;
-  $?: {
-    image?: CSLPFieldMapping;
-    image_alt?: CSLPFieldMapping;
-    show_video?: CSLPFieldMapping;
-    video_id?: CSLPFieldMapping;
   };
 }
 
@@ -537,7 +548,6 @@ export interface IDictionaryItems extends ISystemFields {
   back_to_top_label?: string;
   language_selector_label?: string;
   is_selected_label?: string;
-  external_link_identifier_icon?: IFile | null;
   external_link_identifier_label?: string;
   english_only_identifier_icon?: IFile | null;
   english_only_identifier_label?: string;
@@ -549,7 +559,6 @@ export interface IDictionaryItems extends ISystemFields {
     back_to_top_label?: CSLPFieldMapping;
     language_selector_label?: CSLPFieldMapping;
     is_selected_label?: CSLPFieldMapping;
-    external_link_identifier_icon?: CSLPFieldMapping;
     external_link_identifier_label?: CSLPFieldMapping;
     english_only_identifier_icon?: CSLPFieldMapping;
     english_only_identifier_label?: CSLPFieldMapping;
