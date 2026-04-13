@@ -5,16 +5,19 @@ import { IImageVideoCarousel } from '@/.generated';
 import { CarouselWrapper, CarouselSlide } from '@/helpers/Wrappers/CarouselWrapper/CarouselWrapper';
 import ImageWrapper from '@/helpers/Wrappers/ImageWrapper/ImageWrapper';
 import VimeoPlayer from '@/helpers/Wrappers/VimeoPlayer/VimeoPlayer';
-import { ButtonWrapper } from '@/helpers/Wrappers/ButtonWrapper/ButtonWrapper';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import { videoCarouselVariants } from './VideoCarousel.styles';
 
+interface VideoCarouselProps extends Required<Pick<IImageVideoCarousel, 'carousel_items'>> {
+  carousel_settings?: IImageVideoCarousel['carousel_settings'];
+  isContainerBleedCarousel?: boolean;
+}
+
 const VideoCarousel = ({
   carousel_items,
+  carousel_settings,
   isContainerBleedCarousel = false,
-}: Required<Pick<IImageVideoCarousel, 'carousel_items'>> & {
-  isContainerBleedCarousel?: boolean;
-}) => {
+}: VideoCarouselProps) => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
 
   const handleSlideChange = useCallback(() => {
@@ -54,6 +57,7 @@ const VideoCarousel = ({
         ariaLabel="Video carousel"
         onSlideChange={handleSlideChange}
         isContainerBleedCarousel={isContainerBleedCarousel}
+        {...carousel_settings}
       >
         {carousel_items.map((item, index) => (
           <CarouselSlide key={`video-slide-${index}`} fade>

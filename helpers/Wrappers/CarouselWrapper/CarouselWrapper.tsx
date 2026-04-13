@@ -144,7 +144,7 @@ export const CarouselWrapper = ({
     viewport,
     container,
     fadeContainer,
-    dotsWrapper,
+    controlsWrapper,
     dotButton,
     dotActive,
     autoplayButton,
@@ -167,12 +167,34 @@ export const CarouselWrapper = ({
 
   const hasThumbnails = thumbnails && thumbnails.length > 0;
 
+  const handleMouseEnter = useCallback(() => {
+    if (!autoplay || !isPlaying || !emblaApi) return;
+    const autoplayPlugin = emblaApi.plugins()?.autoplay as
+      | { isPlaying: () => boolean; stop: () => void; play: () => void }
+      | undefined;
+    if (autoplayPlugin?.isPlaying()) {
+      autoplayPlugin.stop();
+    }
+  }, [autoplay, isPlaying, emblaApi]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!autoplay || !isPlaying || !emblaApi) return;
+    const autoplayPlugin = emblaApi.plugins()?.autoplay as
+      | { isPlaying: () => boolean; stop: () => void; play: () => void }
+      | undefined;
+    if (!autoplayPlugin?.isPlaying()) {
+      autoplayPlugin?.play();
+    }
+  }, [autoplay, isPlaying, emblaApi]);
+
   return (
     <div
       className={base({ class: className })}
       role="region"
       aria-roledescription="carousel"
       aria-label={ariaLabel}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* Main carousel viewport */}
       <div className={viewport({ class: viewportClassName })} ref={emblaRef}>
@@ -210,18 +232,7 @@ export const CarouselWrapper = ({
 
       {/* Dot indicators & autoplay toggle */}
       {(showDots || autoplay || showPaginationArrows) && (
-        <div className={dotsWrapper()}>
-          {autoplay && (
-            <button
-              className={autoplayButton()}
-              onClick={toggleAutoplay}
-              aria-label={isPlaying ? 'Pause autoplay' : 'Start autoplay'}
-              type="button"
-            >
-              <SvgIcon icon={isPlaying ? 'carousel-pause' : 'carousel-play'} size="xs" />
-            </button>
-          )}
-
+        <div className={controlsWrapper()}>
           {showPaginationArrows && (
             <button
               onClick={scrollPrev}
@@ -257,6 +268,17 @@ export const CarouselWrapper = ({
               suppressHydrationWarning
             >
               <SvgIcon icon="chevron-right" viewBox="0 0 7 13" />
+            </button>
+          )}
+
+          {autoplay && (
+            <button
+              className={autoplayButton()}
+              onClick={toggleAutoplay}
+              aria-label={isPlaying ? 'Pause autoplay' : 'Start autoplay'}
+              type="button"
+            >
+              <i className={cn('fa-solid', isPlaying ? 'fa-pause' : 'fa-play')}></i>
             </button>
           )}
         </div>

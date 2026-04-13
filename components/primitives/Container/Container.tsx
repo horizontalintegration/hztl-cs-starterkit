@@ -82,7 +82,12 @@ export const Container = ({
   });
 
   return (
-    <Tag className={base({ class: className })} data-component={componentName} id={id}>
+    <Tag
+      className={base({ class: className })}
+      data-component={componentName}
+      id={id}
+      data-id={`${componentName}_${id}`}
+    >
       {hasBackgroundImage && (
         <Image
           src={backgroundImage.image?.url || ''}

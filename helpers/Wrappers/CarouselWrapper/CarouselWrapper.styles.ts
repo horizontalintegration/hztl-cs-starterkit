@@ -23,7 +23,12 @@ export const carouselWrapperVariants = tv({
     arrowNext: ['right-2 md:right-4'],
 
     // Dot indicators
-    dotsWrapper: ['flex items-center justify-center gap-3 mt-9.5 mb-4'],
+    controlsWrapper: [
+      'relative',
+      'w-fit',
+      'mx-auto',
+      'flex items-center justify-center gap-3 mt-9.5 mb-4',
+    ],
     dotButton: [
       'w-3 h-3',
       'rounded-full',
@@ -35,8 +40,10 @@ export const carouselWrapperVariants = tv({
     ],
     dotActive: ['bg-dark-blue', 'opacity-100'],
     autoplayButton: [
+      'absolute top-1/2 -translate-y-1/2 left-[calc(100%_+_12px)]',
       'flex items-center justify-center',
-      'cursor-pointer p-1 border-none bg-transparent mr-2',
+      'text-xl text-primary',
+      'cursor-pointer',
     ],
     paginationArrow: [
       'flex items-center justify-center',
