@@ -348,20 +348,6 @@ export interface IColorList {
   };
 }
 
-export interface IAccordionModularBlock {
-  _version?: number;
-  expand_label?: string;
-  collapse_label?: string;
-  enable_expand_all: boolean;
-  reference: IAccordionItem[];
-  $?: {
-    expand_label?: CSLPFieldMapping;
-    collapse_label?: CSLPFieldMapping;
-    enable_expand_all?: CSLPFieldMapping;
-    reference?: CSLPFieldMapping;
-  };
-}
-
 export interface ISitemapSetting {
   _version?: number;
   change_frequency:
@@ -472,22 +458,7 @@ export interface ISeo {
   };
 }
 
-export interface IAccordionItem extends ISystemFields {
-  _version?: number;
-  title: string;
-  accordion_title: string;
-  description: string;
-  taxonomies?: ITaxonomy | ITaxonomyEntry[];
-  $?: {
-    title?: CSLPFieldMapping;
-    accordion_title?: CSLPFieldMapping;
-    description?: CSLPFieldMapping;
-    taxonomies?: CSLPFieldMapping;
-  };
-}
-
 export interface IComponents extends ISystemFields {
-  accordion: IAccordionModularBlock;
   cta_button: ICtaButtonModularBlock;
   quote: IQuote;
   cta_bar: ICtaBar;
@@ -496,6 +467,23 @@ export interface IComponents extends ISystemFields {
   tabbed_content: ITabbedContentModularBlock;
   media_full_width: IMediaFullWidth;
   image_video_carousel: IImageVideoCarousel;
+  accordion: {
+    expand_first_item: boolean;
+    enable_expand_all: boolean;
+    accordion_items?: {
+      title: string;
+      description: string;
+      $?: {
+        title?: CSLPFieldMapping;
+        description?: CSLPFieldMapping;
+      };
+    }[];
+    $?: {
+      expand_first_item?: CSLPFieldMapping;
+      enable_expand_all?: CSLPFieldMapping;
+      accordion_items?: CSLPFieldMapping;
+    };
+  };
 }
 
 export interface IPage extends ISystemFields {
@@ -548,6 +536,8 @@ export interface IDictionaryItems extends ISystemFields {
   back_to_top_label?: string;
   language_selector_label?: string;
   is_selected_label?: string;
+  expand_all_label?: string;
+  collapse_all_label?: string;
   external_link_identifier_label?: string;
   english_only_identifier_icon?: IFile | null;
   english_only_identifier_label?: string;
@@ -559,6 +549,8 @@ export interface IDictionaryItems extends ISystemFields {
     back_to_top_label?: CSLPFieldMapping;
     language_selector_label?: CSLPFieldMapping;
     is_selected_label?: CSLPFieldMapping;
+    expand_all_label?: CSLPFieldMapping;
+    collapse_all_label?: CSLPFieldMapping;
     external_link_identifier_label?: CSLPFieldMapping;
     english_only_identifier_icon?: CSLPFieldMapping;
     english_only_identifier_label?: CSLPFieldMapping;

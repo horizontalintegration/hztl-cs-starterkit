@@ -2,9 +2,13 @@ import { IImageVideoCarousel } from '@/.generated';
 import { Container } from '@/components/primitives/Container/Container';
 import ImageCarousel from '@/helpers/Wrappers/ImageCarousel/ImageCarousel';
 import VideoCarousel from '@/helpers/Wrappers/VideoCarousel/VideoCarousel';
+import { IBaseComponentProps } from '@/lib/types';
+import { toPascalCase } from '@/utils/string-utils';
 import { getCSLPAttributes } from '@/utils/type-guards';
 
-export const ImageVideoCarousel = (props: IImageVideoCarousel) => {
+type IImageVideoCarouselProps = IImageVideoCarousel & IBaseComponentProps;
+
+export const Default = (props: IImageVideoCarouselProps) => {
   const { carousel_items, carousel_full_width, carousel_type, carousel_settings } = props;
 
   if (!carousel_items || !carousel_items?.length) return null;
@@ -30,4 +34,15 @@ export const ImageVideoCarousel = (props: IImageVideoCarousel) => {
       )}
     </Container>
   );
+};
+
+const variants = {
+  Default,
+};
+
+export const ImageVideoCarousel = (props: IImageVideoCarouselProps) => {
+  const Component = props.component_variant
+    ? variants[toPascalCase(props.component_variant) as keyof typeof variants]
+    : Default;
+  return <Component {...props} />;
 };

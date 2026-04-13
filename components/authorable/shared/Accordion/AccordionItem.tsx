@@ -4,10 +4,10 @@ import { accordionItemVariants } from './Accordion.styles';
 import SvgIcon from '@/helpers/SvgIcon/SvgIcon';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import { IBaseComponentProps } from '@/lib/types';
-import { IAccordionItem } from '@/.generated';
+import { IComponents } from '@/.generated';
 import RichTextWrapper from '@/helpers/Wrappers/RichTextWrapper/RichTextWrapper';
 
-type AccordionItemProps = IAccordionItem & IBaseComponentProps;
+type AccordionItemProps = NonNullable<IComponents['accordion']['accordion_items']>[number] & IBaseComponentProps;
 
 export const AccordionItem = (props: AccordionItemProps) => {
   const { uid, title, description, extendedProps, $ } = props;
