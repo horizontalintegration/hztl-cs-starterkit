@@ -80,6 +80,36 @@ export type IModularBlocksExtension<T> = {
   [P in keyof T]?: T[P] & { _metadata?: { uid?: string } };
 };
 
+export interface ITabbedContentModularBlock {
+  _version?: number;
+  tab_variant?: ("Horizontal" | "Vertical") | null;
+  tab_content_items?: {
+    tab_title?: string;
+    tab_icon?: IFile | null;
+    tab_content_type?: ("RTE" | "Image") | null;
+    rte?: string;
+    image_data?: {
+      image?: IFile | null;
+      image_caption?: string;
+      $?: {
+        image?: CSLPFieldMapping;
+        image_caption?: CSLPFieldMapping;
+      };
+    };
+    $?: {
+      tab_title?: CSLPFieldMapping;
+      tab_icon?: CSLPFieldMapping;
+      tab_content_type?: CSLPFieldMapping;
+      rte?: CSLPFieldMapping;
+      image_data?: CSLPFieldMapping;
+    };
+  }[];
+  $?: {
+    tab_variant?: CSLPFieldMapping;
+    tab_content_items?: CSLPFieldMapping;
+  };
+}
+
 export interface IImageVideoCarousel {
   _version?: number;
   carousel_type?: ("Image" | "Video") | null;
@@ -214,36 +244,6 @@ export interface IRteModularBlock {
   rte?: string;
   $?: {
     rte?: CSLPFieldMapping;
-  };
-}
-
-export interface ITabbedContentModularBlock {
-  _version?: number;
-  tab_variant?: ("Horizontal" | "Vertical") | null;
-  tab_content_iteam?: {
-    tab_title?: string;
-    tab_icon?: IFile | null;
-    tab_content_type?: ("RTE" | "Image") | null;
-    rte?: string;
-    image_data?: {
-      image?: IFile | null;
-      image_caption?: string;
-      $?: {
-        image?: CSLPFieldMapping;
-        image_caption?: CSLPFieldMapping;
-      };
-    };
-    $?: {
-      tab_title?: CSLPFieldMapping;
-      tab_icon?: CSLPFieldMapping;
-      tab_content_type?: CSLPFieldMapping;
-      rte?: CSLPFieldMapping;
-      image_data?: CSLPFieldMapping;
-    };
-  }[];
-  $?: {
-    tab_variant?: CSLPFieldMapping;
-    tab_content_iteam?: CSLPFieldMapping;
   };
 }
 

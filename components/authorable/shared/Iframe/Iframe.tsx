@@ -2,16 +2,16 @@ import { IIframe } from '@/.generated';
 import { defaultVariants } from './Iframe.styles';
 import { Container } from '@/components/primitives/Container/Container';
 import { toPascalCase } from '@/utils/string-utils';
-import { IBaseComponentProps } from '@/lib/types';
+import { IBaseComponentProps, WithMetadata } from '@/lib/types';
 import { getCSLPAttributes } from '@/utils/type-guards';
 
 const DEFAULT_HEIGHT = 500;
 const MAX_WIDTH = 1140;
 
-type IframeProps = IBaseComponentProps & IIframe;
+type IframeProps = IBaseComponentProps & WithMetadata<IIframe>;
 
 const Default = (props: IframeProps) => {
-  const { url, title, width, height, $ } = props;
+  const { url, title, width, height, componentName, _metadata, $ } = props;
   const { base, iframeWrapper, iframe } = defaultVariants();
 
   if (!url) return null;
@@ -27,7 +27,7 @@ const Default = (props: IframeProps) => {
   };
 
   return (
-    <Container componentName="Iframe" containerBleed>
+    <Container componentName={componentName} id={_metadata?.uid} containerBleed>
       <div className={base()}>
         <div className={iframeWrapper()} style={wrapperStyle}>
           <iframe
