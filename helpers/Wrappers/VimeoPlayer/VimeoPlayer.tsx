@@ -1,5 +1,6 @@
 'use client';
 import { forwardRef } from 'react';
+import { cn } from 'tailwind-variants';
 import { vimeoPlayerVariants } from './VimeoPlayer.styles';
 
 export interface VimeoPlayerProps {
@@ -67,7 +68,7 @@ const VimeoPlayer = forwardRef<HTMLIFrameElement, VimeoPlayerProps>(
           ref={ref}
           src={src}
           title={title}
-          className={iframe()}
+          className={cn(iframe(), 'vimeo-player')}
           allow="autoplay; fullscreen; picture-in-picture"
           allowFullScreen
           loading="lazy"
