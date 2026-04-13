@@ -1,23 +1,29 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { defaultVariants } from './Accordion.styles';
 import { Container } from '@/components/primitives/Container/Container';
-import { ReferencePlaceholder } from '@/components/primitives/ReferencePlaceholder';
 import SvgIcon from '@/helpers/SvgIcon/SvgIcon';
 import { getCSLPAttributes } from '@/utils/type-guards';
 import { toPascalCase } from '@/utils/string-utils';
 import { IBaseComponentProps } from '@/lib/types';
-import { IAccordionModularBlock } from '@/.generated';
+import { IComponents } from '@/.generated';
 import { Col, Row } from '@/components/primitives/Grid';
+import { AccordionItem } from './AccordionItem';
+import { useGlobalLabels } from '@/context/GlobalLabelContext';
 
-type AccordionProps = IAccordionModularBlock & IBaseComponentProps;
+type AccordionProps = IComponents['accordion'] & IBaseComponentProps;
 
 const Default = (props: AccordionProps) => {
-  const { reference, expand_label, collapse_label, enable_expand_all } = props;
+  const { accordion_items, enable_expand_all, expand_first_item } = props;
   const [openItemUids, setOpenItemUids] = useState<Set<string>>(new Set());
+
+  const {
+    globalLabels: { expand_all_label, collapse_all_label },
+  } = useGlobalLabels();
+
   const allExpanded =
-    (reference?.length ?? 0) > 0 && openItemUids.size === (reference?.length ?? 0);
+    accordion_items && accordion_items.length > 0 && openItemUids.size === accordion_items.length;
 
   const { base, header, expandAllButton, expandAllChevron, itemList } = defaultVariants({
     allExpanded,
@@ -25,8 +31,13 @@ const Default = (props: AccordionProps) => {
 
   const toggleItem = useCallback((uid: string) => {
     setOpenItemUids((prev) => {
-      if (prev.has(uid)) return new Set();
-      return new Set([uid]);
+      const newSet = new Set(prev);
+      if (newSet.has(uid)) {
+        newSet.delete(uid);
+      } else {
+        newSet.add(uid);
+      }
+      return newSet;
     });
   }, []);
 
@@ -34,12 +45,20 @@ const Default = (props: AccordionProps) => {
     if (allExpanded) {
       setOpenItemUids(new Set());
     } else {
-      setOpenItemUids(new Set(reference?.map((item) => item.uid ?? '') ?? []));
+      setOpenItemUids(new Set(accordion_items?.map((_, index) => `accordion-item-${index}`) ?? []));
     }
-  }, [allExpanded, reference]);
+  }, [allExpanded, accordion_items]);
+
+  useEffect(() => {
+    if (expand_first_item && accordion_items && accordion_items.length > 0) {
+      setOpenItemUids(new Set(['accordion-item-0']));
+    }
+  }, [expand_first_item, accordion_items]);
+
+  if (!accordion_items || accordion_items.length === 0) return <></>;
 
   return (
-    <Container componentName="Accordion">
+    <Container componentName="authorable/shared/Accordion">
       <Row>
         <Col md={8} lg={12} offsetMd={2}>
           <div className={base()}>
@@ -49,9 +68,9 @@ const Default = (props: AccordionProps) => {
                   className={expandAllButton()}
                   onClick={toggleAll}
                   aria-expanded={allExpanded}
-                  {...getCSLPAttributes(props.$?.expand_label)}
+                  {...getCSLPAttributes(allExpanded ? collapse_all_label : expand_all_label)}
                 >
-                  {allExpanded ? collapse_label : expand_label}
+                  {allExpanded ? collapse_all_label : expand_all_label}
                   <SvgIcon
                     icon="chevron-down"
                     size="xs"
@@ -62,11 +81,14 @@ const Default = (props: AccordionProps) => {
               </div>
             )}
             <ul className={itemList()}>
-              <ReferencePlaceholder
-                componentName="AccordionItem"
-                references={reference ?? []}
-                extendedProps={{ openItemUids, onToggle: toggleItem }}
-              />
+              {accordion_items?.map((item, index) => (
+                <AccordionItem
+                  key={index}
+                  {...item}
+                  uid={`accordion-item-${index}`}
+                  extendedProps={{ openItemUids, onToggle: toggleItem }}
+                />
+              ))}
             </ul>
           </div>
         </Col>
